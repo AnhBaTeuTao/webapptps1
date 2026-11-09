@@ -376,6 +376,7 @@ export default function OrderDetailPage() {
                       <p className="font-bold text-xs sm:text-sm text-[#17231d] leading-snug">
                         {productName(item.name)}
                       </p>
+                      {!item.productId && <p className="mt-1 text-[11px] font-semibold text-amber-800">{t(Number(item.finalUnitPrice ?? item.price) > 0 ? 'Ngoài danh mục' : 'Ngoài danh mục · Tạm tính 0đ')}</p>}
                       {productName(item.name) !== item.name && <p className="text-[11px] text-[#59665f]">{item.name}</p>}
                       <div className="flex items-center gap-2 text-[11px] text-[#59665f] mt-0.5">
                         {item.sku && <span className="font-mono font-semibold">SKU: {item.sku}</span>}
@@ -386,13 +387,13 @@ export default function OrderDetailPage() {
 
                     <div className="text-right shrink-0">
                       <span className="font-mono font-bold text-xs sm:text-sm text-[#0f7a4f]">
-                        {Number(item.finalUnitPrice ?? item.price) > 0 ? money(lineTotal(item)) : t('Chờ sale báo giá')}
+                        {Number(item.finalUnitPrice ?? item.price) > 0 ? money(lineTotal(item)) : !item.productId ? '0đ' : t('Chờ sale báo giá')}
                       </span>
                       <p className="text-[10px] text-[#59665f]">
                         {item.quantity} {productUnit(item.unit || 'Kg')} ×{' '}
                         {Number(item.finalUnitPrice ?? item.price) > 0
                           ? money(item.finalUnitPrice ?? item.price)
-                          : t('Chờ sale báo giá')}
+                          : !item.productId ? '0đ' : t('Chờ sale báo giá')}
                       </p>
                     </div>
                   </div>

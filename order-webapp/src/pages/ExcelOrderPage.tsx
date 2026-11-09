@@ -10,7 +10,7 @@ import { saveDocument } from '../lib/android-document';
 
 const columns = ['sku', 'name', 'quantity', 'unit', 'note'] as const;
 type Column = typeof columns[number];
-type RowEdit = { quantity: string; unit: string; note: string };
+type RowEdit = { name: string; quantity: string; unit: string; note: string };
 const keyFor = (row: ExcelMatchResult) => `${row.sourceSheet}:${row.row}`;
 const money = (value: number) => new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';
 const displayNumber = (value: number | null) => value == null ? '' : String(value);
@@ -32,6 +32,7 @@ export default function ExcelOrderPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [edits, setEdits] = useState<Record<string, RowEdit>>({});
   const [chosen, setChosen] = useState<Record<string, ExcelProduct | Product>>({});
+  const [unlisted, setUnlisted] = useState<Set<string>>(new Set());
   const [searchText, setSearchText] = useState<Record<string, string>>({});
   const [searchResults, setSearchResults] = useState<Record<string, Product[]>>({});
   const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
@@ -87,10 +88,10 @@ export default function ExcelOrderPage() {
       setMapping(nextMapping);
       setMappingOpen(response.needsMapping);
       setVisibleCount(30);
-      setChosen({}); setSearchText({}); setSearchResults({});
+      setChosen({}); setUnlisted(new Set()); setSearchText({}); setSearchResults({});
       setSelected(new Set(response.results.filter((row) => row.status === 'matched').map(keyFor)));
       setEdits(Object.fromEntries(response.results.map((row) => [keyFor(row), {
-        quantity: displayNumber(row.requestedQuantity), unit: row.unit || row.product?.unit || '', note: row.note,
+        name: row.name || row.sku, quantity: displayNumber(row.requestedQuantity), unit: row.unit || row.product?.unit || '', note: row.note,
       }])));
     } catch (cause) {
       setError(cause instanceof ApiError ? errorText(cause) : cause instanceof Error && cause.message === t('Chỉ nhận file Excel tối đa 4 MB') ? cause.message : t('Không đọc được file, vui lòng thử lại'));
@@ -104,8 +105,16 @@ export default function ExcelOrderPage() {
   const chooseProduct = (row: ExcelMatchResult, product: ExcelProduct | Product) => {
     const key = keyFor(row);
     setChosen((current) => ({ ...current, [key]: product }));
+    setUnlisted((current) => { const next = new Set(current); next.delete(key); return next; });
     setSelected((current) => new Set(current).add(key));
     setSearchResults((current) => ({ ...current, [key]: [] }));
+  };
+  const chooseUnlisted = (row: ExcelMatchResult) => {
+    const key = keyFor(row);
+    setUnlisted((current) => new Set(current).add(key));
+    setChosen((current) => { const next = { ...current }; delete next[key]; return next; });
+    setSelected((current) => new Set(current).add(key));
+    setRowErrors((current) => { const next = { ...current }; delete next[key]; return next; });
   };
   const searchProducts = async (row: ExcelMatchResult) => {
     const key = keyFor(row);
@@ -136,13 +145,17 @@ export default function ExcelOrderPage() {
     const invalid: Record<string, string> = {};
     const items = source.flatMap((row) => {
       const key = keyFor(row);
-      const product = chosen[key] || row.product;
+      const product = unlisted.has(key) ? null : chosen[key] || row.product;
       const edit = edits[key];
       const quantity = parseQuantity(edit?.quantity || '');
-      if (!product) { invalid[key] = t('Chọn sản phẩm TPS1'); return []; }
+      if (!product && !unlisted.has(key)) { invalid[key] = t('Chọn sản phẩm TPS1'); return []; }
       if (!Number.isFinite(quantity) || quantity <= 0) { invalid[key] = t('Số lượng phải lớn hơn 0'); return []; }
-      return [{ sourceSheet: row.sourceSheet, row: row.row, productId: product.id, quantity,
-        unit: (edit?.unit || product.unit).trim(), note: edit?.note || '' }];
+      if (unlisted.has(key) && (!edit?.name.trim() || !edit?.unit.trim())) {
+        invalid[key] = t('Nhập tên và đơn vị hàng ngoài danh mục'); return [];
+      }
+      return [{ sourceSheet: row.sourceSheet, row: row.row, productId: product?.id || '', quantity,
+        unit: (edit?.unit || product?.unit || '').trim(), note: edit?.note || '',
+        unlisted: unlisted.has(key), name: unlisted.has(key) ? edit.name.trim() : undefined }];
     });
     if (Object.keys(invalid).length) { setRowErrors(invalid); setError(t('Kiểm tra lại các dòng được đánh dấu')); return; }
     setAdding(true); setError(''); setRowErrors({});
@@ -150,13 +163,13 @@ export default function ExcelOrderPage() {
       const response = await api.resolveExcel(items);
       const grouped = new Map<string, { item: typeof response.items[number]; quantity: number; notes: string[] }>();
       for (const item of response.items) {
-        const existing = grouped.get(item.id);
+        const existing = item.isUnlisted ? undefined : grouped.get(item.id);
         if (existing) { existing.quantity += item.quantity; if (item.note && !existing.notes.includes(item.note)) existing.notes.push(item.note); }
         else grouped.set(item.id, { item, quantity: item.quantity, notes: item.note ? [item.note] : [] });
       }
       for (const { item, quantity, notes } of grouped.values()) {
         addItem({ id: item.id, sku: item.sku, name: item.name, category: null, unit: item.unit,
-          imageUrl: null, price: item.price, priceOnRequest: item.priceOnRequest, available: true,
+          imageUrl: item.isUnlisted ? '/product-unlisted.svg' : null, price: item.price, priceOnRequest: item.priceOnRequest, isUnlisted: item.isUnlisted, available: true,
           minOrderQty: item.minOrderQty, orderStep: item.orderStep, enforceOrderStep: item.enforceOrderStep },
           quantity, notes.join('; ').slice(0, 500));
       }
@@ -249,7 +262,7 @@ export default function ExcelOrderPage() {
         <div className="flex items-center justify-between"><h2 className="font-bold text-[#14231c]">{t('Kiểm tra mặt hàng')} ({preview.results.length})</h2></div>
         {preview.results.slice(0, visibleCount).map((row) => {
           const key = keyFor(row);
-          const product = chosen[key] || row.product;
+          const product = unlisted.has(key) ? null : chosen[key] || row.product;
           const edit = edits[key];
           const isSelected = selected.has(key);
           return <article key={key} className={`rounded-2xl border bg-white p-3.5 sm:p-4 ${rowErrors[key] ? 'border-red-300' : isSelected ? 'border-emerald-200' : 'border-[#14231c]/10'}`}>
@@ -262,22 +275,28 @@ export default function ExcelOrderPage() {
                   <div><p className="text-xs font-semibold text-[#59665f]">{row.sourceSheet} · {t('Dòng')} {row.row}</p>
                     <p className="font-semibold text-[#14231c] break-words">{row.name || row.sku}</p>
                     {row.sku && row.name !== row.sku && <p className="text-xs text-[#59665f]">{row.sku}</p>}
-                  </div><StatusBadge status={row.status} selected={Boolean(chosen[key])} t={t}/>
+                  </div><StatusBadge status={row.status} selected={Boolean(chosen[key])} unlisted={unlisted.has(key)} t={t}/>
                 </div>
                 {product && <p className="mt-2 text-sm text-[#0f7a4f]">→ {productName(product.name)} ({product.sku}) · {chosen[key] && row.suggestions?.some((candidate) => candidate.id === product.id) ? t('Giá kiểm tra khi thêm vào giỏ') : product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}</p>}
                 {row.warning && <p className="mt-1 text-xs text-amber-800">{t(row.warning)}</p>}
                 {rowErrors[key] && <p className="mt-1 text-xs font-semibold text-red-700">{rowErrors[key]}</p>}
+                {unlisted.has(key) && <><p className="mt-2 text-xs font-semibold text-amber-800">{t('Hàng không có trong danh mục · Tạm tính 0đ · Sale sẽ xác nhận')}</p>
+                  <label className="mt-2 block text-xs text-[#59665f]">{t('Tên hàng cần mua')}<input value={edit?.name ?? ''} onChange={(event) => editRow(key, { name: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label></>}
                 <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-[110px_110px_1fr]">
                   <label className="text-xs text-[#59665f]">{t('Số lượng')}<input inputMode="decimal" value={edit?.quantity ?? ''} onChange={(event) => editRow(key, { quantity: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label>
                   <label className="text-xs text-[#59665f]">{t('Đơn vị')}<input value={edit?.unit ?? ''} onChange={(event) => editRow(key, { unit: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label>
                   <label className="col-span-2 text-xs text-[#59665f] sm:col-span-1">{t('Ghi chú')}<input value={edit?.note ?? ''} onChange={(event) => editRow(key, { note: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label>
                 </div>
-                {(row.suggestions?.length || row.status !== 'matched') ? <div className="mt-3 space-y-2">
-                  {row.suggestions?.map((candidate) => <button key={candidate.id} onClick={() => chooseProduct(row, candidate)} className={`mr-2 rounded-lg border px-2.5 py-1.5 text-left text-xs ${product?.id === candidate.id ? 'border-emerald-600 bg-emerald-50' : 'border-[#14231c]/15'}`}>{productName(candidate.name)} · {candidate.sku}</button>)}
+                {(row.suggestions?.length || row.status !== 'matched' || unlisted.has(key)) ? <div className="mt-3 space-y-2">
+                  {unlisted.has(key) && row.product && <button onClick={() => chooseProduct(row, row.product!)} className="mr-2 rounded-lg border border-[#14231c]/15 px-2.5 py-1.5 text-left text-xs">{t('Dùng sản phẩm đã khớp')} · {productName(row.product.name)} · {row.product.sku}</button>}
+                  {Boolean(row.suggestions?.length) && <div className="max-h-40 space-y-1.5 overflow-y-auto rounded-lg border border-[#14231c]/10 p-1.5">{row.suggestions?.map((candidate) => <button key={candidate.id} onClick={() => chooseProduct(row, candidate)} className={`block min-h-9 w-full rounded-lg border px-2.5 py-1.5 text-left text-xs ${product?.id === candidate.id ? 'border-emerald-600 bg-emerald-50' : 'border-[#14231c]/15'}`}>{productName(candidate.name)} · {candidate.sku} · {candidate.unit}</button>)}</div>}
                   <div className="flex gap-2"><input value={searchText[key] ?? ''} onChange={(event) => setSearchText((current) => ({ ...current, [key]: event.target.value }))} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void searchProducts(row); } }} placeholder={t('Tìm sản phẩm TPS1')} className="min-w-0 min-h-10 flex-1 rounded-lg border px-3 text-sm"/>
                     <button onClick={() => void searchProducts(row)} disabled={searching === key} className="min-h-10 rounded-lg border px-3 text-sm font-semibold disabled:opacity-50"><Search size={17}/></button></div>
                   {searchResults[key]?.length > 0 && <div className="max-h-44 space-y-1 overflow-y-auto rounded-lg border p-2">{searchResults[key].map((candidate) => <button key={candidate.id} onClick={() => chooseProduct(row, candidate)} className="block w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-emerald-50">{productName(candidate.name)} · {candidate.sku} · {candidate.unit}</button>)}</div>}
                 </div> : null}
+                <button type="button" onClick={() => chooseUnlisted(row)} className={`mt-3 min-h-10 rounded-lg border px-3 text-left text-xs font-semibold ${unlisted.has(key) ? 'border-amber-600 bg-amber-50 text-amber-900' : 'border-[#14231c]/15 text-[#59665f]'}`}>
+                  {t('Không có trong danh mục · 0đ')}
+                </button>
               </div>
             </div>
           </article>;
@@ -296,8 +315,8 @@ export default function ExcelOrderPage() {
 function SummaryTile({ label, value, icon, color }: { label: string; value: number; icon: React.ReactNode; color: string }) {
   return <div className="rounded-xl border border-[#14231c]/10 bg-white p-3 text-center"><div className={`flex items-center justify-center gap-1 font-bold ${color}`}>{icon}{value}</div><p className="mt-1 text-xs text-[#59665f]">{label}</p></div>;
 }
-function StatusBadge({ status, selected, t }: { status: ExcelMatchResult['status']; selected: boolean; t: (key: string) => string }) {
-  const label = selected || status === 'matched' ? 'Đã khớp' : status === 'ambiguous' ? 'Cần chọn' : status === 'not_found' ? 'Chưa tìm thấy' : 'Sai số lượng/đơn vị';
-  const color = selected || status === 'matched' ? 'bg-emerald-50 text-emerald-700' : status === 'ambiguous' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700';
+function StatusBadge({ status, selected, unlisted, t }: { status: ExcelMatchResult['status']; selected: boolean; unlisted: boolean; t: (key: string) => string }) {
+  const label = unlisted ? 'Ngoài danh mục' : selected || status === 'matched' ? 'Đã khớp' : status === 'ambiguous' ? 'Cần chọn' : status === 'not_found' ? 'Chưa tìm thấy' : 'Sai số lượng/đơn vị';
+  const color = unlisted ? 'bg-amber-50 text-amber-800' : selected || status === 'matched' ? 'bg-emerald-50 text-emerald-700' : status === 'ambiguous' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700';
   return <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{t(label)}</span>;
 }

@@ -148,7 +148,7 @@ export const api = {
   frequentItems: (signal?: AbortSignal) => request<{ ok: true; items: FrequentItem[] }>('/api/customer/frequent-items', { signal }),
 
   createOrder: (payload: {
-    items: { productId: string; name: string; quantity: number; note?: string; sourceImportLineId?: string }[];
+    items: { productId: string; name: string; quantity: number; note?: string; sourceImportLineId?: string; isUnlisted?: boolean; unit?: string }[];
     deliveryAlias?: string;
     deliveryAddress: string;
     deliveryName: string;
@@ -210,6 +210,7 @@ export interface Product {
   thumbUrl?: string | null;
   price: number;
   priceOnRequest?: boolean;
+  isUnlisted?: boolean;
   available: boolean;
   stockQty?: number;
   minOrderQty?: number | null;
@@ -327,8 +328,9 @@ export interface ExcelPreviewResponse {
   results: ExcelMatchResult[];
   summary: Record<string, number> | null;
 }
-export interface ExcelSelection { sourceSheet: string; row: number; productId: string; quantity: number; unit: string; note: string }
+export interface ExcelSelection { sourceSheet: string; row: number; productId: string; quantity: number; unit: string; note: string; unlisted?: boolean; name?: string }
 export interface ExcelResolvedItem extends ExcelProduct {
+  isUnlisted?: boolean;
   sourceSheet: string; row: number; quantity: number; requestedQuantity: number;
   adjusted: boolean; adjustmentMessage: string | null; note: string;
 }

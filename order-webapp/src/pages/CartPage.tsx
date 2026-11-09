@@ -104,6 +104,8 @@ export default function CartPage() {
           name: l.product.name,
           quantity: l.quantity,
           note: l.note?.trim() || undefined,
+          isUnlisted: l.product.isUnlisted,
+          unit: l.product.isUnlisted ? l.product.unit : undefined,
         })),
         deliveryAlias: deliveryAlias.trim() || undefined,
         deliveryAddress: deliveryAddress.trim(),
@@ -239,6 +241,7 @@ export default function CartPage() {
                         <h3 className="font-bold text-sm text-[#17231d] mt-0.5 leading-snug">
                           {productName(product.name)}
                         </h3>
+                        {product.isUnlisted && <p className="mt-1 text-[11px] font-semibold text-amber-800">{t('Ngoài danh mục · Tạm tính 0đ')}</p>}
                         {productName(product.name) !== product.name && <p className="text-[11px] text-[#59665f]">{product.name}</p>}
                       </div>
 
@@ -256,7 +259,7 @@ export default function CartPage() {
                       {t('ĐVT:')} <strong className="text-[#17231d]">{productUnit(product.unit || 'Kg')}</strong> ·{' '}
                       Đơn giá:{' '}
                       <strong className="text-[#0f7a4f]">
-                        {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
+                        {product.isUnlisted ? '0đ' : product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
                       </strong>
                     </p>
                   </div>
@@ -298,7 +301,7 @@ export default function CartPage() {
                   <div className="text-right">
                     <span className="text-[10px] text-[#59665f] block">Thành tiền</span>
                     <span className="font-mono font-bold text-sm sm:text-base text-[#0f7a4f]">
-                      {product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
+                      {product.isUnlisted ? '0đ' : product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
                     </span>
                   </div>
                 </div>
