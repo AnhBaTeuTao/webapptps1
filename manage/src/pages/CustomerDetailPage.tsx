@@ -531,6 +531,10 @@ export default function CustomerDetailPage() {
         )}
       </header>
 
+      {!isNew && id && ['admin', 'truong_phong'].includes(user?.role || '') && (
+        <CustomerProfileRequestPanel customerId={id} apiBase={apiBase} authFetch={authFetch} />
+      )}
+
       {!isNew && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
@@ -927,6 +931,52 @@ const CONTRACT_PRICE_PROBLEM_LABELS: Record<string, string> = {
 // hoạch, 14/09/2026) — cùng khuôn với ImportInventoryModal/ImportPricebookModal
 // ở ProductsPage.tsx, chỉ khác gọi route customers/import-contract-prices và
 // gắn cứng customerId của trang đang mở.
+function CustomerProfileRequestPanel({ customerId, apiBase, authFetch }: {
+  customerId: string; apiBase: string; authFetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+}) {
+  const [request, setRequest] = useState<{ id: string; company: string; tax_code: string; status: string; note?: string } | null>(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  const endpoint = `${apiBase}/api/admin/customers/${encodeURIComponent(customerId)}/profile-request`;
+  const refresh = useCallback(async () => {
+    try {
+      const response = await authFetch(endpoint);
+      const body = await response.json();
+      if (!response.ok || !body.ok) throw new Error(body.error || 'Không tải được yêu cầu');
+      setRequest(body.request || null);
+      setError('');
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Không tải được yêu cầu'); }
+  }, [authFetch, endpoint]);
+  useEffect(() => { void refresh(); }, [refresh]);
+  const resolve = async (status: 'approved' | 'rejected') => {
+    if (!request || busy) return;
+    setBusy(true);
+    try {
+      const response = await authFetch(endpoint, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requestId: request.id, status }),
+      });
+      const body = await response.json();
+      if (!response.ok || !body.ok) throw new Error(body.error || 'Không xử lý được yêu cầu');
+      await refresh();
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Không xử lý được yêu cầu'); }
+    finally { setBusy(false); }
+  };
+  if (!request && !error) return null;
+  return <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <h2 className="font-bold text-slate-800">Yêu cầu cập nhật hồ sơ</h2>
+    {request && <div className="mt-2 text-sm text-slate-600">
+      <p>Trạng thái: <strong>{request.status === 'pending' ? 'Chờ duyệt' : request.status === 'approved' ? 'Đã duyệt' : 'Đã từ chối'}</strong></p>
+      <p>Tên công ty: {request.company}</p><p>Mã số thuế: {request.tax_code || '—'}</p>
+      {request.status === 'pending' && <div className="mt-3 flex gap-2">
+        <button disabled={busy} onClick={() => void resolve('approved')} className="rounded-lg bg-green-700 px-3 py-2 font-semibold text-white disabled:opacity-50">Duyệt</button>
+        <button disabled={busy} onClick={() => void resolve('rejected')} className="rounded-lg border border-red-200 px-3 py-2 font-semibold text-red-700 disabled:opacity-50">Từ chối</button>
+      </div>}
+    </div>}
+    {error && <p className="mt-2 text-sm text-red-700">{error}</p>}
+  </section>;
+}
+
 function ImportContractPricesModal({ apiBase, token, customerId, onClose, onDone }: { apiBase: string; token: string | null; customerId: string; onClose: () => void; onDone: () => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [checking, setChecking] = useState(false);
