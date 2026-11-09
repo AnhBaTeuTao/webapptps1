@@ -56,8 +56,8 @@ export default function LoginPage() {
           </div>
           <div className="max-w-sm text-white">
             <p className="tps1-login-kicker text-[11px] font-bold uppercase tracking-[.18em] text-white/80">TPS1 · B2B</p>
-            <p className="tps1-login-title mt-1 text-xl font-bold tracking-tight drop-shadow-sm lg:text-4xl lg:leading-tight">{t('Đặt hàng cho bếp')}</p>
-            <p className="hidden text-base text-white/85 lg:mt-3 lg:block">{t('Đặt hàng và theo dõi đơn trực tuyến')}</p>
+            <p className="tps1-login-title mt-1 text-xl font-bold tracking-tight drop-shadow-sm lg:text-4xl lg:leading-tight">{t('Thực Phẩm Số Một')}</p>
+            <p className="hidden max-w-lg text-base text-white/85 lg:mt-3 lg:block">{t('Nền tảng số đặt hàng nguyên vật liệu cho Bếp Ăn.')}</p>
           </div>
         </div>
       </section>
@@ -66,7 +66,7 @@ export default function LoginPage() {
         <div className="mx-auto w-full max-w-md lg:max-w-sm">
           <header className="tps1-login-header mb-4">
             <h1 className="text-[27px] font-extrabold leading-tight tracking-tight text-[#113b2b]">{t('Đăng nhập')}</h1>
-            <p className="mt-1 text-[13px] leading-snug text-[#65796d]">{t('Đặt hàng và theo dõi đơn trực tuyến')}</p>
+            <p className="mt-1 text-[13px] leading-snug text-[#65796d]">{t('Thực Phẩm Số Một - Nền tảng số đặt hàng nguyên vật liệu cho Bếp Ăn.')}</p>
           </header>
 
           <form onSubmit={handleSubmit} className="tps1-login-form space-y-3">

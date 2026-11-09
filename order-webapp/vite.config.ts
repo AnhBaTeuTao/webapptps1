@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => ({
         id: '/order/',
         name: 'Đặt hàng TPS1',
         short_name: 'TPS1 Đặt hàng',
-        description: 'Cổng đặt hàng dành cho khách hàng VIP của Thực Phẩm Số Một',
+        description: 'Thực Phẩm Số Một - Nền tảng số đặt hàng nguyên vật liệu cho Bếp Ăn.',
         theme_color: '#0b4f34',
         background_color: '#ffffff',
         display: 'standalone',
