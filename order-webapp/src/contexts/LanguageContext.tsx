@@ -215,6 +215,7 @@ const translations: Record<string, [string, string]> = {
   'Nhập tên và đơn vị hàng ngoài danh mục': ['Enter the item name and unit', '请输入商品名称和单位'],
   'Dùng sản phẩm đã khớp': ['Use the matched product', '使用已匹配商品'],
   'Thêm sản phẩm ngoài danh mục': ['Add an item outside the catalog', '添加目录外商品'],
+  'Chọn hàng từ danh mục hoặc thêm hàng ngoài danh mục.': ['Choose a catalog item or add an item outside the catalog.', '选择目录商品或添加目录外商品。'],
   'Tạm tính 0đ · Sale sẽ xác nhận hàng và báo giá': ['Estimated 0 VND · Sales will confirm availability and price', '暂计0越南盾 · 销售人员将确认库存和价格'],
   'Tên sản phẩm': ['Product name', '商品名称'],
   'Nhập tên sản phẩm cần mua': ['Enter the item you need', '输入所需商品名称'],

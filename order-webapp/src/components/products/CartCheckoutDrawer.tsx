@@ -13,9 +13,10 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import type { CustomerSession } from '../../lib/api';
+import type { CustomerSession, Product } from '../../lib/api';
 import type { OrderTab } from './OrderTabsBar';
 import ProductThumbnail from './ProductThumbnail';
+import UnlistedItemEntry from './UnlistedItemEntry';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 function money(v: number) {
@@ -31,6 +32,7 @@ interface CartCheckoutDrawerProps {
   onUpdateQty: (productId: string, qty: number) => void;
   onUpdateNote: (productId: string, note: string) => void;
   onRemoveItem: (productId: string) => void;
+  onAddUnlisted: (product: Product, quantity: number, note: string) => void;
   onSubmitOrder: () => void;
   submitting: boolean;
   errorMessage: string;
@@ -47,6 +49,7 @@ export default function CartCheckoutDrawer({
   onUpdateQty,
   onUpdateNote,
   onRemoveItem,
+  onAddUnlisted,
   onSubmitOrder,
   submitting,
   errorMessage,
@@ -104,7 +107,7 @@ export default function CartCheckoutDrawer({
 
             {activeTab.items.length === 0 ? (
               <div className="py-6 text-center text-[#59665f] text-xs">
-                Chưa có món nào trong đơn này. Hãy chọn thêm món từ danh sách.
+                {t('Chọn hàng từ danh mục hoặc thêm hàng ngoài danh mục.')}
               </div>
             ) : (
               activeTab.items.map((item) => {
@@ -124,7 +127,7 @@ export default function CartCheckoutDrawer({
                         <p className="text-[11px] text-[#59665f] mt-0.5">
                           {productUnit(item.product.unit || 'Kg')} ·{' '}
                           <strong className="text-[#0f7a4f]">
-                            {item.product.priceOnRequest ? t('Chờ sale báo giá') : money(item.product.price)}
+                            {item.product.isUnlisted ? t('Ngoài danh mục · 0đ · Chờ báo giá') : item.product.priceOnRequest ? t('Chờ sale báo giá') : money(item.product.price)}
                           </strong>
                         </p>
                       </div>
@@ -156,7 +159,7 @@ export default function CartCheckoutDrawer({
                         </button>
                         <input
                           type="number"
-                          min={0.1}
+                          min={0.001}
                           step="any"
                           value={item.quantity}
                           onChange={(e) => {
@@ -182,7 +185,7 @@ export default function CartCheckoutDrawer({
                       <div className="text-right">
                         <span className="text-[10px] text-[#59665f] block">Thành tiền</span>
                         <span className="font-mono font-bold text-sm text-[#0f7a4f]">
-                          {item.product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
+                          {item.product.isUnlisted ? '0đ' : item.product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
                         </span>
                       </div>
                     </div>
@@ -201,6 +204,7 @@ export default function CartCheckoutDrawer({
                 );
               })
             )}
+            <UnlistedItemEntry onAdd={onAddUnlisted} initialOpen={activeTab.items.length === 0}/>
           </div>
 
           {/* Ghi chú chung */}

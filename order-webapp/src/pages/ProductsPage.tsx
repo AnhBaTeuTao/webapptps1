@@ -439,6 +439,14 @@ export default function ProductsPage() {
     }
   };
 
+  const handleAddUnlisted = (product: Product, quantity: number, note: string) => {
+    updateActiveTab((tab) => ({
+      ...tab,
+      items: [...tab.items, { product, quantity, note: note || undefined }],
+      sourceImportBatchId: tab.items.some((item) => item.sourceImportLineId) ? tab.sourceImportBatchId : undefined,
+    }));
+  };
+
   const handleUpdateQty = (lineKey: string, newQty: number) => {
     const qty = Number(newQty);
     if (qty <= 0) {
@@ -622,6 +630,8 @@ export default function ProductsPage() {
           quantity: it.quantity,
           note: it.note?.trim() || undefined,
           sourceImportLineId: it.sourceImportLineId,
+          isUnlisted: it.product.isUnlisted,
+          unit: it.product.isUnlisted ? it.product.unit : undefined,
         })),
         deliveryName: activeTab.deliveryName.trim(),
         deliveryPhone: activeTab.deliveryPhone.trim(),
@@ -715,6 +725,7 @@ export default function ProductsPage() {
             onUpdateTab={updateActiveTab}
             onUpdateQty={handleUpdateQty}
             onRemoveItem={handleRemoveItem}
+            onAddUnlisted={handleAddUnlisted}
             onSubmitOrder={handleSubmitOrder}
             submitting={submitting}
             errorMessage={errorMessage}
@@ -740,6 +751,7 @@ export default function ProductsPage() {
         onUpdateQty={handleUpdateQty}
         onUpdateNote={handleUpdateItemNote}
         onRemoveItem={handleRemoveItem}
+        onAddUnlisted={handleAddUnlisted}
         onSubmitOrder={handleSubmitOrder}
         submitting={submitting}
         errorMessage={errorMessage}

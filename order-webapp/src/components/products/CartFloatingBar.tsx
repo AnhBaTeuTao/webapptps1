@@ -1,4 +1,4 @@
-import { ShoppingBag, ArrowRight } from 'lucide-react';
+import { ShoppingBag, ArrowRight, Plus } from 'lucide-react';
 import type { OrderTab } from './OrderTabsBar';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -14,7 +14,11 @@ interface CartFloatingBarProps {
 export default function CartFloatingBar({ activeTab, onOpenDrawer }: CartFloatingBarProps) {
   const { t } = useLanguage();
   const count = activeTab.items.length;
-  if (count === 0) return null;
+  if (count === 0) return <div className="lg:hidden fixed bottom-[60px] inset-x-2 z-20 pb-[env(safe-area-inset-bottom)]">
+    <button type="button" onClick={onOpenDrawer} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0b4f34] px-3 text-sm font-bold text-white shadow-lg">
+      <Plus size={18}/>{t('Thêm sản phẩm ngoài danh mục')}
+    </button>
+  </div>;
 
   const totalQuantity = activeTab.items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = activeTab.items.reduce(

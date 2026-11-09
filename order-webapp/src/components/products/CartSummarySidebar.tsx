@@ -13,9 +13,10 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import type { CustomerSession } from '../../lib/api';
+import type { CustomerSession, Product } from '../../lib/api';
 import type { OrderTab } from './OrderTabsBar';
 import ProductThumbnail from './ProductThumbnail';
+import UnlistedItemEntry from './UnlistedItemEntry';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 function money(v: number) {
@@ -28,6 +29,7 @@ interface CartSummarySidebarProps {
   onUpdateTab: (updater: (prev: OrderTab) => OrderTab) => void;
   onUpdateQty: (productId: string, qty: number) => void;
   onRemoveItem: (productId: string) => void;
+  onAddUnlisted: (product: Product, quantity: number, note: string) => void;
   onSubmitOrder: () => void;
   submitting: boolean;
   errorMessage: string;
@@ -41,6 +43,7 @@ export default function CartSummarySidebar({
   onUpdateTab,
   onUpdateQty,
   onRemoveItem,
+  onAddUnlisted,
   onSubmitOrder,
   submitting,
   errorMessage,
@@ -87,7 +90,7 @@ export default function CartSummarySidebar({
           {activeTab.items.length === 0 ? (
             <div className="py-8 text-center text-[#59665f] space-y-1">
               <p className="text-xs font-semibold text-[#17231d]">{t('Đơn hàng này chưa có món')}</p>
-              <p className="text-[11px] text-[#59665f]">{t('Chọn từ danh mục hoặc tìm kiếm để thêm vào đơn.')}</p>
+              <p className="text-[11px] text-[#59665f]">{t('Chọn hàng từ danh mục hoặc thêm hàng ngoài danh mục.')}</p>
             </div>
           ) : (
             activeTab.items.map((item) => {
@@ -106,7 +109,9 @@ export default function CartSummarySidebar({
                       {productName(item.product.name) !== item.product.name && <p className="text-[10px] text-[#59665f] truncate">{item.product.name}</p>}
                       <p className="text-[10px] text-[#59665f]">
                         {productUnit(item.product.unit || 'Kg')} ·{' '}
-                        {item.product.priceOnRequest ? (
+                        {item.product.isUnlisted ? (
+                          <span className="text-amber-700">{t('Ngoài danh mục · 0đ · Chờ báo giá')}</span>
+                        ) : item.product.priceOnRequest ? (
                           <span className="text-[#e0742f]">{t('Chờ sale báo giá')}</span>
                         ) : (
                           money(item.product.price)
@@ -141,7 +146,7 @@ export default function CartSummarySidebar({
                       </button>
                       <input
                         type="number"
-                        min={0.1}
+                        min={0.001}
                         step="any"
                         value={item.quantity}
                         onChange={(e) => {
@@ -165,7 +170,7 @@ export default function CartSummarySidebar({
                     </div>
 
                     <div className="text-right font-mono font-bold text-xs text-[#0f7a4f]">
-                      {item.product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
+                      {item.product.isUnlisted ? '0đ' : item.product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
                     </div>
                   </div>
 
@@ -180,6 +185,8 @@ export default function CartSummarySidebar({
             })
           )}
         </div>
+
+        <div className="border-t border-[#17231d]/10 p-2.5"><UnlistedItemEntry onAdd={onAddUnlisted}/></div>
 
         {/* Ghi chú chung cho toàn bộ đơn hàng */}
         <div className="p-3 border-t border-[#17231d]/10 bg-[#fbfcfb]">
