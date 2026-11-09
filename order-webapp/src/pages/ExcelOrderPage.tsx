@@ -1,43 +1,58 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, Download, CheckCircle2, AlertTriangle, XCircle, ShoppingCart } from 'lucide-react';
-import { api, ApiError, requestFile, type ExcelMatchResult } from '../lib/api';
+import { AlertTriangle, CheckCircle2, Download, FileSpreadsheet, Search, ShoppingCart, Upload, XCircle } from 'lucide-react';
+import { api, ApiError, requestFile, type ExcelMapping, type ExcelMatchResult, type ExcelPreviewResponse, type ExcelProduct, type Product } from '../lib/api';
 import { useCart } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Capacitor } from '@capacitor/core';
 import { saveDocument } from '../lib/android-document';
 
-function money(v: number) {
-  return new Intl.NumberFormat('vi-VN').format(Number(v) || 0) + 'đ';
-}
+const columns = ['sku', 'name', 'quantity', 'unit', 'note'] as const;
+type Column = typeof columns[number];
+type RowEdit = { quantity: string; unit: string; note: string };
+const keyFor = (row: ExcelMatchResult) => `${row.sourceSheet}:${row.row}`;
+const money = (value: number) => new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';
+const displayNumber = (value: number | null) => value == null ? '' : String(value);
+const parseQuantity = (value: string) => Number(value.trim().replace(',', '.'));
+const normalizeSearch = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/đ/g, 'd').replace(/Đ/g, 'D').toLocaleLowerCase('vi-VN')
+  .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 
-// Mục 9/13.7 kế hoạch — khách tải file mẫu, nộp lại danh sách hàng cần mua,
-// hệ thống tự khớp mã/tên (khớp gần đúng nếu không tìm thấy chính xác). Dùng
-// nguyên API /api/customer/order/import-excel đã có sẵn (chung với sale-webapp
-// và Zalo Mini App) — không xử lý lại logic khớp ở phía app này.
 export default function ExcelOrderPage() {
   const { addItem } = useCart();
+  const { session } = useAuth();
   const { t, errorText, productName } = useLanguage();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [results, setResults] = useState<ExcelMatchResult[] | null>(null);
-  const [summary, setSummary] = useState<Record<string, number> | null>(null);
+  const fileRef = useRef<File | null>(null);
+  const [preview, setPreview] = useState<ExcelPreviewResponse | null>(null);
+  const [mapping, setMapping] = useState<ExcelMapping | null>(null);
+  const [mappingOpen, setMappingOpen] = useState(false);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [edits, setEdits] = useState<Record<string, RowEdit>>({});
+  const [chosen, setChosen] = useState<Record<string, ExcelProduct | Product>>({});
+  const [searchText, setSearchText] = useState<Record<string, string>>({});
+  const [searchResults, setSearchResults] = useState<Record<string, Product[]>>({});
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const [visibleCount, setVisibleCount] = useState(30);
   const [loading, setLoading] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [searching, setSearching] = useState('');
   const [error, setError] = useState('');
   const [downloadMessage, setDownloadMessage] = useState('');
   const [downloading, setDownloading] = useState(false);
-  const [chosenSuggestion, setChosenSuggestion] = useState<Record<number, string>>({});
+  const [allowRepeat, setAllowRepeat] = useState(false);
+
+  const duplicateKey = preview && session ? `tps1_excel_added_${session.id}_${preview.fileHash}` : '';
+  const duplicate = Boolean(duplicateKey && localStorage.getItem(duplicateKey) === '1');
 
   const downloadTemplate = async () => {
     if (downloading) return;
-    setDownloading(true);
+    setDownloading(true); setError(''); setDownloadMessage('');
     try {
-      setError('');
-      setDownloadMessage('');
       const blob = await requestFile('/api/customer/order/import-excel');
-      if (blob.size < 100 || (blob.type && !blob.type.includes('spreadsheet') && !blob.type.includes('octet-stream'))) {
-        throw new Error('Tệp mẫu trả về không đúng định dạng Excel');
-      }
+      if (blob.size < 100) throw new Error('Invalid Excel file');
       if (Capacitor.getPlatform() === 'android') {
         const data = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
@@ -47,177 +62,242 @@ export default function ExcelOrderPage() {
         });
         const result = await saveDocument.save({ name: 'TPS1-mau-dat-hang.xlsx', data });
         if (result.saved) setDownloadMessage(t('File mẫu đã được lưu trên điện thoại'));
-        return;
+      } else {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url; anchor.download = 'mau-dat-hang.xlsx'; anchor.style.display = 'none';
+        document.body.appendChild(anchor); anchor.click(); anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1500);
+        setDownloadMessage(t('File mẫu đã được tải xuống'));
       }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'mau-dat-hang.xlsx';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1500);
-      setDownloadMessage(t('File mẫu đã được tải xuống'));
     } catch (cause) {
       setError(cause instanceof ApiError ? errorText(cause) : t('Không tải được file mẫu, vui lòng thử lại'));
-    } finally {
-      setDownloading(false);
-    }
+    } finally { setDownloading(false); }
   };
 
-  const handleFile = async (file: File) => {
-    setLoading(true);
-    setError('');
-    setResults(null);
+  const loadFile = async (file: File, customMapping?: ExcelMapping) => {
+    setLoading(true); setError(''); setRowErrors({}); setAllowRepeat(false);
     try {
-      const res = await api.importExcel(file);
-      setResults(res.results || []);
-      setSummary(res.summary || null);
-    } catch (err) {
-      setError(err instanceof ApiError ? errorText(err) : t('Không đọc được file, kiểm tra đúng định dạng mẫu chưa'));
-    } finally {
-      setLoading(false);
-    }
+      if (file.size > 4 * 1024 * 1024) throw new Error(t('Chỉ nhận file Excel tối đa 4 MB'));
+      const response = await api.importExcel(file, customMapping);
+      setPreview(response);
+      const nextMapping = response.mapping || response.sheets[0]?.detectedMapping || {
+        sheet: response.sheets[0]?.name || '', headerRow: 0, columns: {},
+      };
+      setMapping(nextMapping);
+      setMappingOpen(response.needsMapping);
+      setVisibleCount(30);
+      setChosen({}); setSearchText({}); setSearchResults({});
+      setSelected(new Set(response.results.filter((row) => row.status === 'matched').map(keyFor)));
+      setEdits(Object.fromEntries(response.results.map((row) => [keyFor(row), {
+        quantity: displayNumber(row.requestedQuantity), unit: row.unit || row.product?.unit || '', note: row.note,
+      }])));
+    } catch (cause) {
+      setError(cause instanceof ApiError ? errorText(cause) : cause instanceof Error && cause.message === t('Chỉ nhận file Excel tối đa 4 MB') ? cause.message : t('Không đọc được file, vui lòng thử lại'));
+    } finally { setLoading(false); }
   };
 
-  const addAllMatched = () => {
-    if (!results) return;
-    for (const r of results) {
-      if (r.status === 'matched' && r.product) {
-        addItem(
-          { id: r.product.id, sku: r.product.sku, name: r.product.name, category: null, unit: r.product.unit, imageUrl: null, price: r.product.price, priceOnRequest: r.product.priceOnRequest, available: true },
-          r.quantity
-        );
-      } else if (r.status === 'ambiguous' && chosenSuggestion[r.row]) {
-        const chosen = r.suggestions?.find((s) => s.id === chosenSuggestion[r.row]);
-        if (chosen) {
-          addItem(
-            { id: chosen.id, sku: chosen.sku, name: chosen.name, category: null, unit: chosen.unit, imageUrl: null, price: chosen.price, priceOnRequest: chosen.priceOnRequest, available: true },
-            r.quantity
-          );
-        }
+  const editRow = (key: string, change: Partial<RowEdit>) => {
+    setEdits((current) => ({ ...current, [key]: { ...current[key], ...change } }));
+    setRowErrors((current) => { const next = { ...current }; delete next[key]; return next; });
+  };
+  const chooseProduct = (row: ExcelMatchResult, product: ExcelProduct | Product) => {
+    const key = keyFor(row);
+    setChosen((current) => ({ ...current, [key]: product }));
+    setSelected((current) => new Set(current).add(key));
+    setSearchResults((current) => ({ ...current, [key]: [] }));
+  };
+  const searchProducts = async (row: ExcelMatchResult) => {
+    const key = keyFor(row);
+    const query = (searchText[key] || row.name || row.sku).trim();
+    if (!query) return;
+    setSearching(key);
+    try {
+      const response = await api.products({ search: query, page: 0 });
+      let products = response.products || [];
+      if (!products.length) {
+        const catalog = await api.productCatalog();
+        const words = normalizeSearch(query).split(' ').filter(Boolean);
+        products = catalog.items.filter(([, sku, name]) => words.every((word) =>
+          normalizeSearch(`${sku} ${name} ${productName(name)}`).includes(word)))
+          .slice(0, 30).map(([id, sku, name, category, unit, price, priceOnRequest]) => ({
+            id, sku, name, category, unit, price, priceOnRequest, imageUrl: null, available: true,
+          }));
       }
-    }
-    navigate('/gio-hang');
+      setSearchResults((current) => ({ ...current, [key]: products }));
+    } catch (cause) { setError(cause instanceof ApiError ? errorText(cause) : t('Không tìm được sản phẩm')); }
+    finally { setSearching(''); }
   };
 
+  const addSelected = async () => {
+    if (!preview || adding || (duplicate && !allowRepeat)) return;
+    const source = preview.results.filter((row) => selected.has(keyFor(row)));
+    if (!source.length) { setError(t('Chọn ít nhất một mặt hàng')); return; }
+    const invalid: Record<string, string> = {};
+    const items = source.flatMap((row) => {
+      const key = keyFor(row);
+      const product = chosen[key] || row.product;
+      const edit = edits[key];
+      const quantity = parseQuantity(edit?.quantity || '');
+      if (!product) { invalid[key] = t('Chọn sản phẩm TPS1'); return []; }
+      if (!Number.isFinite(quantity) || quantity <= 0) { invalid[key] = t('Số lượng phải lớn hơn 0'); return []; }
+      return [{ sourceSheet: row.sourceSheet, row: row.row, productId: product.id, quantity,
+        unit: (edit?.unit || product.unit).trim(), note: edit?.note || '' }];
+    });
+    if (Object.keys(invalid).length) { setRowErrors(invalid); setError(t('Kiểm tra lại các dòng được đánh dấu')); return; }
+    setAdding(true); setError(''); setRowErrors({});
+    try {
+      const response = await api.resolveExcel(items);
+      const grouped = new Map<string, { item: typeof response.items[number]; quantity: number; notes: string[] }>();
+      for (const item of response.items) {
+        const existing = grouped.get(item.id);
+        if (existing) { existing.quantity += item.quantity; if (item.note && !existing.notes.includes(item.note)) existing.notes.push(item.note); }
+        else grouped.set(item.id, { item, quantity: item.quantity, notes: item.note ? [item.note] : [] });
+      }
+      for (const { item, quantity, notes } of grouped.values()) {
+        addItem({ id: item.id, sku: item.sku, name: item.name, category: null, unit: item.unit,
+          imageUrl: null, price: item.price, priceOnRequest: item.priceOnRequest, available: true,
+          minOrderQty: item.minOrderQty, orderStep: item.orderStep, enforceOrderStep: item.enforceOrderStep },
+          quantity, notes.join('; ').slice(0, 500));
+      }
+      if (duplicateKey) localStorage.setItem(duplicateKey, '1');
+      navigate('/gio-hang');
+    } catch (cause) {
+      if (cause instanceof ApiError && Array.isArray(cause.details)) {
+        setRowErrors(Object.fromEntries(cause.details.map((issue: { sourceSheet: string; row: number; message: string }) =>
+          [`${issue.sourceSheet}:${issue.row}`, issue.message])));
+      }
+      setError(cause instanceof ApiError ? errorText(cause) : t('Không thêm được hàng, vui lòng thử lại'));
+    } finally { setAdding(false); }
+  };
+
+  const selectedCount = selected.size;
+  const skippedCount = (preview?.results.length || 0) - selectedCount;
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="mx-auto max-w-5xl space-y-5 pb-8">
       <header>
         <h1 className="text-2xl font-bold text-[#14231c]">{t('Đặt hàng bằng file Excel')}</h1>
-        <p className="text-[#59665f] text-sm mt-1">
-          {t('Tải mẫu → điền hàng và số lượng → tải lên')}
-        </p>
+        <p className="mt-1 text-sm text-[#59665f]">{t('Tải file lên → kiểm tra sản phẩm → thêm vào giỏ')}</p>
       </header>
-
       <div className="flex flex-wrap gap-3">
-        <button
-          onClick={downloadTemplate}
-          disabled={downloading}
-          className="flex items-center gap-2 px-4 py-2.5 border border-[#14231c]/15 rounded-xl font-medium text-[#14231c] hover:bg-white transition-colors disabled:opacity-60"
-        >
-          <Download size={18} /> {t(downloading ? 'Đang tải file mẫu...' : 'Tải file mẫu')}
+        <button onClick={downloadTemplate} disabled={downloading} className="flex min-h-11 items-center gap-2 rounded-xl border border-[#14231c]/15 px-4 font-medium text-[#14231c] disabled:opacity-60">
+          <Download size={18}/>{t(downloading ? 'Đang tải file mẫu...' : 'Tải file mẫu')}
         </button>
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          disabled={loading}
-          className="flex items-center gap-2 px-4 py-2.5 bg-[#0f7a4f] text-white rounded-xl font-medium hover:bg-[#0b4f34] disabled:opacity-50 transition-colors"
-        >
-          <Upload size={18} /> {t(loading ? 'Đang xử lý...' : 'Tải lên file đã điền')}
+        <button onClick={() => fileInputRef.current?.click()} disabled={loading} className="flex min-h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-4 font-medium text-white disabled:opacity-50">
+          <Upload size={18}/>{t(loading ? 'Đang xử lý...' : 'Chọn file Excel')}
         </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".xlsx,.xls"
-          className="hidden"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleFile(file);
-            e.target.value = '';
-          }}
-        />
+        <input ref={fileInputRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) { fileRef.current = file; void loadFile(file); }
+          event.target.value = '';
+        }}/>
       </div>
+      {fileRef.current && <p className="flex items-center gap-2 text-sm text-[#59665f]"><FileSpreadsheet size={16}/>{fileRef.current.name}</p>}
+      {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+      {downloadMessage && <div role="status" className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">{downloadMessage}</div>}
 
-      {error && <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">{error}</div>}
-      {downloadMessage && <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-sm text-emerald-800">{downloadMessage}</div>}
-
-      {summary && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <SummaryTile label="Khớp đúng" value={summary.matched} color="text-[#0f7a4f]" icon={<CheckCircle2 size={16} />} />
-          <SummaryTile label="Cần chọn" value={summary.ambiguous} color="text-amber-600" icon={<AlertTriangle size={16} />} />
-          <SummaryTile label="Không tìm thấy" value={summary.notFound} color="text-red-600" icon={<XCircle size={16} />} />
-          <SummaryTile label="Sai số lượng" value={summary.invalidQuantity} color="text-red-600" icon={<XCircle size={16} />} />
-        </div>
-      )}
-
-      {results && results.length > 0 && (
-        <div className="space-y-2.5">
-          {results.map((r) => (
-            <div key={r.row} className="bg-white border border-[#14231d]/10 rounded-xl p-3.5">
-              <div className="flex items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-[#14231c] truncate">
-                    Dòng {r.row}: {r.input} <span className="text-[#59665f]">× {r.quantity}</span>
-                  </p>
-                  {r.note && <p className="text-xs text-[#59665f]/70 italic">{r.note}</p>}
-                </div>
-                <StatusBadge status={r.status} />
-              </div>
-              {r.status === 'matched' && r.product && (
-                <p className="text-xs text-[#0f7a4f] mt-1.5">
-                  → {productName(r.product.name)} ({r.product.sku}) — {r.product.priceOnRequest ? t('Chờ sale báo giá') : money(r.product.price)}
-                </p>
-              )}
-              {r.status === 'ambiguous' && r.suggestions && (
-                <div className="mt-2 space-y-1.5">
-                  <p className="text-xs text-[#59665f]">Chọn đúng sản phẩm:</p>
-                  {r.suggestions.map((s) => (
-                    <label key={s.id} className="flex items-center gap-2 text-sm cursor-pointer">
-                      <input
-                        type="radio"
-                        name={`row-${r.row}`}
-                        checked={chosenSuggestion[r.row] === s.id}
-                        onChange={() => setChosenSuggestion((prev) => ({ ...prev, [r.row]: s.id }))}
-                      />
-                      {productName(s.name)} ({s.sku}) — {s.priceOnRequest ? t('Chờ sale báo giá') : money(s.price)}
-                    </label>
-                  ))}
-                </div>
-              )}
+      {preview && mapping && (mappingOpen || preview.sheets.length > 1) && (
+        <section className="rounded-2xl border border-[#14231c]/10 bg-white p-4 space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-bold text-[#14231c]">{t('Chọn bảng và cột hàng')}</h2>
+            {!preview.needsMapping && <button className="text-sm font-semibold text-[#0f7a4f]" onClick={() => setMappingOpen((open) => !open)}>{t(mappingOpen ? 'Thu gọn' : 'Đổi sheet hoặc cột')}</button>}
+          </div>
+          {mappingOpen && <>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="text-sm font-semibold">{t('Sheet')}
+                <select value={mapping.sheet} onChange={(event) => {
+                  const sheet = preview.sheets.find((entry) => entry.name === event.target.value);
+                  setMapping(sheet?.detectedMapping || { sheet: event.target.value, headerRow: 0, columns: {} });
+                }} className="mt-1 block min-h-10 w-full rounded-lg border px-2">
+                  {preview.sheets.map((sheet) => <option key={sheet.name} value={sheet.name}>{sheet.name}</option>)}
+                </select>
+              </label>
+              <label className="text-sm font-semibold">{t('Dòng tiêu đề')}
+                <select value={mapping.headerRow} onChange={(event) => setMapping({ ...mapping, headerRow: Number(event.target.value) })} className="mt-1 block min-h-10 w-full rounded-lg border px-2">
+                  <option value={0}>{t('Không có tiêu đề')}</option>
+                  {(preview.sheets.find((sheet) => sheet.name === mapping.sheet)?.rows || []).map((entry) => <option key={entry.row} value={entry.row}>{t('Dòng')} {entry.row}: {entry.cells.filter(Boolean).slice(0, 3).join(' · ').slice(0, 70)}</option>)}
+                </select>
+              </label>
+              {columns.map((column) => <label key={column} className="text-sm font-semibold">{t(({ sku: 'Mã hàng', name: 'Tên hàng', quantity: 'Số lượng', unit: 'Đơn vị', note: 'Ghi chú' } as const)[column])}
+                <select value={mapping.columns[column] ?? -1} onChange={(event) => setMapping({ ...mapping, columns: { ...mapping.columns, [column]: Number(event.target.value) < 0 ? undefined : Number(event.target.value) } })} className="mt-1 block min-h-10 w-full rounded-lg border px-2">
+                  <option value={-1}>{t('Không dùng')}</option>
+                  {Array.from({ length: 20 }, (_, index) => <option key={index} value={index}>{String.fromCharCode(65 + index)}</option>)}
+                </select>
+              </label>)}
             </div>
-          ))}
-
-          <button
-            onClick={addAllMatched}
-            className="w-full flex items-center justify-center gap-2 bg-[#0f7a4f] text-white font-semibold py-3 rounded-xl hover:bg-[#0b4f34] transition-colors mt-4"
-          >
-            <ShoppingCart size={18} /> {t('Thêm tất cả vào giỏ hàng')}
-          </button>
-        </div>
+            <div className="overflow-x-auto rounded-xl border text-xs">
+              <table className="min-w-full whitespace-nowrap"><tbody>
+                {(preview.sheets.find((sheet) => sheet.name === mapping.sheet)?.rows || []).slice(0, 18).map((entry) => <tr key={entry.row} className={entry.row === mapping.headerRow ? 'bg-emerald-50 font-bold' : 'border-t'}>
+                  <th className="sticky left-0 bg-white px-2 py-1.5 text-left">{entry.row}</th>
+                  {entry.cells.slice(0, 12).map((cell, index) => <td key={index} className="max-w-44 truncate px-2 py-1.5">{cell}</td>)}
+                </tr>)}
+              </tbody></table>
+            </div>
+            <button onClick={() => fileRef.current && void loadFile(fileRef.current, mapping)} disabled={loading} className="min-h-11 rounded-xl bg-[#0f7a4f] px-5 font-bold text-white disabled:opacity-50">{t('Đọc lại theo cột đã chọn')}</button>
+          </>}
+        </section>
       )}
+
+      {preview?.summary && <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <SummaryTile label={t('Đã khớp')} value={preview.summary.matched || 0} icon={<CheckCircle2 size={17}/>} color="text-emerald-700"/>
+        <SummaryTile label={t('Cần chọn')} value={preview.summary.ambiguous || 0} icon={<AlertTriangle size={17}/>} color="text-amber-700"/>
+        <SummaryTile label={t('Chưa tìm thấy')} value={preview.summary.notFound || 0} icon={<XCircle size={17}/>} color="text-red-700"/>
+        <SummaryTile label={t('Sai số lượng/đơn vị')} value={preview.summary.invalidQuantity || 0} icon={<XCircle size={17}/>} color="text-red-700"/>
+      </div>}
+
+      {preview && preview.results.length > 0 && <section className="space-y-3">
+        <div className="flex items-center justify-between"><h2 className="font-bold text-[#14231c]">{t('Kiểm tra mặt hàng')} ({preview.results.length})</h2></div>
+        {preview.results.slice(0, visibleCount).map((row) => {
+          const key = keyFor(row);
+          const product = chosen[key] || row.product;
+          const edit = edits[key];
+          const isSelected = selected.has(key);
+          return <article key={key} className={`rounded-2xl border bg-white p-3.5 sm:p-4 ${rowErrors[key] ? 'border-red-300' : isSelected ? 'border-emerald-200' : 'border-[#14231c]/10'}`}>
+            <div className="flex items-start gap-3">
+              <input type="checkbox" aria-label={`${t('Chọn dòng')} ${row.row}`} checked={isSelected} onChange={(event) => setSelected((current) => {
+                const next = new Set(current); if (event.target.checked) next.add(key); else next.delete(key); return next;
+              })} className="mt-1 size-5 shrink-0 accent-[#0f7a4f]"/>
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div><p className="text-xs font-semibold text-[#59665f]">{row.sourceSheet} · {t('Dòng')} {row.row}</p>
+                    <p className="font-semibold text-[#14231c] break-words">{row.name || row.sku}</p>
+                    {row.sku && row.name !== row.sku && <p className="text-xs text-[#59665f]">{row.sku}</p>}
+                  </div><StatusBadge status={row.status} selected={Boolean(chosen[key])} t={t}/>
+                </div>
+                {product && <p className="mt-2 text-sm text-[#0f7a4f]">→ {productName(product.name)} ({product.sku}) · {chosen[key] && row.suggestions?.some((candidate) => candidate.id === product.id) ? t('Giá kiểm tra khi thêm vào giỏ') : product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}</p>}
+                {row.warning && <p className="mt-1 text-xs text-amber-800">{t(row.warning)}</p>}
+                {rowErrors[key] && <p className="mt-1 text-xs font-semibold text-red-700">{rowErrors[key]}</p>}
+                <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-[110px_110px_1fr]">
+                  <label className="text-xs text-[#59665f]">{t('Số lượng')}<input inputMode="decimal" value={edit?.quantity ?? ''} onChange={(event) => editRow(key, { quantity: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label>
+                  <label className="text-xs text-[#59665f]">{t('Đơn vị')}<input value={edit?.unit ?? ''} onChange={(event) => editRow(key, { unit: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label>
+                  <label className="col-span-2 text-xs text-[#59665f] sm:col-span-1">{t('Ghi chú')}<input value={edit?.note ?? ''} onChange={(event) => editRow(key, { note: event.target.value })} className="mt-1 min-h-10 w-full rounded-lg border px-2 text-sm text-[#14231c]"/></label>
+                </div>
+                {(row.suggestions?.length || row.status !== 'matched') ? <div className="mt-3 space-y-2">
+                  {row.suggestions?.map((candidate) => <button key={candidate.id} onClick={() => chooseProduct(row, candidate)} className={`mr-2 rounded-lg border px-2.5 py-1.5 text-left text-xs ${product?.id === candidate.id ? 'border-emerald-600 bg-emerald-50' : 'border-[#14231c]/15'}`}>{productName(candidate.name)} · {candidate.sku}</button>)}
+                  <div className="flex gap-2"><input value={searchText[key] ?? ''} onChange={(event) => setSearchText((current) => ({ ...current, [key]: event.target.value }))} onKeyDown={(event) => { if (event.key === 'Enter') { event.preventDefault(); void searchProducts(row); } }} placeholder={t('Tìm sản phẩm TPS1')} className="min-w-0 min-h-10 flex-1 rounded-lg border px-3 text-sm"/>
+                    <button onClick={() => void searchProducts(row)} disabled={searching === key} className="min-h-10 rounded-lg border px-3 text-sm font-semibold disabled:opacity-50"><Search size={17}/></button></div>
+                  {searchResults[key]?.length > 0 && <div className="max-h-44 space-y-1 overflow-y-auto rounded-lg border p-2">{searchResults[key].map((candidate) => <button key={candidate.id} onClick={() => chooseProduct(row, candidate)} className="block w-full rounded-lg px-2 py-1.5 text-left text-sm hover:bg-emerald-50">{productName(candidate.name)} · {candidate.sku} · {candidate.unit}</button>)}</div>}
+                </div> : null}
+              </div>
+            </div>
+          </article>;
+        })}
+        {preview.results.length > visibleCount && <button onClick={() => setVisibleCount((count) => count + 30)} className="w-full rounded-xl border bg-white py-3 font-semibold text-[#0f7a4f]">{t('Hiện thêm mặt hàng')}</button>}
+        <div className="sticky bottom-16 z-10 rounded-2xl border border-emerald-200 bg-white/95 p-3 shadow-lg backdrop-blur-sm md:bottom-3">
+          <p className="mb-2 text-xs text-[#59665f]">{t('Đã chọn')} {selectedCount}. {skippedCount > 0 && <>{skippedCount} {t('dòng không chọn sẽ bỏ qua')}.</>}</p>
+          {duplicate && <label className="mb-2 flex items-center gap-2 text-sm text-amber-800"><input type="checkbox" checked={allowRepeat} onChange={(event) => setAllowRepeat(event.target.checked)}/>{t('File này đã thêm vào giỏ. Tôi muốn thêm lại.')}</label>}
+          <button onClick={() => void addSelected()} disabled={adding || !selectedCount || (duplicate && !allowRepeat)} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0f7a4f] font-bold text-white disabled:opacity-50"><ShoppingCart size={18}/>{t(adding ? 'Đang kiểm tra...' : 'Thêm mặt hàng đã chọn vào giỏ')} ({selectedCount})</button>
+        </div>
+      </section>}
     </div>
   );
 }
 
-function SummaryTile({ label, value, color, icon }: { label: string; value: number; color: string; icon: React.ReactNode }) {
-  return (
-    <div className="bg-white border border-[#14231c]/10 rounded-xl p-3 text-center">
-      <div className={`flex items-center justify-center gap-1.5 font-bold text-lg ${color}`}>
-        {icon} {value}
-      </div>
-      <p className="text-xs text-[#59665f] mt-0.5">{label}</p>
-    </div>
-  );
+function SummaryTile({ label, value, icon, color }: { label: string; value: number; icon: React.ReactNode; color: string }) {
+  return <div className="rounded-xl border border-[#14231c]/10 bg-white p-3 text-center"><div className={`flex items-center justify-center gap-1 font-bold ${color}`}>{icon}{value}</div><p className="mt-1 text-xs text-[#59665f]">{label}</p></div>;
 }
-
-function StatusBadge({ status }: { status: ExcelMatchResult['status'] }) {
-  const map: Record<string, { label: string; cls: string }> = {
-    matched: { label: 'Khớp đúng', cls: 'bg-green-100 text-green-700' },
-    ambiguous: { label: 'Cần chọn', cls: 'bg-amber-100 text-amber-700' },
-    not_found: { label: 'Không tìm thấy', cls: 'bg-red-100 text-red-700' },
-    invalid_quantity: { label: 'Sai số lượng', cls: 'bg-red-100 text-red-700' },
-  };
-  const s = map[status] || { label: status, cls: 'bg-slate-100 text-slate-600' };
-  return <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${s.cls}`}>{s.label}</span>;
+function StatusBadge({ status, selected, t }: { status: ExcelMatchResult['status']; selected: boolean; t: (key: string) => string }) {
+  const label = selected || status === 'matched' ? 'Đã khớp' : status === 'ambiguous' ? 'Cần chọn' : status === 'not_found' ? 'Chưa tìm thấy' : 'Sai số lượng/đơn vị';
+  const color = selected || status === 'matched' ? 'bg-emerald-50 text-emerald-700' : status === 'ambiguous' ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-700';
+  return <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{t(label)}</span>;
 }

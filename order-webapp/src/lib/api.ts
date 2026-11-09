@@ -25,10 +25,12 @@ export function clearToken() {
 export class ApiError extends Error {
   status: number;
   code?: string;
-  constructor(message: string, status: number, code?: string) {
+  details?: unknown;
+  constructor(message: string, status: number, code?: string, details?: unknown) {
     super(message);
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -56,7 +58,7 @@ async function request<T = any>(
     // vd tải file nhị phân (PDF) — để caller tự xử lý res gốc qua requestRaw
   }
   if (!res.ok || (data && data.ok === false)) {
-    throw new ApiError(data?.error || `Lỗi máy chủ (${res.status})`, res.status, data?.code);
+    throw new ApiError(data?.error || `Lỗi máy chủ (${res.status})`, res.status, data?.code, data?.errors);
   }
   return data as T;
 }
@@ -172,15 +174,21 @@ export const api = {
       body: { orderId, cancelReason },
     }),
 
-  importExcel: (file: File) => {
+  importExcel: (file: File, mapping?: ExcelMapping) => {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('token', getToken() || '');
-    return request<{ ok: true; results: ExcelMatchResult[]; summary: Record<string, number> }>(
+    if (mapping) fd.append('mapping', JSON.stringify(mapping));
+    return request<ExcelPreviewResponse>(
       '/api/customer/order/import-excel',
       { method: 'POST', formData: fd }
     );
   },
+
+  resolveExcel: (items: ExcelSelection[]) =>
+    request<{ ok: true; items: ExcelResolvedItem[] }>('/api/customer/order/import-excel/resolve', {
+      method: 'POST', body: { items },
+    }),
 
   vapidPublicKey: () =>
     request<{ ok: true; publicKey: string }>('/api/push/vapid-public-key', { auth: false }),
@@ -281,12 +289,46 @@ export interface FrequentItem {
   orderCount?: number;
 }
 
+export interface ExcelMapping {
+  sheet: string;
+  headerRow: number;
+  columns: Partial<Record<'sku' | 'name' | 'quantity' | 'unit' | 'note', number>>;
+}
+export interface ExcelSheetPreview {
+  name: string;
+  rows: { row: number; cells: string[] }[];
+  detectedMapping: ExcelMapping | null;
+}
+export interface ExcelProduct {
+  id: string; sku: string; name: string; unit: string; price: number; priceOnRequest: boolean;
+  minOrderQty: number; orderStep: number; enforceOrderStep: boolean; quantityPrecision: number; quantityAdjustmentMode: string;
+}
 export interface ExcelMatchResult {
   row: number;
+  sourceSheet: string;
   input: string;
-  quantity: number;
+  sku: string;
+  name: string;
+  unit: string;
+  quantity: number | null;
+  requestedQuantity: number | null;
   note: string;
-  status: 'matched' | 'ambiguous' | 'not_found' | 'invalid_quantity';
-  product?: { id: string; sku: string; name: string; unit: string; price: number; priceOnRequest: boolean };
-  suggestions?: { id: string; sku: string; name: string; unit: string; price: number; priceOnRequest: boolean; score: number }[];
+  status: 'matched' | 'ambiguous' | 'not_found' | 'invalid_quantity' | 'unit_conflict';
+  warning?: string;
+  product?: ExcelProduct;
+  suggestions?: (ExcelProduct & { score: number })[];
+}
+export interface ExcelPreviewResponse {
+  ok: true;
+  needsMapping: boolean;
+  fileHash: string;
+  sheets: ExcelSheetPreview[];
+  mapping: ExcelMapping | null;
+  results: ExcelMatchResult[];
+  summary: Record<string, number> | null;
+}
+export interface ExcelSelection { sourceSheet: string; row: number; productId: string; quantity: number; unit: string; note: string }
+export interface ExcelResolvedItem extends ExcelProduct {
+  sourceSheet: string; row: number; quantity: number; requestedQuantity: number;
+  adjusted: boolean; adjustmentMessage: string | null; note: string;
 }
