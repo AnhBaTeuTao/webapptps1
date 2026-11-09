@@ -36,7 +36,7 @@ export default function CustomerLayout() {
                 className="h-7 w-auto object-contain"
               />
             </NavLink>
-            <div className="min-w-0 hidden sm:block">
+            <div className="min-w-0 hidden lg:block">
               <p className="font-semibold text-white text-sm leading-tight truncate">
                 {session?.name || session?.company || 'Khách hàng'}
               </p>
@@ -47,58 +47,27 @@ export default function CustomerLayout() {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1.5">
-            {tabs.map(({ to, label, icon: Icon, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  `relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-                    isActive
-                      ? 'bg-white text-[#0b4f34] shadow-sm font-semibold'
-                      : 'text-white/85 hover:bg-white/12 hover:text-white'
-                  }`
-                }
-              >
-                <Icon size={16} /> {t(label)}
-              </NavLink>
-            ))}
-            <NavLink
-              to="/tai-khoan"
-              className={({ isActive }) =>
-                `flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  isActive ? 'bg-white text-[#0b4f34] font-semibold' : 'text-white/85 hover:bg-white/12'
-                }`
-              }
-            >
-              <UserCircle2 size={16} /> {t('Tài khoản')}
-            </NavLink>
-
-            {/* Hotline B2B TPS1 */}
+          {/* Desktop utilities */}
+          <div className="hidden md:flex shrink-0 items-center gap-2">
             <a
               href="tel:0898902222"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/35 text-xs font-bold tracking-wide ml-2 transition-all active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-100 border border-amber-400/30 text-xs font-semibold whitespace-nowrap transition-colors"
               title="Tổng đài CSKH & Đặt hàng TPS1"
             >
               <Phone size={13} className="text-amber-300" />
               <span>089 890 2222</span>
             </a>
-
-            <div className="h-4 w-[1px] bg-white/20 mx-1" />
-
             <NotificationBell />
             <LanguageSwitcher dark />
-
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-white/75 hover:bg-white/12 hover:text-white transition-colors cursor-pointer"
-              title="Đăng xuất"
+              className="flex size-9 items-center justify-center rounded-xl text-white/80 hover:bg-white/12 hover:text-white transition-colors cursor-pointer"
+              title={t('Đăng xuất')}
+              aria-label={t('Đăng xuất')}
             >
-              <LogOut size={16} /><span className="sr-only">{t('Đăng xuất')}</span>
+              <LogOut size={17} />
             </button>
-          </nav>
+          </div>
 
           {/* Mobile Top Bar */}
           <div className="flex md:hidden items-center gap-2">
@@ -113,6 +82,27 @@ export default function CustomerLayout() {
             </button>
           </div>
         </div>
+        {/* A separate row gives desktop navigation room for full labels. */}
+        <nav className="hidden md:flex max-w-[1520px] mx-auto px-6 pb-2.5 items-center gap-2" aria-label={t('Điều hướng chính')}>
+          {[
+            ...tabs,
+            { to: '/tai-khoan', label: 'Tài khoản', icon: UserCircle2 },
+          ].map(({ to, label, icon: Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={to === '/'}
+              className={({ isActive }) =>
+                `inline-flex min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
+                  isActive ? 'bg-white text-[#0b4f34] shadow-sm' : 'text-white/85 hover:bg-white/12 hover:text-white'
+                }`
+              }
+            >
+              <Icon size={17} className="shrink-0" />
+              <span>{t(label)}</span>
+            </NavLink>
+          ))}
+        </nav>
       </header>
 
       {/* Main Content Area */}

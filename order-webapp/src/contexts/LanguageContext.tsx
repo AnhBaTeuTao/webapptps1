@@ -92,6 +92,7 @@ const translations: Record<string, [string, string]> = {
   'Đặt hàng Excel': ['Import Excel', 'Excel 下单'],
   'Đơn hàng của tôi': ['My orders', '我的订单'],
   'Tài khoản': ['Account', '账户'],
+  'Điều hướng chính': ['Main navigation', '主导航'],
   'Đăng xuất': ['Sign out', '退出登录'],
   'Đăng nhập': ['Sign in', '登录'],
   'Chưa có tài khoản?': ["Don't have an account?", '还没有账户？'],
