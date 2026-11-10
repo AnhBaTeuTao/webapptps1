@@ -25,7 +25,7 @@ export default function CustomerLayout() {
   return (
     <div className="min-h-screen bg-[#f5f7f3] flex flex-col selection:bg-[#0f7a4f] selection:text-white">
       {/* Top Header with safe area padding */}
-      <header className="bg-gradient-to-r from-[#0b4f34] via-[#0d593c] to-[#0f7a4f] sticky top-0 z-30 shadow-md border-b border-white/10 pt-[env(safe-area-inset-top,0px)]">
+      <header className="bg-gradient-to-r from-[#0b4f34] via-[#0d593c] to-[#0f7a4f] sticky top-0 z-30 border-b border-white/10 shadow-[0_8px_24px_rgba(9,42,28,0.16)] pt-[env(safe-area-inset-top,0px)]">
         <div className="max-w-[1520px] mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-4">
           {/* Brand Logo & Customer Info */}
           <div className="flex items-center gap-3.5 min-w-0">
@@ -46,6 +46,28 @@ export default function CustomerLayout() {
               </div>
             </div>
           </div>
+
+          {/* Wide desktop navigation sits between the brand and utilities. */}
+          <nav className="hidden min-[1440px]:flex flex-1 items-center justify-center gap-1.5 px-2" aria-label={t('Điều hướng chính')}>
+            {[
+              ...tabs,
+              { to: '/tai-khoan', label: 'Tài khoản', icon: UserCircle2 },
+            ].map(({ to, label, icon: Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === '/'}
+                className={({ isActive }) =>
+                  `inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2.5 text-[13px] font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
+                    isActive ? 'bg-white text-[#0b4f34] shadow-[0_3px_10px_rgba(0,0,0,0.12)]' : 'text-white/85 hover:bg-white/10 hover:text-white'
+                  }`
+                }
+              >
+                <Icon size={16} className="shrink-0" />
+                <span>{t(label)}</span>
+              </NavLink>
+            ))}
+          </nav>
 
           {/* Desktop utilities */}
           <div className="hidden md:flex shrink-0 items-center gap-2">
@@ -82,8 +104,8 @@ export default function CustomerLayout() {
             </button>
           </div>
         </div>
-        {/* A separate row gives desktop navigation room for full labels. */}
-        <nav className="hidden md:flex max-w-[1520px] mx-auto px-6 pb-2.5 items-center gap-2" aria-label={t('Điều hướng chính')}>
+        {/* Centered second row keeps labels balanced on medium desktop widths. */}
+        <nav className="hidden md:flex min-[1440px]:hidden max-w-[1520px] mx-auto px-6 pb-2.5 pt-0.5 items-center justify-center gap-2 border-t border-white/10 bg-black/[0.035]" aria-label={t('Điều hướng chính')}>
           {[
             ...tabs,
             { to: '/tai-khoan', label: 'Tài khoản', icon: UserCircle2 },
@@ -93,8 +115,8 @@ export default function CustomerLayout() {
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
-                `inline-flex min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-colors ${
-                  isActive ? 'bg-white text-[#0b4f34] shadow-sm' : 'text-white/85 hover:bg-white/12 hover:text-white'
+                `inline-flex min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 ${
+                  isActive ? 'bg-white text-[#0b4f34] shadow-sm' : 'text-white/85 hover:bg-white/10 hover:text-white'
                 }`
               }
             >
