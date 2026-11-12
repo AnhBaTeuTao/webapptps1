@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock } from 'lucide-react';
+import { searchProducts } from '../lib/productSearch';
 import {
   api,
   type Product,
@@ -27,19 +28,6 @@ const PRODUCT_CACHE_TTL_MS = 2 * 60 * 1000;
 const productSearchCache = new Map<string, { expiresAt: number; products: Product[] }>();
 const PRODUCT_CATALOG_TTL_MS = 5 * 60 * 1000;
 const productCatalogMemoryCache = new Map<string, { expiresAt: number; products: Product[] }>();
-const productSearchKeys = new Map<string, string>();
-
-function normalizeSearch(value: string) {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/Đ/g, 'D')
-    .toLocaleLowerCase('vi-VN')
-    .replace(/[^\p{L}\p{N}]+/gu, ' ')
-    .trim();
-}
-
 function decodeCatalog(catalog: ProductCatalogResponse): Product[] {
   const imageBaseUrl = catalog.imageBaseUrl.replace(/\/$/, '');
   return catalog.items.map(([id, sku, name, category, unit, price, priceOnRequest, hasImage]) => {
@@ -56,37 +44,20 @@ function decodeCatalog(catalog: ProductCatalogResponse): Product[] {
       thumbUrl: imageUrl,
       available: true,
     };
-    productSearchKeys.set(id, normalizeSearch(`${sku} ${name} ${category || ''}`));
     return product;
   });
 }
 
 function searchLocalCatalog(products: Product[], rawQuery: string, productName: (name: string) => string): Product[] {
-  const query = normalizeSearch(rawQuery);
-  if (!query) return products.slice(0, 48);
-  const words = query.split(' ').filter(Boolean);
-  const ranked: Array<{ product: Product; score: number }> = [];
-
-  for (const product of products) {
-    const key = normalizeSearch(`${productSearchKeys.get(product.id) || `${product.sku} ${product.name} ${product.category || ''}`} ${productName(product.name)} ${product.category ? productName(product.category) : ''}`);
-    if (!words.every((word) => key.includes(word))) continue;
-    const sku = normalizeSearch(product.sku || '');
-    const name = normalizeSearch(productName(product.name));
-    const score =
-      sku === query ? 0 : sku.startsWith(query) ? 1 : name === query ? 2 : name.startsWith(query) ? 3 : 4;
-    ranked.push({ product, score });
-  }
-
-  return ranked
-    .sort(
-      (a, b) =>
-        a.score - b.score ||
-        Number(Boolean(b.product.thumbUrl || b.product.imageUrl)) -
-          Number(Boolean(a.product.thumbUrl || a.product.imageUrl)) ||
-        a.product.name.localeCompare(b.product.name, 'vi')
-    )
-    .slice(0, 60)
-    .map(({ product }) => product);
+  return searchProducts(
+    products,
+    rawQuery,
+    (product) => ({
+      text: `${product.sku || ''} ${product.name} ${productName(product.name)} ${product.category || ''}`,
+      name: productName(product.name),
+    }),
+    (product) => Boolean(product.thumbUrl || product.imageUrl),
+  );
 }
 
 export default function ProductsPage() {

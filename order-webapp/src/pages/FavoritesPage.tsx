@@ -5,7 +5,7 @@ import { api, ApiError, type Product } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import StoreProductCard from '../components/store/StoreProductCard';
+import StoreProductGrid, { StoreGridSkeleton } from '../components/store/StoreProductGrid';
 
 /** Danh sách hàng yêu thích; giá lấy mới mỗi lần mở (theo hợp đồng nếu đã đăng nhập). */
 export default function FavoritesPage() {
@@ -51,14 +51,7 @@ export default function FavoritesPage() {
       {error && <p className="rounded-2xl bg-red-50 p-4 text-sm text-red-700">{error}</p>}
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 lg:grid-cols-5 xl:grid-cols-6">
-          {Array.from({ length: Math.min(ids.length || 4, 10) }).map((_, i) => (
-            <div key={i} className="rounded-2xl bg-white p-2 ring-1 ring-[#17231d]/6">
-              <div className="aspect-square animate-pulse rounded-xl bg-[#eef2ee]" />
-              <div className="mt-2 h-4 animate-pulse rounded bg-[#eef2ee]" />
-            </div>
-          ))}
-        </div>
+        <StoreGridSkeleton count={Math.min(ids.length || 6, 14)} />
       ) : products.length === 0 ? (
         <div className="mx-auto max-w-md space-y-3 rounded-3xl bg-white px-6 py-12 text-center ring-1 ring-[#17231d]/8">
           <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-[#fef5ee] text-[#e0742f]"><Heart size={30} /></div>
@@ -67,9 +60,7 @@ export default function FavoritesPage() {
           <Link to="/" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-6 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 lg:grid-cols-5 xl:grid-cols-6">
-          {products.map((product) => <StoreProductCard key={product.id} product={product} />)}
-        </div>
+        <StoreProductGrid products={products} />
       )}
     </div>
   );

@@ -8,11 +8,10 @@ import { useStoreHome } from '../hooks/useStoreHome';
 import BannerCarousel from '../components/store/BannerCarousel';
 import CategoryRail from '../components/store/CategoryRail';
 import ProductRail from '../components/store/ProductRail';
-import StoreProductCard from '../components/store/StoreProductCard';
+import StoreProductGrid from '../components/store/StoreProductGrid';
 
 /** Danh mục không phải thực phẩm: không đưa vào lưới đề xuất. */
 const NON_FOOD_SLUGS = new Set(['dung-cu-bep']);
-const GRID = 'grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-2.5 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7';
 
 function RailSkeleton() {
   return (
@@ -200,9 +199,7 @@ export default function StoreHomePage() {
               {t(session ? 'Những món bếp của quý khách thường đặt và các mặt hàng cùng nhóm' : 'Những mặt hàng được nhiều bếp ăn lựa chọn')}
             </p>
           </div>
-          <div className={GRID}>
-            {suggestions.map((product) => <StoreProductCard key={product.id} product={product} />)}
-          </div>
+          <StoreProductGrid products={suggestions} hasMore={!exhausted && foodGroups.length > 0} />
           {!exhausted && foodGroups.length > 0 && (
             <div className="mt-3 flex justify-center">
               <button

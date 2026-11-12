@@ -5,7 +5,7 @@ import { api, ApiError, type Product } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useStoreHome } from '../hooks/useStoreHome';
-import StoreProductCard from '../components/store/StoreProductCard';
+import StoreProductGrid, { StoreGridSkeleton } from '../components/store/StoreProductGrid';
 import CategoryRail from '../components/store/CategoryRail';
 
 type Sort = 'default' | 'price_asc' | 'price_desc' | 'name';
@@ -20,19 +20,7 @@ function sortProducts(products: Product[], sort: Sort) {
   return copy;
 }
 
-function ProductGridSkeleton() {
-  return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 lg:grid-cols-5 xl:grid-cols-6">
-      {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="rounded-2xl bg-white p-2 ring-1 ring-[#17231d]/6">
-          <div className="aspect-square animate-pulse rounded-xl bg-[#eef2ee]" />
-          <div className="mt-2 h-4 animate-pulse rounded bg-[#eef2ee]" />
-          <div className="mt-2 h-9 animate-pulse rounded-xl bg-[#eef2ee]" />
-        </div>
-      ))}
-    </div>
-  );
-}
+const ProductGridSkeleton = () => <StoreGridSkeleton />;
 
 /**
  * /danh-muc            → tất cả danh mục (lưới ảnh)
@@ -110,7 +98,7 @@ export default function ProductListingPage({ mode }: { mode: 'categories' | 'cat
   const sorted = sortProducts(products, sort);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <nav className="flex items-center gap-1 text-xs text-[#59665f]" aria-label="breadcrumb">
         <Link to="/" className="hover:text-[#0f7a4f]">{t('Trang chủ')}</Link>
         <ChevronRight size={13} />
@@ -120,7 +108,7 @@ export default function ProductListingPage({ mode }: { mode: 'categories' | 'cat
 
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-black text-[#17231d]">{title}</h1>
+          <h1 className="text-xl font-black text-[#17231d] sm:text-2xl">{title}</h1>
           {!loading && <p className="text-sm text-[#59665f]">{total} {t('mặt hàng')}</p>}
         </div>
         <label className="flex items-center gap-2 text-sm text-[#59665f]">
@@ -164,13 +152,11 @@ export default function ProductListingPage({ mode }: { mode: 'categories' | 'cat
           <Link to="/gio-hang" className="mt-1 text-sm font-bold text-[#0f7a4f] hover:underline">{t('Mở giỏ hàng')}</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 lg:grid-cols-5 xl:grid-cols-6">
-          {sorted.map((product) => <StoreProductCard key={product.id} product={product} />)}
-        </div>
+        <StoreProductGrid products={sorted} hasMore={mode === 'category' && products.length < total} />
       )}
 
       {mode === 'category' && !loading && products.length < total && (
-        <button type="button" onClick={loadMore} disabled={loadingMore} className="mx-auto flex h-11 items-center justify-center rounded-xl border border-[#0f7a4f]/25 bg-white px-6 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef] disabled:opacity-60">
+        <button type="button" onClick={loadMore} disabled={loadingMore} className="mx-auto flex h-10 items-center justify-center rounded-full border border-[#0f7a4f]/30 bg-white px-6 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef] disabled:opacity-60">
           {loadingMore ? t('Đang tải...') : `${t('Xem thêm')} (${total - products.length})`}
         </button>
       )}
