@@ -23,9 +23,9 @@ export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) 
     return (
       <section className="relative overflow-hidden rounded-3xl bg-[#0b4f34] text-white">
         <img
-          src={`${import.meta.env.BASE_URL}images/tps1-cover-food-hd.png`}
+          src={`${import.meta.env.BASE_URL}images/store-hero.webp`}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-35"
+          className="absolute inset-0 h-full w-full object-cover opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#062b1c] via-[#0b4f34]/90 to-transparent" />
         <div className="relative max-w-xl px-5 py-8 sm:px-8 sm:py-12">
