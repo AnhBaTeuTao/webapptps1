@@ -28,14 +28,16 @@ export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) 
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#062b1c] via-[#0b4f34]/90 to-transparent" />
-        <div className="relative max-w-xl px-5 py-8 sm:px-8 sm:py-12">
+        <div className="relative max-w-[680px] px-5 py-7 sm:px-8 sm:py-10">
           <p className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-100 ring-1 ring-white/20">
             <BadgeCheck size={14} /> {t('Đạt chuẩn ISO 22000 & HACCP')}
           </p>
-          <h1 className="mt-3 text-2xl font-black leading-tight sm:text-4xl">
-            {t('Nguồn thực phẩm sạch cho bếp ăn,')}<br className="hidden sm:block" /> {t('giao tận nơi theo nhu cầu của bếp.')}
+          {/* Mỗi vế của tiêu đề một dòng từ tablet trở lên; cỡ chữ theo bề ngang để không tràn khung. */}
+          <h1 className="mt-3 text-balance text-[22px] font-black leading-[1.25] sm:text-[28px] lg:text-[32px]">
+            <span className="sm:block sm:whitespace-nowrap">{t('Nguồn thực phẩm sạch cho bếp ăn,')}</span>{' '}
+            <span className="sm:block sm:whitespace-nowrap">{t('giao tận nơi theo nhu cầu của bếp.')}</span>
           </h1>
-          <p className="mt-2 text-sm text-emerald-50/85 sm:text-base">
+          <p className="mt-2.5 max-w-[540px] text-pretty text-[13.5px] leading-relaxed text-emerald-50/85 sm:text-sm lg:text-[15px]">
             {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng một nơi.')}
           </p>
           <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-emerald-50/90">

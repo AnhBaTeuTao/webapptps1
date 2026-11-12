@@ -89,20 +89,20 @@ export default function StoreLayout() {
             <img src={`${import.meta.env.BASE_URL}images/tps1-logo-horizontal.png`} alt="Thực Phẩm Số Một" className="h-9 w-auto object-contain sm:h-10" />
           </Link>
 
-          <SearchBox className="hidden flex-1 md:block" />
+          <SearchBox className="hidden min-w-0 flex-1 md:block" />
 
           <div className="ml-auto flex shrink-0 items-center gap-2">
             <a href={`tel:${HOTLINE.replace(/\s/g, '')}`} className="hidden items-center gap-2 rounded-xl px-2.5 py-1.5 text-[#17231d] hover:bg-[#f5f7f3] xl:flex" title={t('Tổng đài đặt hàng')}>
               <span className="flex size-9 items-center justify-center rounded-full bg-[#fef5ee] text-[#e0742f]"><Phone size={16} /></span>
               <span className="leading-tight"><span className="block text-[10.5px] font-semibold text-[#59665f]">{t('Tổng đài đặt hàng')}</span><span className="text-sm font-black">{HOTLINE}</span></span>
             </a>
-            <div className="hidden sm:block"><LanguageSwitcher /></div>
+            <div className="hidden sm:block md:hidden lg:block"><LanguageSwitcher /></div>
             {session && <NotificationBell light />}
             {session ? (
               <div className="hidden items-center gap-1 md:flex">
                 <Link to="/tai-khoan" className="flex h-11 items-center gap-2 rounded-xl px-2.5 hover:bg-[#f5f7f3]">
                   <span className="flex size-8 items-center justify-center rounded-full bg-[#eaf6ef] text-sm font-black text-[#0f7a4f]">{(session.company || session.name || 'K').trim().charAt(0).toUpperCase()}</span>
-                  <span className="max-w-[140px] truncate text-sm font-semibold text-[#17231d]">{session.company || session.name}</span>
+                  <span className="hidden max-w-[140px] truncate text-sm font-semibold text-[#17231d] lg:inline">{session.company || session.name}</span>
                 </Link>
                 <button type="button" onClick={() => { logout(); navigate('/'); }} title={t('Đăng xuất')} aria-label={t('Đăng xuất')} className="flex size-10 items-center justify-center rounded-xl text-[#59665f] hover:bg-[#f5f7f3]">
                   <LogOut size={17} />
@@ -114,8 +114,8 @@ export default function StoreLayout() {
                 <Link to="/dang-ky" className="flex h-11 items-center rounded-xl border border-[#0f7a4f]/30 px-3.5 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]">{t('Đăng ký')}</Link>
               </div>
             )}
-            <div className="hidden md:block"><CartButton /></div>
-            <div className="md:hidden"><CartButton compact /></div>
+            <div className="hidden lg:block"><CartButton /></div>
+            <div className="lg:hidden"><CartButton compact /></div>
           </div>
         </div>
 

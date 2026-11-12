@@ -60,7 +60,7 @@ export default function StoreHomePage() {
     api.storeRecommendations(controller.signal)
       .then((res) => setRecommended(res.products || []))
       .catch(() => undefined);
-    if (session) {
+    if (session?.id) {
       api.frequentItems(controller.signal)
         .then((res) => setFrequent((res.items || []).slice(0, 12).map(frequentToProduct)))
         .catch(() => undefined);
@@ -68,7 +68,7 @@ export default function StoreHomePage() {
       setFrequent([]);
     }
     return () => controller.abort();
-  }, [session]);
+  }, [session?.id]);
 
   // Hàng hay đặt đã có khối riêng → bỏ khỏi gợi ý để không trùng lặp.
   const recommendedOnly = useMemo(() => {
