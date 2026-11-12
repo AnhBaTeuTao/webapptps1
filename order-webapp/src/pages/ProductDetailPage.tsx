@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useStoreHome } from '../hooks/useStoreHome';
-import { PriceTag, ProductImage, QuantityStepper, money } from '../components/store/StoreProductCard';
+import { FavoriteButton, PriceTag, ProductImage, QuantityStepper, money } from '../components/store/StoreProductCard';
 import ProductRail from '../components/store/ProductRail';
 
 export default function ProductDetailPage() {
@@ -101,9 +101,12 @@ export default function ProductDetailPage() {
           <div>
             <div className="flex items-start justify-between gap-3">
               <h1 className="text-xl font-black leading-snug text-[#17231d] sm:text-2xl">{name}</h1>
-              <button type="button" onClick={share} aria-label={t('Chia sẻ')} className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#17231d]/10 text-[#59665f] hover:bg-[#f5f7f3]">
-                <Share2 size={17} />
-              </button>
+              <div className="flex shrink-0 items-center gap-2">
+                <FavoriteButton productId={product.id} className="size-10" />
+                <button type="button" onClick={share} aria-label={t('Chia sẻ')} className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#17231d]/10 text-[#59665f] hover:bg-[#f5f7f3]">
+                  <Share2 size={17} />
+                </button>
+              </div>
             </div>
             {name !== product.name && <p className="mt-1 text-sm text-[#59665f]">{product.name}</p>}
             {shared && <p className="mt-1 text-xs font-semibold text-[#0f7a4f]">{t('Đã sao chép đường dẫn')}</p>}

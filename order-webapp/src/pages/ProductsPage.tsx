@@ -12,6 +12,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useOrderSubmit } from '../hooks/useOrderSubmit';
+import { useFavorites } from '../contexts/FavoritesContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
 import ProductSearchBar from '../components/products/ProductSearchBar';
@@ -119,14 +120,8 @@ export default function ProductsPage() {
   const [frequentItems, setFrequentItems] = useState<FrequentItem[]>([]);
   const [loadingLatestOrder, setLoadingLatestOrder] = useState(false);
   const hasSubmittedSearch = Boolean(searchQuery.trim()) && searchInput.trim() === searchQuery.trim();
-  const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem(`tps1_favorite_products_v2_${session?.id || 'guest'}`);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  // Hàng yêu thích dùng chung với cửa hàng (FavoritesContext).
+  const { ids: favoriteIds, toggle: toggleFavorite } = useFavorites();
 
   // Mobile Checkout Drawer & Success Modal state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -137,12 +132,6 @@ export default function ProductsPage() {
   const searchRequestRef = useRef(0);
   const catalogAbortRef = useRef<AbortController | null>(null);
 
-  // Lưu danh sách yêu thích
-  useEffect(() => {
-    try {
-      localStorage.setItem(`tps1_favorite_products_v2_${session?.id || 'guest'}`, JSON.stringify(favoriteIds));
-    } catch {}
-  }, [favoriteIds, session?.id]);
 
   // Tìm kiếm qua Search API khi catalog cục bộ chưa sẵn sàng
   const loadProducts = useCallback(
@@ -406,13 +395,6 @@ export default function ProductsPage() {
   );
   const visibleProducts = hasSubmittedSearch ? displayedProducts : browseProducts.slice(0, browseLimit);
 
-  const toggleFavorite = (productId: string) => {
-    setFavoriteIds((current) =>
-      current.includes(productId)
-        ? current.filter((id) => id !== productId)
-        : [...current, productId]
-    );
-  };
 
   const addOrderAgain = (order: Order) => {
     const productsById = new Map(catalogProducts.map((p) => [p.id, p]));

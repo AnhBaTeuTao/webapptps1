@@ -491,6 +491,14 @@ const translations: Record<string, [string, string]> = {
   'Có sẵn danh sách hàng trong file Excel?': ['Already have your order list in Excel?', '已有 Excel 订货清单？'],
   'Tải file lên, hệ thống tự khớp mặt hàng và đưa vào giỏ cho quý khách.': ['Upload the file and we will match the items and add them to your cart.', '上传文件，系统会自动匹配商品并加入购物车。'],
   'Thêm hàng từ file Excel': ['Add items from an Excel file', '从 Excel 文件添加商品'],
+  // ── Cửa hàng online ──
+  'Yêu thích': ['Favourites', '收藏'],
+  'Hàng yêu thích': ['Favourite items', '收藏的商品'],
+  'Bỏ khỏi yêu thích': ['Remove from favourites', '取消收藏'],
+  'Thêm vào yêu thích': ['Add to favourites', '加入收藏'],
+  'Chưa có mặt hàng yêu thích': ['No favourite items yet', '还没有收藏的商品'],
+  'Bấm vào hình trái tim trên mỗi mặt hàng để lưu lại, lần sau đặt chỉ cần mở trang này.': ['Tap the heart on any item to save it, then order again from this page.', '点击商品上的爱心即可收藏，下次直接在此页面下单。'],
+  'Không tải được danh sách yêu thích, vui lòng thử lại': ['Could not load your favourites, please try again', '无法加载收藏列表，请重试'],
 };
 
 const errorTranslations: Record<string, string> = {

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { ClipboardList, FileSpreadsheet, Home, LayoutGrid, LogOut, Phone, Search, ShoppingCart, UserCircle2, Zap } from 'lucide-react';
+import { ClipboardList, FileSpreadsheet, Heart, Home, LayoutGrid, LogOut, Phone, Search, ShoppingCart, UserCircle2, Zap } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
+import { useFavorites } from '../contexts/FavoritesContext';
 import { LanguageSwitcher, useLanguage } from '../contexts/LanguageContext';
 import { useStoreHome } from '../hooks/useStoreHome';
 import NotificationBell from '../components/NotificationBell';
@@ -65,6 +66,7 @@ function CartButton({ compact = false }: { compact?: boolean }) {
 export default function StoreLayout() {
   const { session, logout } = useAuth();
   const { count } = useCart();
+  const { ids: favoriteIds } = useFavorites();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { data: home } = useStoreHome();
@@ -75,7 +77,7 @@ export default function StoreLayout() {
 
   const bottomTabs = [
     { to: '/', label: 'Trang chủ', icon: Home, end: true },
-    { to: '/danh-muc', label: 'Danh mục', icon: LayoutGrid },
+    { to: '/yeu-thich', label: 'Yêu thích', icon: Heart, badge: favoriteIds.length },
     { to: '/don-hang', label: 'Đơn hàng', icon: ClipboardList },
     { to: '/gio-hang', label: 'Giỏ hàng', icon: ShoppingCart, badge: count },
     { to: session ? '/tai-khoan' : loginTarget, label: session ? 'Tài khoản' : 'Đăng nhập', icon: UserCircle2 },
@@ -114,6 +116,10 @@ export default function StoreLayout() {
                 <Link to="/dang-ky" className="flex h-11 items-center rounded-xl border border-[#0f7a4f]/30 px-3.5 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]">{t('Đăng ký')}</Link>
               </div>
             )}
+            <Link to="/yeu-thich" aria-label={`${t('Hàng yêu thích')} (${favoriteIds.length})`} title={t('Hàng yêu thích')} className="relative hidden size-11 items-center justify-center rounded-xl text-[#59665f] hover:bg-[#fef5ee] hover:text-[#e0742f] md:flex">
+              <Heart size={20} />
+              {favoriteIds.length > 0 && <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e0742f] px-1 text-[10px] font-black text-white">{favoriteIds.length > 99 ? '99+' : favoriteIds.length}</span>}
+            </Link>
             <div className="hidden lg:block"><CartButton /></div>
             <div className="lg:hidden"><CartButton compact /></div>
           </div>
@@ -135,8 +141,8 @@ export default function StoreLayout() {
             {session && (
               <NavLink to="/dat-hang" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-bold ${isActive ? 'text-[#0f7a4f]' : 'text-[#c4601f] hover:text-[#0f7a4f]'}`}><Zap size={15} /> {t('Đặt nhanh')}</NavLink>
             )}
-            {/* Đặt từ Excel hiện cả khi chưa đăng nhập: bấm vào sẽ mời đăng nhập rồi quay lại đúng trang. */}
-            <NavLink to="/dat-hang/excel" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-bold ring-1 ${isActive ? 'bg-[#0f7a4f] text-white ring-[#0f7a4f]' : 'bg-white text-[#0b4f34] ring-[#0f7a4f]/25 hover:bg-[#eaf6ef]'}`}><FileSpreadsheet size={15} /> {t('Đặt từ Excel')}</NavLink>
+            {/* Đặt từ Excel chỉ dành cho khách đã đăng nhập. */}
+            {session && <NavLink to="/dat-hang/excel" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-bold ring-1 ${isActive ? 'bg-[#0f7a4f] text-white ring-[#0f7a4f]' : 'bg-white text-[#0b4f34] ring-[#0f7a4f]/25 hover:bg-[#eaf6ef]'}`}><FileSpreadsheet size={15} /> {t('Đặt từ Excel')}</NavLink>}
             {session && (
               <>
                 <NavLink to="/don-hang" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold ${isActive ? 'text-[#0f7a4f]' : 'text-[#2c3a33] hover:text-[#0f7a4f]'}`}><ClipboardList size={15} /> {t('Đơn hàng')}</NavLink>

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Minus, PackageOpen, Plus, ShoppingCart } from 'lucide-react';
+import { Heart, Minus, PackageOpen, Plus, ShoppingCart } from 'lucide-react';
 import type { Product } from '../../lib/api';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useFavorites } from '../../contexts/FavoritesContext';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { productImage } from '../products/ProductThumbnail';
 
@@ -80,6 +81,24 @@ export function QuantityStepper({ product, size = 'md' }: { product: Product; si
   );
 }
 
+/** Nút tim: thêm/bỏ khỏi danh sách hàng yêu thích. */
+export function FavoriteButton({ productId, className = '' }: { productId: string; className?: string }) {
+  const { isFavorite, toggle } = useFavorites();
+  const { t } = useLanguage();
+  const active = isFavorite(productId);
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      aria-label={active ? t('Bỏ khỏi yêu thích') : t('Thêm vào yêu thích')}
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(productId); }}
+      className={`flex size-9 items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition active:scale-90 ${active ? 'text-[#e0742f]' : 'text-[#59665f] hover:text-[#e0742f]'} ${className}`}
+    >
+      <Heart size={17} fill={active ? 'currentColor' : 'none'} strokeWidth={active ? 2 : 2.2} />
+    </button>
+  );
+}
+
 export function ProductImage({ product, className = '' }: { product: Product; className?: string }) {
   const [failed, setFailed] = useState(false);
   const src = productImage(product);
@@ -99,9 +118,12 @@ export default function StoreProductCard({ product }: { product: Product }) {
   const name = productName(product.name);
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#17231d]/8 bg-white shadow-[0_1px_2px_rgba(16,40,30,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(16,40,30,0.10)]">
-      <Link to={`/san-pham/${product.id}`} className="block">
-        <ProductImage product={product} className="aspect-square w-full transition duration-300 group-hover:scale-[1.02]" />
-      </Link>
+      <div className="relative">
+        <Link to={`/san-pham/${product.id}`} className="block">
+          <ProductImage product={product} className="aspect-square w-full transition duration-300 group-hover:scale-[1.02]" />
+        </Link>
+        <FavoriteButton productId={product.id} className="absolute right-2 top-2" />
+      </div>
       <div className="flex flex-1 flex-col gap-2 p-3">
         <Link to={`/san-pham/${product.id}`} className="min-h-[2.6rem]">
           <h3 className="line-clamp-2 text-[13.5px] font-semibold leading-snug text-[#17231d] group-hover:text-[#0b4f34]">{name}</h3>

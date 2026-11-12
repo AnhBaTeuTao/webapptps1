@@ -5,6 +5,7 @@ import { App as NativeApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
+import { FavoritesProvider } from './contexts/FavoritesContext';
 import StoreLayout from './layouts/StoreLayout';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -15,6 +16,7 @@ const ChangePasswordPage = lazy(() => import('./pages/ChangePasswordPage'));
 const ProductsPage = lazy(() => import('./pages/ProductsPage'));
 const ProductListingPage = lazy(() => import('./pages/ProductListingPage'));
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage'));
 const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
@@ -77,7 +79,7 @@ function App() {
   const Router = Capacitor.isNativePlatform() ? HashRouter : BrowserRouter;
   return (
     <LanguageProvider><AuthProvider>
-      <CartProvider>
+      <CartProvider><FavoritesProvider>
         <Router>
           <NativeBackButton />
           <Suspense fallback={<LoadingScreen />}><Routes>
@@ -91,6 +93,7 @@ function App() {
               <Route path="tim-kiem" element={<PasswordGate><ProductListingPage mode="search" /></PasswordGate>} />
               <Route path="san-pham/:id" element={<PasswordGate><ProductDetailPage /></PasswordGate>} />
               <Route path="gio-hang" element={<PasswordGate><CartPage /></PasswordGate>} />
+              <Route path="yeu-thich" element={<PasswordGate><FavoritesPage /></PasswordGate>} />
               {/* Bắt đăng nhập */}
               <Route path="dat-hang" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
               <Route path="dat-hang/excel" element={<ProtectedRoute><ExcelOrderPage /></ProtectedRoute>} />
@@ -102,7 +105,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes></Suspense>
         </Router>
-      </CartProvider>
+      </FavoritesProvider></CartProvider>
     </AuthProvider></LanguageProvider>
   );
 }

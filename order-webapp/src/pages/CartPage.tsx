@@ -106,7 +106,7 @@ export default function CartPage() {
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           <Link to="/" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-6 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
-          <Link to="/dat-hang/excel" className="inline-flex h-11 items-center gap-2 rounded-xl border border-[#0f7a4f]/30 px-5 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]"><FileSpreadsheet size={16} /> {t('Đặt từ Excel')}</Link>
+          {session && <Link to="/dat-hang/excel" className="inline-flex h-11 items-center gap-2 rounded-xl border border-[#0f7a4f]/30 px-5 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]"><FileSpreadsheet size={16} /> {t('Đặt từ Excel')}</Link>}
         </div>
         {session && <UnlistedItemEntry onAdd={addUnlisted} />}
       </div>
@@ -138,7 +138,7 @@ export default function CartPage() {
           {session && <div className="rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6"><UnlistedItemEntry onAdd={addUnlisted} /></div>}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><ShoppingBag size={15} /> {t('Tiếp tục chọn hàng')}</Link>
-            <Link to="/dat-hang/excel" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><FileSpreadsheet size={15} /> {t('Thêm hàng từ file Excel')}</Link>
+            {session && <Link to="/dat-hang/excel" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><FileSpreadsheet size={15} /> {t('Thêm hàng từ file Excel')}</Link>}
           </div>
         </div>
 
