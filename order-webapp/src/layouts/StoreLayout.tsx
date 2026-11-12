@@ -7,6 +7,7 @@ import { useFavorites } from '../contexts/FavoritesContext';
 import { LanguageSwitcher, useLanguage } from '../contexts/LanguageContext';
 import { useStoreHome } from '../hooks/useStoreHome';
 import NotificationBell from '../components/NotificationBell';
+import TrustMarquee from '../components/store/TrustMarquee';
 
 const HOTLINE = '089 890 2222';
 
@@ -86,6 +87,7 @@ export default function StoreLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-[#f5f7f3] selection:bg-[#0f7a4f] selection:text-white">
       <header className="sticky top-0 z-30 border-b border-[#17231d]/8 bg-white/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
+        <TrustMarquee />
         <div className="mx-auto flex max-w-[1320px] items-center gap-3 px-3 py-2.5 sm:px-5 lg:gap-6">
           <Link to="/" className="shrink-0" aria-label="Thực Phẩm Số Một">
             <img src={`${import.meta.env.BASE_URL}images/tps1-logo-horizontal.png`} alt="Thực Phẩm Số Một" className="h-9 w-auto object-contain sm:h-10" />

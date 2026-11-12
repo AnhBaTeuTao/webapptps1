@@ -499,6 +499,14 @@ const translations: Record<string, [string, string]> = {
   'Chưa có mặt hàng yêu thích': ['No favourite items yet', '还没有收藏的商品'],
   'Bấm vào hình trái tim trên mỗi mặt hàng để lưu lại, lần sau đặt chỉ cần mở trang này.': ['Tap the heart on any item to save it, then order again from this page.', '点击商品上的爱心即可收藏，下次直接在此页面下单。'],
   'Không tải được danh sách yêu thích, vui lòng thử lại': ['Could not load your favourites, please try again', '无法加载收藏列表，请重试'],
+  // ── Cửa hàng online ──
+  'Vận chuyển tận nơi đúng tiêu chuẩn, sớm nhất từ 5 giờ sáng': ['Delivered to your door to standard, from as early as 5 a.m.', '按标准送货上门，最早早上 5 点'],
+  'Vận chuyển tận nơi đúng tiêu chuẩn': ['Delivered to your door, to standard', '按标准送货上门'],
+  'Bảo hiểm trách nhiệm sản phẩm 5.000.000.000 VNĐ': ['Product liability insurance of VND 5 billion', '50 亿越南盾产品责任保险'],
+  'Hotline B2B: 089 890 2222': ['B2B hotline: 089 890 2222', 'B2B 热线：089 890 2222'],
+  '99,8% đơn hàng giao đúng hẹn': ['99.8% of orders delivered on time', '99.8% 的订单准时送达'],
+  '109+ khách hàng doanh nghiệp tin dùng': ['Trusted by 109+ business customers', '109+ 家企业客户信赖'],
+  'Thông tin chứng chỉ và liên hệ': ['Certifications and contact', '资质与联系方式'],
 };
 
 const errorTranslations: Record<string, string> = {

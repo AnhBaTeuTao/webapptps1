@@ -259,9 +259,16 @@ export interface StoreCollection {
   products: Product[];
 }
 
+export interface StoreAnnouncement {
+  icon: 'shield' | 'award' | 'phone';
+  text: string;
+}
+
 export interface StoreHome {
   ok: true;
   priceMode: PriceMode;
+  /** Dòng chữ chạy, cùng nguồn với thanh trên cùng của website (lib/site.ts). */
+  announcements?: StoreAnnouncement[];
   categories: StoreCategory[];
   banners: StoreBanner[];
   collections: StoreCollection[];

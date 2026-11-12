@@ -143,7 +143,7 @@ export default function ProductDetailPage() {
           </div>
 
           <ul className="grid gap-2 text-sm text-[#2c3a33]">
-            <li className="flex items-center gap-2"><Truck size={17} className="text-[#0f7a4f]" /> {t('Giao bằng xe lạnh đến tận bếp, sớm nhất từ 5 giờ sáng')}</li>
+            <li className="flex items-center gap-2"><Truck size={17} className="text-[#0f7a4f]" /> {t('Vận chuyển tận nơi đúng tiêu chuẩn, sớm nhất từ 5 giờ sáng')}</li>
             <li className="flex items-center gap-2"><ShieldCheck size={17} className="text-[#0f7a4f]" /> {t('Kiểm soát an toàn thực phẩm theo ISO 22000 và HACCP')}</li>
             <li className="flex items-center gap-2"><MapPin size={17} className="text-[#0f7a4f]" /> {t('Giao tại Đồng Nai, TP.HCM và các tỉnh lân cận')}</li>
           </ul>

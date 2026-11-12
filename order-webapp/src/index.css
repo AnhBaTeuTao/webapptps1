@@ -123,3 +123,18 @@ body {
   border-color: rgba(52, 211, 153, 0.7);
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15);
 }
+
+/* Dòng cam kết chạy ngang (TrustMarquee): hai bản sao nối tiếp, trượt nửa chiều dài. */
+@keyframes tps1-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.tps1-marquee__track { animation: tps1-marquee 38s linear infinite; }
+.tps1-marquee:hover .tps1-marquee__track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .tps1-marquee__track { animation: none; }
+}
+
+/* Banner slide: ẩn thanh cuộn ngang. */
+.tps1-snap-row { scrollbar-width: none; }
+.tps1-snap-row::-webkit-scrollbar { display: none; }

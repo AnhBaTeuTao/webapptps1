@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BadgeCheck, ClipboardList, FileSpreadsheet, Flame, Heart, RotateCcw, ShieldCheck, Sparkles, Truck, Zap } from 'lucide-react';
+import { ClipboardList, FileSpreadsheet, Flame, Heart, RotateCcw, Sparkles } from 'lucide-react';
 import { api, type FrequentItem, type Product } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -41,12 +41,6 @@ function RailSkeleton() {
   );
 }
 
-const TRUST = [
-  { icon: ShieldCheck, title: 'ISO 22000 & HACCP', text: 'Kiểm soát an toàn từng khâu' },
-  { icon: Truck, title: 'Xe lạnh giao tận bếp', text: 'Đồng Nai, TP.HCM và lân cận' },
-  { icon: BadgeCheck, title: 'Hóa đơn VAT đầy đủ', text: 'Công nợ theo thỏa thuận' },
-  { icon: Zap, title: 'Hơn 5.000 mặt hàng', text: 'Cả bếp chỉ cần đặt một nơi' },
-];
 
 export default function StoreHomePage() {
   const { session } = useAuth();
@@ -78,7 +72,9 @@ export default function StoreHomePage() {
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      {/* Điện thoại: danh mục lên đầu để khách thấy gian hàng ngay; máy tính: banner trước. */}
+      <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="order-2 grid gap-4 lg:order-1 lg:grid-cols-[minmax(0,1fr)_300px]">
         <BannerCarousel banners={data?.banners || []} />
         <aside className="hidden flex-col gap-3 lg:flex">
           {session ? (
@@ -110,7 +106,7 @@ export default function StoreHomePage() {
 
       {/* Lối tắt trên điện thoại/tablet (máy tính đã có khung bên cạnh banner và thanh menu). */}
       {session ? (
-        <div className="grid grid-cols-3 gap-2 lg:hidden">
+        <div className="order-3 grid grid-cols-3 gap-2 lg:hidden">
           {[
             { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh' },
             { to: '/dat-hang/excel', icon: FileSpreadsheet, label: 'Đặt từ Excel' },
@@ -124,27 +120,26 @@ export default function StoreHomePage() {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
-        {TRUST.map(({ icon: Icon, title, text }) => (
-          <div key={title} className="flex items-center gap-3 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#eaf6ef] text-[#0f7a4f]"><Icon size={20} /></span>
-            <div className="min-w-0">
-              <p className="truncate text-[13px] font-bold text-[#17231d]">{t(title)}</p>
-              <p className="truncate text-[11.5px] text-[#59665f]">{t(text)}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
       {data && data.categories.length > 0 && (
-        <section className="rounded-3xl bg-white p-4 ring-1 ring-[#17231d]/6 sm:p-5">
-          <div className="mb-3 flex items-end justify-between">
-            <h2 className="text-lg font-black text-[#17231d] sm:text-xl">{t('Danh mục hàng hóa')}</h2>
+        <section className="order-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 sm:rounded-3xl sm:p-5 lg:order-2">
+          <div className="mb-3 hidden items-end justify-between lg:flex">
+            <h2 className="text-xl font-black text-[#17231d]">{t('Danh mục hàng hóa')}</h2>
             <Link to="/danh-muc" className="text-sm font-bold text-[#0f7a4f] hover:underline">{t('Xem tất cả')}</Link>
           </div>
           <CategoryRail categories={data.categories} />
         </section>
       )}
+      {!data && loading && (
+        <div className="order-1 flex gap-3 overflow-hidden rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 lg:hidden" aria-hidden="true">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex w-[78px] shrink-0 flex-col items-center gap-2">
+              <div className="size-[72px] animate-pulse rounded-2xl bg-[#eef2ee]" />
+              <div className="h-3 w-14 animate-pulse rounded bg-[#eef2ee]" />
+            </div>
+          ))}
+        </div>
+      )}
+      </div>
 
       {frequent.length > 0 && (
         <ProductRail title="Những món quý khách hay đặt" subtitle="Thêm lại vào giỏ chỉ với một lần bấm" products={frequent} icon={<Heart size={20} className="text-[#e0742f]" />} moreTo="/dat-hang" />
