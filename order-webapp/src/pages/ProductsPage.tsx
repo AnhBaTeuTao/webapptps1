@@ -10,9 +10,10 @@ import {
   ApiError,
 } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
+import { useOrderSubmit } from '../hooks/useOrderSubmit';
 import { useLanguage } from '../contexts/LanguageContext';
 
-import type { OrderTab } from '../components/products/OrderTabsBar';
 import ProductSearchBar from '../components/products/ProductSearchBar';
 import QuickOrderSections from '../components/products/QuickOrderSections';
 import ProductGrid from '../components/products/ProductGrid';
@@ -21,7 +22,6 @@ import CartFloatingBar from '../components/products/CartFloatingBar';
 import CartCheckoutDrawer from '../components/products/CartCheckoutDrawer';
 import OrderSuccessModal from '../components/products/OrderSuccessModal';
 
-const storageKeyFor = (customerId: string) => `tps1_b2b_pos_tabs_v2_${customerId}`;
 const PRODUCT_CACHE_TTL_MS = 2 * 60 * 1000;
 const productSearchCache = new Map<string, { expiresAt: number; products: Product[] }>();
 const PRODUCT_CATALOG_TTL_MS = 5 * 60 * 1000;
@@ -88,89 +88,22 @@ function searchLocalCatalog(products: Product[], rawQuery: string, productName: 
     .map(({ product }) => product);
 }
 
-function getTomorrowDateStr() {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function getDefaultDelivery(session: any) {
-  const shipping = session?.defaultShippingAddress;
-  const address = String(shipping?.address || '').trim();
-  if (!address) {
-    return { deliveryName: '', deliveryPhone: '', deliveryAddress: '' };
-  }
-  return {
-    deliveryName: String(shipping?.name || '').trim(),
-    deliveryPhone: String(shipping?.phone || '').trim(),
-    deliveryAddress: address,
-  };
-}
-
-function createDefaultTab(session: any): OrderTab {
-  const defaultDelivery = getDefaultDelivery(session);
-  return {
-    id: `tab-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    idempotencyKey: crypto.randomUUID(),
-    title: 'Đặt hàng',
-    items: [],
-    note: '',
-    deliveryDate: getTomorrowDateStr(),
-    deliveryShift: 'Ca sáng sớm (05:00 - 07:00)',
-    ...defaultDelivery,
-    mode: 'delivery',
-  };
-}
-
 export default function ProductsPage() {
   const { session, logout } = useAuth();
-  const { t, errorText, productName } = useLanguage();
+  const { t, productName } = useLanguage();
   const navigate = useNavigate();
 
-  // Một giỏ đặt hàng; gom các giỏ cũ vào một giỏ khi nâng cấp từ bản beta trước.
-  const [activeTab, setActiveTab] = useState<OrderTab>(() => {
-    try {
-      const saved = localStorage.getItem(storageKeyFor(session?.id || 'guest'));
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const defaultDelivery = getDefaultDelivery(session);
-          const sourceTabs = parsed.filter((tab) => tab && typeof tab === 'object');
-          const primary = sourceTabs[0];
-          if (primary) {
-            const mergedItems = new Map<string, OrderTab['items'][number]>();
-            for (const tab of sourceTabs) {
-              for (const item of Array.isArray(tab.items) ? tab.items : []) {
-                if (!item?.product?.id) continue;
-                const current = mergedItems.get(item.product.id);
-                mergedItems.set(item.product.id, current
-                  ? { ...current, quantity: Number((current.quantity + (Number(item.quantity) || 0)).toFixed(2)), note: [current.note, item.note].filter(Boolean).join('; ') || undefined, sourceImportLineId: undefined }
-                  : { ...item, quantity: Number(item.quantity) || 1, sourceImportLineId: undefined });
-              }
-            }
-            return {
-              ...primary,
-              id: primary.id || `tab-${Date.now()}`,
-              idempotencyKey: sourceTabs.length === 1 && primary.idempotencyKey ? primary.idempotencyKey : crypto.randomUUID(),
-              title: 'Đặt hàng',
-              items: [...mergedItems.values()],
-              note: [...new Set(sourceTabs.map((tab) => String(tab.note || '').trim()).filter(Boolean))].join('\n'),
-              sourceImportBatchId: undefined,
-              ...(String(primary.deliveryAddress || '').trim() ? {} : defaultDelivery),
-            } as OrderTab;
-          }
-        }
-      }
-    } catch {}
-    return createDefaultTab(session);
-  });
-
-  useEffect(() => {
-    localStorage.setItem(storageKeyFor(session?.id || 'guest'), JSON.stringify([activeTab]));
-  }, [activeTab, session?.id]);
+  // Giỏ hàng chung của cả app (CartContext) và luồng gửi đơn dùng chung.
+  const {
+    tab: activeTab,
+    updateTab: updateActiveTab,
+    addProduct,
+    addUnlisted,
+    updateQty,
+    updateNote,
+    removeItem,
+  } = useCart();
+  const { submit, submitting, errorMessage, setErrorMessage, successOrder, clearSuccess, cutoffInfo } = useOrderSubmit();
 
   // 2. Search & Catalog state
   const [searchQuery, setSearchQuery] = useState('');
@@ -181,7 +114,6 @@ export default function ProductsPage() {
   const [catalogProducts, setCatalogProducts] = useState<Product[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   const [browseLimit, setBrowseLimit] = useState(40);
-  const [cutoffInfo, setCutoffInfo] = useState<{ earliestDate: string; cutoffTimeStr: string } | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [frequentItems, setFrequentItems] = useState<FrequentItem[]>([]);
@@ -198,16 +130,12 @@ export default function ProductsPage() {
 
   // Mobile Checkout Drawer & Success Modal state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successOrder, setSuccessOrder] = useState<{ code: string; total: number; pendingPriceCount: number } | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<any>(null);
   const searchAbortRef = useRef<AbortController | null>(null);
   const searchRequestRef = useRef(0);
   const catalogAbortRef = useRef<AbortController | null>(null);
-  const cutoffLoadedRef = useRef(false);
 
   // Lưu danh sách yêu thích
   useEffect(() => {
@@ -386,52 +314,13 @@ export default function ProductsPage() {
     return () => clearTimeout(searchTimeoutRef.current);
   }, [searchQuery, loadProducts, catalogProducts, productName]);
 
-  // Update tab helper
-  const updateActiveTab = useCallback(
-    (updater: (prev: OrderTab) => OrderTab) => {
-      setActiveTab(updater);
-    },
-    []
-  );
-
-  // Lấy ngày giao sớm nhất do server tính theo giờ Việt Nam. Không dùng giờ
-  // trên máy khách để quyết định vì đồng hồ thiết bị có thể sai hoặc bị đổi múi giờ.
-  useEffect(() => {
-    if (cutoffLoadedRef.current) return;
-    cutoffLoadedRef.current = true;
-    void api.orderConfig().then((info) => {
-      setCutoffInfo({ earliestDate: info.earliestDate, cutoffTimeStr: info.cutoffTimeStr });
-      updateActiveTab((tab) =>
-        tab.deliveryDate < info.earliestDate
-          ? { ...tab, deliveryDate: info.earliestDate }
-          : tab
-      );
-    }).catch(() => undefined);
-  }, [updateActiveTab]);
-
   // Thao tác Thêm / Sửa số lượng / Ghi chú dòng
   const handleAddProduct = (
     product: Product,
     quantityToAdd: number = 1,
     options?: { resetSearch?: boolean; keepFocus?: boolean }
   ) => {
-    const qty = Math.max(0.1, Number(quantityToAdd) || 1);
-    updateActiveTab((tab) => {
-      const existingIdx = tab.items.findIndex((item) => item.product.id === product.id && !item.note?.trim());
-      if (existingIdx >= 0) {
-        const updated = [...tab.items];
-        updated[existingIdx] = {
-          ...updated[existingIdx],
-          quantity: Number((updated[existingIdx].quantity + qty).toFixed(2)),
-        };
-        return { ...tab, items: updated };
-      } else {
-        return {
-          ...tab,
-          items: [...tab.items, { product, quantity: qty }],
-        };
-      }
-    });
+    addProduct(product, Math.max(0.1, Number(quantityToAdd) || 1));
 
     if (options?.resetSearch) { setSearchQuery(''); setSearchInput(''); }
     if (options?.keepFocus) {
@@ -439,43 +328,10 @@ export default function ProductsPage() {
     }
   };
 
-  const handleAddUnlisted = (product: Product, quantity: number, note: string) => {
-    updateActiveTab((tab) => ({
-      ...tab,
-      items: [...tab.items, { product, quantity, note: note || undefined }],
-      sourceImportBatchId: tab.items.some((item) => item.sourceImportLineId) ? tab.sourceImportBatchId : undefined,
-    }));
-  };
-
-  const handleUpdateQty = (lineKey: string, newQty: number) => {
-    const qty = Number(newQty);
-    if (qty <= 0) {
-      handleRemoveItem(lineKey);
-      return;
-    }
-    updateActiveTab((tab) => ({
-      ...tab,
-      items: tab.items.map((item) =>
-        (item.lineKey || item.product.id) === lineKey ? { ...item, quantity: qty } : item
-      ),
-    }));
-  };
-
-  const handleUpdateItemNote = (lineKey: string, note: string) => {
-    updateActiveTab((tab) => ({
-      ...tab,
-      items: tab.items.map((item) =>
-        (item.lineKey || item.product.id) === lineKey ? { ...item, note } : item
-      ),
-    }));
-  };
-
-  const handleRemoveItem = (lineKey: string) => {
-    updateActiveTab((tab) => {
-      const items = tab.items.filter((item) => (item.lineKey || item.product.id) !== lineKey);
-      return { ...tab, items, sourceImportBatchId: items.some((item) => item.sourceImportLineId) ? tab.sourceImportBatchId : undefined };
-    });
-  };
+  const handleAddUnlisted = addUnlisted;
+  const handleUpdateQty = updateQty;
+  const handleUpdateItemNote = updateNote;
+  const handleRemoveItem = removeItem;
 
   // Nhận yêu cầu "Đặt lại" từ lịch sử đơn sau khi catalog đã sẵn sàng.
   useEffect(() => {
@@ -585,80 +441,8 @@ export default function ProductsPage() {
     }
   };
 
-  // Gửi đơn đặt hàng (Submit Order)
   const handleSubmitOrder = async () => {
-    setErrorMessage('');
-    if (!navigator.onLine) { setErrorMessage(t('Không có kết nối mạng. Giỏ hàng của bạn đã được lưu.')); return; }
-    if (activeTab.items.length === 0) {
-      setErrorMessage(t('Vui lòng thêm ít nhất 1 mặt hàng vào đơn'));
-      return;
-    }
-    if (cutoffInfo && activeTab.deliveryDate < cutoffInfo.earliestDate) {
-      setErrorMessage(t('Đã quá giờ chốt đơn. Vui lòng chọn ngày giao mới.'));
-      updateActiveTab(tab => ({ ...tab, deliveryDate: cutoffInfo.earliestDate }));
-      return;
-    }
-    if (
-      !activeTab.deliveryName.trim() ||
-      !activeTab.deliveryPhone.trim() ||
-      !activeTab.deliveryAddress.trim()
-    ) {
-      setErrorMessage(t('Vui lòng điền đầy đủ Tên, SĐT và Địa chỉ giao hàng'));
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const lineNotesFormatted = activeTab.items
-        .filter((it) => it.note?.trim())
-        .map((it) => `[${it.product.name}: ${it.note!.trim()}]`)
-        .join('; ');
-
-      const fullNote = [
-        activeTab.deliveryShift ? `[Ca: ${activeTab.deliveryShift}]` : '',
-        activeTab.deliveryDate ? `[Ngày giao: ${activeTab.deliveryDate}]` : '',
-        lineNotesFormatted,
-        activeTab.note.trim(),
-      ]
-        .filter(Boolean)
-        .join(' - ');
-
-      const res = await api.createOrder({
-        items: activeTab.items.map((it) => ({
-          productId: it.product.id,
-          name: it.product.name,
-          quantity: it.quantity,
-          note: it.note?.trim() || undefined,
-          sourceImportLineId: it.sourceImportLineId,
-          isUnlisted: it.product.isUnlisted,
-          unit: it.product.isUnlisted ? it.product.unit : undefined,
-        })),
-        deliveryName: activeTab.deliveryName.trim(),
-        deliveryPhone: activeTab.deliveryPhone.trim(),
-        deliveryAddress: activeTab.deliveryAddress.trim(),
-        deliveryDate: activeTab.deliveryDate,
-        note: fullNote,
-        idempotencyKey: activeTab.idempotencyKey,
-        sourceImportBatchId: activeTab.sourceImportBatchId,
-      });
-
-      const subtotal = activeTab.items.reduce(
-        (sum, item) => sum + item.quantity * (item.product.price || 0),
-        0
-      );
-
-      setSuccessOrder({ code: res.orderCode, total: res.total ?? subtotal, pendingPriceCount: res.pendingPriceCount || 0 });
-      setIsDrawerOpen(false);
-
-      // Reset giỏ của tab vừa gửi
-      updateActiveTab((t) => ({ ...t, items: [], note: '', idempotencyKey: crypto.randomUUID(), sourceImportBatchId: undefined }));
-    } catch (err) {
-      setErrorMessage(
-        err instanceof ApiError ? errorText(err) : t('Không gửi được đơn hàng, vui lòng thử lại')
-      );
-    } finally {
-      setSubmitting(false);
-    }
+    if (await submit()) setIsDrawerOpen(false);
   };
 
   return (
@@ -761,7 +545,7 @@ export default function ProductsPage() {
       <OrderSuccessModal
         order={successOrder}
         pendingVerification={session?.verificationStatus === 'pending'}
-        onClose={() => setSuccessOrder(null)}
+        onClose={clearSuccess}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { safeReturnTo, withReturnTo } from '../lib/returnTo';
 import { ArrowRight, Eye, EyeOff, HelpCircle, LockKeyhole, PhoneCall, UserRound, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { LanguageSwitcher, useLanguage } from '../contexts/LanguageContext';
@@ -18,6 +19,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const { t, errorText } = useLanguage();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const returnTo = safeReturnTo(params.get('quay-lai'));
 
   useEffect(() => {
     if (rememberCode && code.trim()) localStorage.setItem(REMEMBER_KEY, code.trim());
@@ -35,7 +38,7 @@ export default function LoginPage() {
       if (rememberCode) localStorage.setItem(REMEMBER_KEY, cleanCode);
       else localStorage.removeItem(REMEMBER_KEY);
       const session = await login(cleanCode, password);
-      navigate(session.mustChangePassword ? '/doi-mat-khau' : '/');
+      navigate(session.mustChangePassword ? '/doi-mat-khau' : returnTo, { replace: true });
     } catch (cause) {
       setError(errorText(cause instanceof ApiError ? cause : { message: 'Có lỗi xảy ra, vui lòng thử lại sau.' }));
     } finally { setLoading(false); }
@@ -115,7 +118,10 @@ export default function LoginPage() {
 
           <p className="mt-4 text-center text-[13px] text-[#6c7d71]">
             {t('Chưa có tài khoản?')}{' '}
-            <Link to="/dang-ky" className="font-bold text-[#087d57] underline-offset-2 hover:underline">{t('Đăng ký tài khoản')}</Link>
+            <Link to={withReturnTo('/dang-ky', returnTo)} className="font-bold text-[#087d57] underline-offset-2 hover:underline">{t('Đăng ký tài khoản')}</Link>
+          </p>
+          <p className="mt-2 text-center text-[13px]">
+            <Link to="/" className="font-semibold text-[#536d5c] underline-offset-2 hover:underline">{t('Xem cửa hàng không cần đăng nhập')}</Link>
           </p>
           <button type="button" onClick={() => setShowHelp(true)} className="tps1-login-support mx-auto mt-5 flex min-h-8 items-center justify-center gap-1.5 text-[13px] font-medium text-[#536d5c]">
             <HelpCircle size={16} /> {t('Hỗ trợ khách hàng')}

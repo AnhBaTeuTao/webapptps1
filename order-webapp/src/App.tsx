@@ -5,13 +5,16 @@ import { App as NativeApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
-import CustomerLayout from './layouts/CustomerLayout';
+import StoreLayout from './layouts/StoreLayout';
 import LoginPage from './pages/LoginPage';
-import ProductsPage from './pages/ProductsPage';
 import RegisterPage from './pages/RegisterPage';
+import StoreHomePage from './pages/StoreHomePage';
 import { LanguageProvider } from './contexts/LanguageContext';
 
 const ChangePasswordPage = lazy(() => import('./pages/ChangePasswordPage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ProductListingPage = lazy(() => import('./pages/ProductListingPage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage'));
 const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
@@ -30,20 +33,27 @@ const LoadingScreen = () => (
   </div>
 );
 
-// Toàn bộ app này CHỈ dành cho khách hàng — không có khái niệm nhân viên
-// hay route nội bộ nào để bảo vệ, nên không cần StaffOnlyRoute/CustomerOnlyRoute
-// như sale-webapp. Route guard duy nhất cần là "đã đăng nhập chưa" và "có bị
-// bắt buộc đổi mật khẩu không".
+// App chỉ dành cho khách hàng. Cửa hàng (trang chủ, danh mục, sản phẩm, giỏ
+// hàng) mở cho khách chưa đăng nhập; đặt nhanh, đơn hàng, tài khoản bắt đăng
+// nhập và đưa khách quay lại đúng trang sau khi đăng nhập (?quay-lai=).
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading } = useAuth();
   const location = useLocation();
   if (loading) return <LoadingScreen />;
-  if (!session) return <Navigate to="/dang-nhap" />;
+  if (!session) return <Navigate to={`/dang-nhap?quay-lai=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   // Mật khẩu do sale cấp lần đầu bắt buộc phải đổi trước khi làm gì khác —
   // chặn cứng ở đây, không chỉ ẩn/hiện nút trên giao diện.
   if (session.mustChangePassword && location.pathname !== '/doi-mat-khau') {
     return <Navigate to="/doi-mat-khau" replace />;
   }
+  return <>{children}</>;
+};
+
+// Trang công khai: khách đã đăng nhập bằng mật khẩu tạm do sale cấp vẫn
+// phải đổi mật khẩu trước, giống các trang bắt đăng nhập.
+const PasswordGate = ({ children }: { children: React.ReactNode }) => {
+  const { session } = useAuth();
+  if (session?.mustChangePassword) return <Navigate to="/doi-mat-khau" replace />;
   return <>{children}</>;
 };
 
@@ -73,21 +83,21 @@ function App() {
           <Suspense fallback={<LoadingScreen />}><Routes>
             <Route path="/dang-nhap" element={<LoginPage />} />
             <Route path="/dang-ky" element={<RegisterPage />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <CustomerLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<ProductsPage />} />
-              <Route path="gio-hang" element={<CartPage />} />
-              <Route path="dat-hang/excel" element={<ExcelOrderPage />} />
-              <Route path="don-hang" element={<OrdersPage />} />
-              <Route path="don-hang/:id" element={<OrderDetailPage />} />
-              <Route path="tai-khoan" element={<AccountPage />} />
-              <Route path="doi-mat-khau" element={<ChangePasswordPage />} />
+            <Route path="/" element={<StoreLayout />}>
+              {/* Công khai */}
+              <Route index element={<PasswordGate><StoreHomePage /></PasswordGate>} />
+              <Route path="danh-muc" element={<PasswordGate><ProductListingPage mode="categories" /></PasswordGate>} />
+              <Route path="danh-muc/:slug" element={<PasswordGate><ProductListingPage mode="category" /></PasswordGate>} />
+              <Route path="tim-kiem" element={<PasswordGate><ProductListingPage mode="search" /></PasswordGate>} />
+              <Route path="san-pham/:id" element={<PasswordGate><ProductDetailPage /></PasswordGate>} />
+              <Route path="gio-hang" element={<PasswordGate><CartPage /></PasswordGate>} />
+              {/* Bắt đăng nhập */}
+              <Route path="dat-hang" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
+              <Route path="dat-hang/excel" element={<ProtectedRoute><ExcelOrderPage /></ProtectedRoute>} />
+              <Route path="don-hang" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+              <Route path="don-hang/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+              <Route path="tai-khoan" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
+              <Route path="doi-mat-khau" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes></Suspense>

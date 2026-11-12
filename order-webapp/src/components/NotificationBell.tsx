@@ -5,7 +5,7 @@ import { disablePush, enablePush, getPushStatus, isPushSupported } from '../lib/
 // Nút bật/tắt thông báo đẩy — chủ động để khách bấm thay vì tự động xin quyền
 // lúc mở app (trình duyệt/iOS chặn prompt tự động và tỉ lệ khách bấm "Cho
 // phép" thấp hơn nhiều nếu không giải thích trước lý do).
-export default function NotificationBell() {
+export default function NotificationBell({ light = false }: { light?: boolean }) {
   const [status, setStatus] = useState<'unsupported' | 'denied' | 'subscribed' | 'not-subscribed' | 'loading'>(
     'loading'
   );
@@ -46,7 +46,7 @@ export default function NotificationBell() {
       disabled={status === 'denied'}
       title={title}
       className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
-        status === 'subscribed' ? 'bg-[#e0742f]/90 text-white' : 'bg-white/15 text-white/90 hover:bg-white/25'
+        status === 'subscribed' ? 'bg-[#e0742f]/90 text-white' : light ? 'bg-[#eaf6ef] text-[#0f7a4f] hover:bg-[#dcefe4]' : 'bg-white/15 text-white/90 hover:bg-white/25'
       } disabled:opacity-40 disabled:cursor-not-allowed`}
     >
       <Icon size={17} />

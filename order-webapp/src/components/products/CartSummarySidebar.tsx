@@ -35,6 +35,12 @@ interface CartSummarySidebarProps {
   errorMessage: string;
   earliestDate?: string;
   cutoffTimeStr?: string;
+  /** Khách chưa đăng nhập: ẩn thông tin nhận hàng, nút chính chuyển sang đăng nhập. */
+  guest?: boolean;
+  /** false khi đặt trong trang giỏ hàng (không cần dính khi cuộn). */
+  sticky?: boolean;
+  /** false khi trang đã hiện danh sách hàng riêng (trang Giỏ hàng). */
+  showItems?: boolean;
 }
 
 export default function CartSummarySidebar({
@@ -49,6 +55,9 @@ export default function CartSummarySidebar({
   errorMessage,
   earliestDate,
   cutoffTimeStr,
+  guest = false,
+  sticky = true,
+  showItems = true,
 }: CartSummarySidebarProps) {
   const { t, productName, productUnit } = useLanguage();
   const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(true);
@@ -62,7 +71,7 @@ export default function CartSummarySidebar({
   );
 
   return (
-    <aside className="space-y-3 sticky top-[136px] z-20">
+    <aside className={`space-y-3 ${sticky ? 'sticky top-[136px] z-20' : ''}`}>
       <div className="bg-white rounded-2xl border border-[#17231d]/10 shadow-sm overflow-hidden flex flex-col">
         {/* Header: Tab title & Item Count */}
         <div className="p-3.5 sm:p-4 border-b border-[#17231d]/10 bg-gradient-to-r from-[#0b4f34]/5 to-transparent flex items-center justify-between">
@@ -86,7 +95,7 @@ export default function CartSummarySidebar({
         </div>
 
         {/* Danh sách các món trong đơn (scrollable) */}
-        <div className="divide-y divide-[#17231d]/5 max-h-[300px] overflow-y-auto p-2 space-y-1">
+        {showItems && <div className="divide-y divide-[#17231d]/5 max-h-[300px] overflow-y-auto p-2 space-y-1">
           {activeTab.items.length === 0 ? (
             <div className="py-8 text-center text-[#59665f] space-y-1">
               <p className="text-xs font-semibold text-[#17231d]">{t('Đơn hàng này chưa có món')}</p>
@@ -184,9 +193,9 @@ export default function CartSummarySidebar({
               );
             })
           )}
-        </div>
+        </div>}
 
-        <div className="border-t border-[#17231d]/10 p-2.5"><UnlistedItemEntry onAdd={onAddUnlisted}/></div>
+        {showItems && <div className="border-t border-[#17231d]/10 p-2.5"><UnlistedItemEntry onAdd={onAddUnlisted}/></div>}
 
         {/* Ghi chú chung cho toàn bộ đơn hàng */}
         <div className="p-3 border-t border-[#17231d]/10 bg-[#fbfcfb]">
@@ -200,7 +209,7 @@ export default function CartSummarySidebar({
         </div>
 
         {/* Thông tin giao nhận (Collapsible) */}
-        <div className="border-t border-[#17231d]/10">
+        {!guest && <div className="border-t border-[#17231d]/10">
           <button
             type="button"
             onClick={() => setIsDeliveryExpanded(!isDeliveryExpanded)}
@@ -326,7 +335,7 @@ export default function CartSummarySidebar({
               )}
             </div>
           )}
-        </div>
+        </div>}
 
         {/* Tổng tiền & Báo lỗi & Nút Đặt hàng */}
         <div className="p-3.5 sm:p-4 bg-[#fbfcfb] border-t border-[#17231d]/10 space-y-3">
@@ -343,9 +352,11 @@ export default function CartSummarySidebar({
             </div>
             <p className="text-[10px] text-[#59665f] flex items-center gap-1 leading-tight pt-1">
               <Info size={12} className="text-[#e0742f] shrink-0" />
-              <span>{t('Giá hiển thị theo bảng giá hiện tại. TPS1 sẽ xác nhận lại các mặt hàng cần báo giá hoặc có điều chỉnh.')}</span>
+              <span>{guest
+                ? t('Đây là giá tham khảo. Sau khi đăng nhập, giỏ hàng tự cập nhật theo giá hợp đồng của quý khách.')
+                : t('Giá hiển thị theo bảng giá hiện tại. TPS1 sẽ xác nhận lại các mặt hàng cần báo giá hoặc có điều chỉnh.')}</span>
             </p>
-            {earliestDate && <p className="text-xs text-[#59665f]">{t('Ngày giao sớm nhất')}: {earliestDate}{cutoffTimeStr ? ` · ${t('Giờ chốt đơn')}: ${cutoffTimeStr}` : ''}</p>}
+            {!guest && earliestDate && <p className="text-xs text-[#59665f]">{t('Ngày giao sớm nhất')}: {earliestDate}{cutoffTimeStr ? ` · ${t('Giờ chốt đơn')}: ${cutoffTimeStr}` : ''}</p>}
             {pendingPriceCount > 0 && <p className="text-xs font-semibold text-amber-800 rounded-xl bg-amber-50 p-2">{t('Tạm tính chưa gồm hàng chờ giá')} ({pendingPriceCount}). {t('Sale sẽ nhập giá hoặc bỏ mặt hàng không có hàng trước khi xác nhận đơn.')}</p>}
           </div>
 
@@ -369,7 +380,7 @@ export default function CartSummarySidebar({
               </>
             ) : (
               <>
-                <span>{t('Xác nhận đặt hàng')}</span>
+                <span>{guest ? t('Đăng nhập để đặt hàng') : t('Xác nhận đặt hàng')}</span>
                 <ArrowRight size={16} />
               </>
             )}

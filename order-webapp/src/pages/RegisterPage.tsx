@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { safeReturnTo, withReturnTo } from '../lib/returnTo';
 import { api, ApiError } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { LanguageSwitcher, useLanguage } from '../contexts/LanguageContext';
@@ -8,6 +9,8 @@ export default function RegisterPage() {
   const { login } = useAuth();
   const { t, errorText } = useLanguage();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const returnTo = safeReturnTo(params.get('quay-lai'));
   const [form, setForm] = useState({ name: '', company: '', phone: '', username: '', email: '', password: '', confirmPassword: '' });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -25,7 +28,7 @@ export default function RegisterPage() {
       const { account } = await api.register(form);
       setRegisteredCode(account.code);
       await login(form.username, form.password);
-      navigate('/', { replace: true });
+      navigate(returnTo, { replace: true });
     } catch (cause) {
       setError(errorText(cause instanceof ApiError ? cause : { message: 'Có lỗi xảy ra, vui lòng thử lại sau.' }));
     } finally { setBusy(false); }
@@ -53,7 +56,8 @@ export default function RegisterPage() {
           {error && <p role="alert" className="rounded-xl bg-rose-50 p-3 text-sm text-rose-700">{error}</p>}
           <button disabled={busy} className="w-full min-h-12 rounded-xl bg-[#0f7a4f] px-4 font-bold text-white disabled:opacity-60">{busy ? t('Đang xử lý...') : t('Tạo tài khoản')}</button>
         </form>
-        <Link to="/dang-nhap" className="mt-5 block text-center text-sm font-semibold text-[#0b4f34]">{t('Đã có tài khoản? Đăng nhập')}</Link>
+        <Link to={withReturnTo('/dang-nhap', returnTo)} className="mt-5 block text-center text-sm font-semibold text-[#0b4f34]">{t('Đã có tài khoản? Đăng nhập')}</Link>
+        <Link to="/" className="mt-3 block text-center text-sm text-[#59665f] hover:text-[#0b4f34]">{t('Xem cửa hàng không cần đăng nhập')}</Link>
       </div>
     </div>
   </main>;

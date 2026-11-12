@@ -120,16 +120,27 @@ export const api = {
   setDefaultAddress: (id:string) => request<{ok:true}>('/api/customer/addresses',{method:'PATCH',body:{id,isDefault:true}}),
   deleteAddress: (id:string) => request<{ok:true}>(`/api/customer/addresses?id=${encodeURIComponent(id)}`,{method:'DELETE'}),
 
-  products: (params: { search?: string; category?: string; page?: number } = {}, signal?: AbortSignal) => {
+  products: (params: { search?: string; category?: string; categories?: string[]; page?: number } = {}, signal?: AbortSignal) => {
     const qs = new URLSearchParams();
     if (params.search) qs.set('search', params.search);
     if (params.category) qs.set('category', params.category);
+    if (params.categories?.length) qs.set('categories', params.categories.join('|'));
     qs.set('page', String(params.page || 0));
     return request<{ ok: true; total: number; page: number; pageSize: number; products: Product[] }>(
       `/api/customer/products?${qs}`,
       { signal }
     );
   },
+  /** Tối đa 24 mã/lần (đúng cỡ trang của API) — dùng để tính lại giá giỏ hàng sau khi đăng nhập. */
+  productsByIds: (ids: string[]) =>
+    request<{ ok: true; products: Product[] }>(`/api/customer/products?ids=${encodeURIComponent(ids.slice(0, 24).join(','))}`),
+  productDetail: (id: string) =>
+    request<{ ok: true; products: Product[]; detail?: ProductDetailExtra }>(
+      `/api/customer/products?id=${encodeURIComponent(id)}&detail=1`
+    ),
+  storeHome: (signal?: AbortSignal) => request<StoreHome>('/api/store/home', { signal }),
+  storeRecommendations: (signal?: AbortSignal) =>
+    request<{ ok: true; basis: 'personal' | 'best_sellers'; priceMode: PriceMode; products: Product[] }>('/api/store/recommendations', { signal }),
   productCategories: () =>
     request<{ ok: true; categories: string[] }>('/api/customer/products?meta=1'),
   productCatalog: (signal?: AbortSignal) =>
@@ -219,6 +230,48 @@ export interface Product {
   enforceOrderStep?: boolean | null;
   packagingNote?: string | null;
   quantityPrecision?: number | null;
+  shortDescription?: string | null;
+}
+
+export type PriceMode = 'customer' | 'reference';
+
+export interface StoreCategory {
+  slug: string;
+  name: string;
+  imageUrl: string | null;
+  productCategories: string[];
+}
+
+export interface StoreBanner {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  imageUrl: string;
+  imageMobileUrl: string;
+  linkUrl: string | null;
+}
+
+export interface StoreCollection {
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  source: 'manual' | 'best_sellers' | 'new_arrivals';
+  products: Product[];
+}
+
+export interface StoreHome {
+  ok: true;
+  priceMode: PriceMode;
+  categories: StoreCategory[];
+  banners: StoreBanner[];
+  collections: StoreCollection[];
+}
+
+export interface ProductDetailExtra {
+  description: string | null;
+  origin: string | null;
+  imageUrlLarge: string | null;
+  related: Product[];
 }
 
 export type ProductCatalogTuple = [
