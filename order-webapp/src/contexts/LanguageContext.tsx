@@ -487,6 +487,10 @@ const translations: Record<string, [string, string]> = {
   'Đồ khô': ['Dry goods', '干货'],
   'Thực phẩm chay': ['Vegetarian', '素食'],
   'Dụng cụ bếp': ['Kitchen tools', '厨房用具'],
+  // ── Cửa hàng online ──
+  'Có sẵn danh sách hàng trong file Excel?': ['Already have your order list in Excel?', '已有 Excel 订货清单？'],
+  'Tải file lên, hệ thống tự khớp mặt hàng và đưa vào giỏ cho quý khách.': ['Upload the file and we will match the items and add them to your cart.', '上传文件，系统会自动匹配商品并加入购物车。'],
+  'Thêm hàng từ file Excel': ['Add items from an Excel file', '从 Excel 文件添加商品'],
 };
 
 const errorTranslations: Record<string, string> = {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BadgeCheck, FileSpreadsheet, Flame, Heart, RotateCcw, ShieldCheck, Sparkles, Truck, Zap } from 'lucide-react';
+import { ArrowRight, BadgeCheck, ClipboardList, FileSpreadsheet, Flame, Heart, RotateCcw, ShieldCheck, Sparkles, Truck, Zap } from 'lucide-react';
 import { api, type FrequentItem, type Product } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -100,6 +100,7 @@ export default function StoreHomePage() {
                 <p className="mt-2 text-sm text-[#59665f]">{t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}</p>
               </div>
               <div className="mt-4 grid gap-2">
+                <Link to="/dat-hang/excel" className="flex items-center gap-1.5 text-xs font-bold text-[#0f7a4f] hover:underline"><FileSpreadsheet size={14} /> {t('Đặt hàng từ file Excel')}</Link>
                 <Link to="/dang-ky" className="flex h-11 items-center justify-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white hover:bg-[#c4601f]">{t('Đăng ký tài khoản')}</Link>
                 <Link to="/dang-nhap" className="flex h-11 items-center justify-center rounded-xl border border-[#17231d]/12 bg-white px-4 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]">{t('Đăng nhập')}</Link>
               </div>
@@ -107,6 +108,30 @@ export default function StoreHomePage() {
           )}
         </aside>
       </div>
+
+      {/* Lối tắt trên điện thoại/tablet (máy tính đã có khung bên cạnh banner và thanh menu). */}
+      {session ? (
+        <div className="grid grid-cols-3 gap-2 lg:hidden">
+          {[
+            { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh' },
+            { to: '/dat-hang/excel', icon: FileSpreadsheet, label: 'Đặt từ Excel' },
+            { to: '/don-hang', icon: ClipboardList, label: 'Đơn hàng' },
+          ].map(({ to, icon: Icon, label }) => (
+            <Link key={to} to={to} className="flex flex-col items-center gap-1.5 rounded-2xl bg-white px-2 py-3 text-center text-[12.5px] font-bold text-[#0b4f34] ring-1 ring-[#17231d]/6 active:scale-[0.98]">
+              <span className="flex size-10 items-center justify-center rounded-xl bg-[#eaf6ef] text-[#0f7a4f]"><Icon size={20} /></span>
+              {t(label)}
+            </Link>
+          ))}
+        </div>
+      ) : null}
+      <Link to="/dat-hang/excel" className={`items-center gap-3 rounded-2xl bg-white p-3.5 ring-1 ring-[#0f7a4f]/15 active:scale-[0.99] ${session ? 'hidden' : 'flex lg:hidden'}`}>
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#eaf6ef] text-[#0f7a4f]"><FileSpreadsheet size={22} /></span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-bold text-[#17231d]">{t('Có sẵn danh sách hàng trong file Excel?')}</span>
+          <span className="block text-xs text-[#59665f]">{t('Tải file lên, hệ thống tự khớp mặt hàng và đưa vào giỏ cho quý khách.')}</span>
+        </span>
+        <ArrowRight size={18} className="shrink-0 text-[#0f7a4f]" />
+      </Link>
 
       <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
         {TRUST.map(({ icon: Icon, title, text }) => (

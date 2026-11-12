@@ -133,9 +133,12 @@ export default function StoreLayout() {
             ))}
             <span className="ml-auto" />
             {session && (
+              <NavLink to="/dat-hang" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-bold ${isActive ? 'text-[#0f7a4f]' : 'text-[#c4601f] hover:text-[#0f7a4f]'}`}><Zap size={15} /> {t('Đặt nhanh')}</NavLink>
+            )}
+            {/* Đặt từ Excel hiện cả khi chưa đăng nhập: bấm vào sẽ mời đăng nhập rồi quay lại đúng trang. */}
+            <NavLink to="/dat-hang/excel" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-bold ring-1 ${isActive ? 'bg-[#0f7a4f] text-white ring-[#0f7a4f]' : 'bg-white text-[#0b4f34] ring-[#0f7a4f]/25 hover:bg-[#eaf6ef]'}`}><FileSpreadsheet size={15} /> {t('Đặt từ Excel')}</NavLink>
+            {session && (
               <>
-                <NavLink to="/dat-hang" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-bold ${isActive ? 'text-[#0f7a4f]' : 'text-[#c4601f] hover:text-[#0f7a4f]'}`}><Zap size={15} /> {t('Đặt nhanh')}</NavLink>
-                <NavLink to="/dat-hang/excel" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold ${isActive ? 'text-[#0f7a4f]' : 'text-[#2c3a33] hover:text-[#0f7a4f]'}`}><FileSpreadsheet size={15} /> {t('Đặt từ Excel')}</NavLink>
                 <NavLink to="/don-hang" className={({ isActive }) => `flex h-9 shrink-0 items-center gap-1.5 rounded-lg px-3 text-[13px] font-semibold ${isActive ? 'text-[#0f7a4f]' : 'text-[#2c3a33] hover:text-[#0f7a4f]'}`}><ClipboardList size={15} /> {t('Đơn hàng')}</NavLink>
               </>
             )}
