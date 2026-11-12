@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { api, ApiError, clearToken, getToken, setToken, type CustomerSession } from '../lib/api';
+import { DEMO_CUSTOMER_SESSION, IS_DEMO_MODE } from '../lib/demoMock';
 
 const SESSION_CACHE = 'tps1_customer_session_snapshot';
 
@@ -34,6 +35,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   const refresh = async () => {
+    if (IS_DEMO_MODE) {
+      if (DEMO_CUSTOMER_SESSION.orderSessionToken) {
+        setToken(DEMO_CUSTOMER_SESSION.orderSessionToken);
+      }
+      setSessionState(DEMO_CUSTOMER_SESSION);
+      localStorage.setItem(SESSION_CACHE, JSON.stringify(DEMO_CUSTOMER_SESSION));
+      setLoading(false);
+      return;
+    }
     const token = getToken();
     if (!token) {
       setSessionState(null);

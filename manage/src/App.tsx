@@ -2,6 +2,7 @@ import { lazy, Suspense, type ComponentType } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { can } from './lib/permissions';
+import { IS_DEMO_MODE } from './lib/demoMock';
 import SaleLayout from './layouts/SaleLayout';
 import LoginPage from './pages/LoginPage';
 const CHUNK_RELOAD_KEY = 'tps1_manage_chunk_reload';
@@ -70,6 +71,13 @@ const StaffOnlyRoute = ({ children, perm }: { children: React.ReactNode; perm?: 
   return <>{children}</>;
 };
 
+function LoginRoute() {
+  const { user, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
+  if (IS_DEMO_MODE && user) return <Navigate to="/" replace />;
+  return <LoginPage />;
+}
+
 // Giai đoạn E: khách hàng vào "/" giờ thấy trang Đặt hàng (tự lên đơn) thay
 // vì chỉ xem lại đơn cũ như trước — "Đơn hàng của tôi" chuyển thành mục
 // riêng /don-hang-cua-toi.
@@ -94,7 +102,7 @@ function App() {
       <Router>
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
-          <Route path="/dang-nhap" element={<LoginPage />} />
+          <Route path="/dang-nhap" element={<LoginRoute />} />
           <Route path="/" element={<ProtectedRoute><SaleLayout /></ProtectedRoute>}>
             <Route index element={<HomeRoute />} />
             <Route path="don-hang" element={<StaffOnlyRoute perm="orders.view"><OrdersPage /></StaffOnlyRoute>} />

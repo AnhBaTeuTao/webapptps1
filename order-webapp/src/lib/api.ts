@@ -1,3 +1,5 @@
+import { handleOrderDemoRequest, IS_DEMO_MODE } from './demoMock';
+
 // Client gọi API /api/customer/** trên web chính (thucphamsomot.vn). App này
 // (dat-hang.thucphamsomot.vn) là origin KHÁC hoàn toàn — không dùng cookie
 // (httpOnly cookie của web chính không đọc/gửi được từ origin khác), mà dùng
@@ -38,6 +40,10 @@ async function request<T = any>(
   path: string,
   opts: { method?: string; body?: unknown; auth?: boolean; formData?: FormData; signal?: AbortSignal } = {}
 ): Promise<T> {
+  if (IS_DEMO_MODE) {
+    const mocked = handleOrderDemoRequest<T>(path, opts);
+    if (mocked !== null) return mocked;
+  }
   const { method = 'GET', body, auth = true, formData, signal } = opts;
   const headers: Record<string, string> = {};
   if (!formData) headers['Content-Type'] = 'application/json';

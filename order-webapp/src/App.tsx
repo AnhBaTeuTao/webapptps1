@@ -10,6 +10,7 @@ import LoginPage from './pages/LoginPage';
 import ProductsPage from './pages/ProductsPage';
 import RegisterPage from './pages/RegisterPage';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { IS_DEMO_MODE } from './lib/demoMock';
 
 const ChangePasswordPage = lazy(() => import('./pages/ChangePasswordPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
@@ -47,6 +48,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+function LoginRoute() {
+  const { session, loading } = useAuth();
+  if (loading) return <LoadingScreen />;
+  if (IS_DEMO_MODE && session) return <Navigate to="/" replace />;
+  return <LoginPage />;
+}
+
 function NativeBackButton() {
   const location = useLocation();
   useEffect(() => {
@@ -71,7 +79,7 @@ function App() {
         <Router>
           <NativeBackButton />
           <Suspense fallback={<LoadingScreen />}><Routes>
-            <Route path="/dang-nhap" element={<LoginPage />} />
+            <Route path="/dang-nhap" element={<LoginRoute />} />
             <Route path="/dang-ky" element={<RegisterPage />} />
             <Route
               path="/"

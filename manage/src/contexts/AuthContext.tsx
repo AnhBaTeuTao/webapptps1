@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { DEMO_STAFF_USER, IS_DEMO_MODE } from '../lib/demoMock';
 
 export interface User {
   id: string;
@@ -77,6 +78,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let mounted = true;
 
     const restore = async () => {
+      if (IS_DEMO_MODE) {
+        if (mounted) {
+          setUser(DEMO_STAFF_USER);
+          setToken('demo-staff-token');
+          setLoading(false);
+        }
+        return;
+      }
       try {
         const sessionPromise = supabase.auth.getSession();
         const timeoutPromise = new Promise<{ data: { session: any } }>((_, reject) =>
