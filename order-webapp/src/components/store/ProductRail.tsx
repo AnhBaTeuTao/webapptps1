@@ -29,14 +29,14 @@ export default function ProductRail({
   };
 
   return (
-    <section className="rounded-3xl bg-white p-4 shadow-[0_1px_2px_rgba(16,40,30,0.04)] ring-1 ring-[#17231d]/6 sm:p-5">
-      <div className="mb-3 flex items-end justify-between gap-3">
+    <section className="rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6 sm:p-4">
+      <div className="mb-2.5 flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="flex items-center gap-2 text-lg font-black text-[#17231d] sm:text-xl">
+          <h2 className="flex items-center gap-1.5 text-base font-black text-[#17231d] sm:text-lg">
             {icon}
             <span className="truncate">{t(title)}</span>
           </h2>
-          {subtitle && <p className="mt-0.5 line-clamp-1 text-xs text-[#59665f] sm:text-sm">{t(subtitle)}</p>}
+          {subtitle && <p className="line-clamp-1 hidden text-xs text-[#59665f] sm:block">{t(subtitle)}</p>}
         </div>
         <div className="flex shrink-0 items-center gap-2">
           {moreTo && (
@@ -54,9 +54,9 @@ export default function ProductRail({
           </div>
         </div>
       </div>
-      <div ref={scroller} className="no-scrollbar -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-1">
+      <div ref={scroller} className="no-scrollbar -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-1 sm:gap-2.5">
         {products.map((product) => (
-          <div key={product.id} className="w-[46%] shrink-0 snap-start sm:w-[31%] md:w-[23%] lg:w-[18.6%] xl:w-[15.8%]">
+          <div key={product.id} className="w-[36%] shrink-0 snap-start sm:w-[23%] md:w-[18.5%] lg:w-[15.5%] xl:w-[13.4%]">
             <StoreProductCard product={product} />
           </div>
         ))}

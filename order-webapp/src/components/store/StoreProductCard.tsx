@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Minus, PackageOpen, Plus, ShoppingCart } from 'lucide-react';
 import type { Product } from '../../lib/api';
@@ -101,6 +101,7 @@ export function FavoriteButton({ productId, className = '' }: { productId: strin
 
 export function ProductImage({ product, className = '' }: { product: Product; className?: string }) {
   const [failed, setFailed] = useState(false);
+  const { t } = useLanguage();
   const src = productImage(product);
   return (
     <div className={`relative flex items-center justify-center overflow-hidden bg-[#f3f6f2] ${className}`}>
@@ -109,33 +110,85 @@ export function ProductImage({ product, className = '' }: { product: Product; cl
       ) : (
         <PackageOpen size={36} strokeWidth={1.5} className="text-[#59665f]/35" />
       )}
+      {src && !failed && product.imageIsIllustration && (
+        <span className="pointer-events-none absolute bottom-1.5 left-1.5 rounded-md bg-black/45 px-1.5 py-0.5 text-[9.5px] font-semibold text-white backdrop-blur-sm">
+          {t('Ảnh minh hoạ')}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Nút thêm gọn đặt trên ảnh (kiểu sàn bán sỉ): "+" tròn khi chưa có trong
+ * giỏ, chuyển thành "− số lượng +" khi đã chọn — thẻ sản phẩm thấp hơn,
+ * mỗi hàng hiện được nhiều món hơn.
+ */
+export function CompactAdd({ product, className = '' }: { product: Product; className?: string }) {
+  const { quantityOf, addProduct, updateQty, tab } = useCart();
+  const { t } = useLanguage();
+  const quantity = quantityOf(product.id);
+  const step = stepOf(product);
+  const plainLine = tab.items.find((item) => item.product.id === product.id && !item.note?.trim());
+  const stop = (e: MouseEvent) => { e.preventDefault(); e.stopPropagation(); };
+
+  if (quantity <= 0) {
+    return (
+      <button
+        type="button"
+        aria-label={t('Thêm vào giỏ')}
+        onClick={(e) => { stop(e); addProduct(product, firstQuantityOf(product)); }}
+        className={`flex size-9 items-center justify-center rounded-full bg-[#0f7a4f] text-white shadow-md shadow-black/15 transition hover:bg-[#0b4f34] active:scale-90 ${className}`}
+      >
+        <Plus size={19} strokeWidth={2.6} />
+      </button>
+    );
+  }
+
+  const change = (e: MouseEvent, delta: number) => {
+    stop(e);
+    if (!plainLine) { addProduct(product, Math.max(step, delta)); return; }
+    const next = Number((plainLine.quantity + delta).toFixed(3));
+    updateQty(plainLine.lineKey || plainLine.product.id, next < (Number(product.minOrderQty) || 0) ? 0 : next);
+  };
+
+  return (
+    <div className={`flex h-9 items-center rounded-full bg-[#0f7a4f] text-white shadow-md shadow-black/15 ${className}`}>
+      <button type="button" aria-label={t('Giảm')} onClick={(e) => change(e, -step)} className="flex size-9 items-center justify-center rounded-full active:scale-90"><Minus size={16} strokeWidth={2.6} /></button>
+      <span className="min-w-6 text-center text-[13px] font-black">{Number(quantity.toFixed(3))}</span>
+      <button type="button" aria-label={t('Tăng')} onClick={(e) => change(e, step)} className="flex size-9 items-center justify-center rounded-full active:scale-90"><Plus size={16} strokeWidth={2.6} /></button>
     </div>
   );
 }
 
 export default function StoreProductCard({ product }: { product: Product }) {
-  const { productName, productUnit } = useLanguage();
+  const { session } = useAuth();
+  const { t, productName, productUnit } = useLanguage();
   const name = productName(product.name);
+  const priced = !product.priceOnRequest && product.price > 0;
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#17231d]/8 bg-white shadow-[0_1px_2px_rgba(16,40,30,0.04)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(16,40,30,0.10)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-[#17231d]/7 transition hover:shadow-[0_8px_22px_rgba(16,40,30,0.10)]">
       <div className="relative">
         <Link to={`/san-pham/${product.id}`} className="block">
-          <ProductImage product={product} className="aspect-square w-full transition duration-300 group-hover:scale-[1.02]" />
+          <ProductImage product={product} className="aspect-square w-full" />
         </Link>
-        <FavoriteButton productId={product.id} className="absolute right-2 top-2" />
+        <FavoriteButton productId={product.id} className="absolute right-1.5 top-1.5 size-8" />
+        <CompactAdd product={product} className="absolute bottom-1.5 right-1.5" />
       </div>
-      <div className="flex flex-1 flex-col gap-2 p-3">
-        <Link to={`/san-pham/${product.id}`} className="min-h-[2.6rem]">
-          <h3 className="line-clamp-2 text-[13.5px] font-semibold leading-snug text-[#17231d] group-hover:text-[#0b4f34]">{name}</h3>
-        </Link>
-        <p className="line-clamp-1 text-[11.5px] text-[#59665f]">
-          {product.packagingNote || product.shortDescription || productUnit(product.unit || 'Kg')}
+      <Link to={`/san-pham/${product.id}`} className="flex flex-1 flex-col px-2 pb-2 pt-1.5 sm:px-2.5">
+        {priced ? (
+          <p className="text-[14.5px] font-black leading-tight text-[#0b4f34]">
+            {money(product.price)}
+            {!session && <span className="ml-1 text-[10px] font-semibold text-[#8a9690]">{t('Giá tham khảo')}</span>}
+          </p>
+        ) : (
+          <p className="truncate text-[12px] font-bold leading-[1.45] text-[#c4601f]">{t('Liên hệ báo giá')}</p>
+        )}
+        <h3 className="mt-0.5 line-clamp-2 min-h-[2.4em] text-[12.5px] font-medium leading-[1.2] text-[#17231d] group-hover:text-[#0b4f34]">{name}</h3>
+        <p className="mt-0.5 line-clamp-1 text-[11px] text-[#8a9690]">
+          {product.packagingNote || productUnit(product.unit || 'Kg')}
         </p>
-        <div className="mt-auto space-y-2">
-          <PriceTag product={product} />
-          <QuantityStepper product={product} />
-        </div>
-      </div>
+      </Link>
     </article>
   );
 }

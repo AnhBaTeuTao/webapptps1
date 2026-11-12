@@ -507,6 +507,15 @@ const translations: Record<string, [string, string]> = {
   '99,8% đơn hàng giao đúng hẹn': ['99.8% of orders delivered on time', '99.8% 的订单准时送达'],
   '109+ khách hàng doanh nghiệp tin dùng': ['Trusted by 109+ business customers', '109+ 家企业客户信赖'],
   'Thông tin chứng chỉ và liên hệ': ['Certifications and contact', '资质与联系方式'],
+  // ── Cửa hàng online ──
+  'Ảnh minh hoạ': ['Illustrative photo', '示意图'],
+  // ── Cửa hàng online ──
+  'Đề xuất cho bếp của quý khách': ['Picked for your kitchen', '为您的厨房推荐'],
+  'Đề xuất cho quý khách': ['Recommended for you', '为您推荐'],
+  'Những mặt hàng được nhiều bếp ăn lựa chọn': ['Items many kitchens choose', '众多厨房的常选商品'],
+  'Những món bếp của quý khách thường đặt và các mặt hàng cùng nhóm': ['What your kitchen usually orders, plus related items', '您厨房常订的商品及同类商品'],
+  'Khuyến mãi': ['Promotions', '促销'],
+  'Ưu đãi đang áp dụng cho quý khách': ['Current offers for you', '当前为您提供的优惠'],
 };
 
 const errorTranslations: Record<string, string> = {

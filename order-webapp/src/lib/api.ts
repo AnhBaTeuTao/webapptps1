@@ -231,6 +231,8 @@ export interface Product {
   packagingNote?: string | null;
   quantityPrecision?: number | null;
   shortDescription?: string | null;
+  /** Ảnh lấy từ kho ảnh miễn phí để minh hoạ, chưa phải ảnh chụp đúng sản phẩm. */
+  imageIsIllustration?: boolean;
 }
 
 export type PriceMode = 'customer' | 'reference';

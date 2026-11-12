@@ -129,10 +129,11 @@ body {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
-.tps1-marquee__track { animation: tps1-marquee 38s linear infinite; }
+.tps1-marquee__track { animation: tps1-marquee 45s linear infinite; }
 .tps1-marquee:hover .tps1-marquee__track { animation-play-state: paused; }
+/* Chạy cả khi máy bật "giảm chuyển động" (yêu cầu của chủ shop); chậm lại cho dễ đọc. */
 @media (prefers-reduced-motion: reduce) {
-  .tps1-marquee__track { animation: none; }
+  .tps1-marquee__track { animation-duration: 60s; }
 }
 
 /* Banner slide: ẩn thanh cuộn ngang. */

@@ -15,18 +15,18 @@ function BrandHero() {
     <section className="relative overflow-hidden rounded-2xl bg-[#0b4f34] text-white sm:rounded-3xl">
       <img src={`${import.meta.env.BASE_URL}images/store-hero.webp`} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
       <div className="absolute inset-0 bg-gradient-to-r from-[#062b1c] via-[#0b4f34]/90 to-transparent" />
-      <div className="relative max-w-[680px] px-4 py-4 sm:px-8 sm:py-8">
+      <div className="relative max-w-[640px] px-4 py-4 sm:px-7 sm:py-6">
         <p className="hidden items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-100 ring-1 ring-white/20 sm:inline-flex">
           <BadgeCheck size={14} /> {t('Đạt chuẩn ISO 22000 & HACCP')}
         </p>
-        <h1 className="text-balance text-[18px] font-black leading-[1.25] sm:mt-3 sm:text-[28px] lg:text-[32px]">
+        <h1 className="text-balance text-[18px] font-black leading-[1.25] sm:mt-2.5 sm:text-[26px] lg:text-[28px]">
           <span className="sm:block sm:whitespace-nowrap">{t('Nguồn thực phẩm sạch cho bếp ăn,')}</span>{' '}
           <span className="sm:block sm:whitespace-nowrap">{t('giao tận nơi theo nhu cầu của bếp.')}</span>
         </h1>
-        <p className="mt-2.5 hidden max-w-[540px] text-pretty text-sm leading-relaxed text-emerald-50/85 sm:block lg:text-[15px]">
+        <p className="mt-2 hidden max-w-[520px] text-pretty text-[13.5px] leading-relaxed text-emerald-50/85 sm:block">
           {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng một nơi.')}
         </p>
-        <Link to="/danh-muc" className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-xl bg-[#e0742f] px-4 text-[13px] font-bold text-white shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-5 sm:h-11 sm:px-5 sm:text-sm">
+        <Link to="/danh-muc" className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-xl bg-[#e0742f] px-4 text-[13px] font-bold text-white shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-4 sm:h-10 sm:px-5 sm:text-sm">
           {t('Bắt đầu chọn hàng')} <ArrowRight size={16} />
         </Link>
       </div>
@@ -77,7 +77,7 @@ export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) 
       <div ref={row} onScroll={onScroll} className="tps1-snap-row -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 lg:mx-0 lg:gap-0 lg:px-0">
         {banners.map((banner) => {
           const image = (
-            <picture className="block aspect-[2/1] w-full overflow-hidden rounded-2xl bg-[#eaf6ef] lg:aspect-[21/8] lg:rounded-3xl">
+            <picture className="block aspect-[2/1] w-full overflow-hidden rounded-2xl bg-[#eaf6ef] lg:aspect-[3/1] lg:rounded-2xl">
               <source media="(max-width: 1023px)" srcSet={banner.imageMobileUrl} />
               <img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" draggable={false} />
             </picture>

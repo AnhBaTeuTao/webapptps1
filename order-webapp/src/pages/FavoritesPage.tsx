@@ -51,7 +51,7 @@ export default function FavoritesPage() {
       {error && <p className="rounded-2xl bg-red-50 p-4 text-sm text-red-700">{error}</p>}
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 lg:grid-cols-5 xl:grid-cols-6">
           {Array.from({ length: Math.min(ids.length || 4, 10) }).map((_, i) => (
             <div key={i} className="rounded-2xl bg-white p-2 ring-1 ring-[#17231d]/6">
               <div className="aspect-square animate-pulse rounded-xl bg-[#eef2ee]" />
@@ -67,7 +67,7 @@ export default function FavoritesPage() {
           <Link to="/" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-6 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 lg:grid-cols-5 xl:grid-cols-6">
           {products.map((product) => <StoreProductCard key={product.id} product={product} />)}
         </div>
       )}
