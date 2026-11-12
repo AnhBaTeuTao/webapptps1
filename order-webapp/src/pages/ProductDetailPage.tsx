@@ -67,7 +67,7 @@ export default function ProductDetailPage() {
     return (
       <div className="mx-auto max-w-md rounded-3xl bg-white p-8 text-center ring-1 ring-[#17231d]/6">
         <Package size={40} className="mx-auto text-[#59665f]/40" />
-        <p className="mt-3 font-bold text-[#17231d]">{state === 'missing' ? t('Sản phẩm không còn bán trên cửa hàng') : t('Không tải được sản phẩm')}</p>
+        <p className="mt-3 font-bold text-[#17231d]">{state === 'missing' ? t('Mặt hàng này hiện không còn trên cửa hàng') : t('Không tải được sản phẩm')}</p>
         <Link to="/" className="mt-4 inline-flex h-11 items-center rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white">{t('Về trang chủ')}</Link>
       </div>
     );
@@ -140,8 +140,8 @@ export default function ProductDetailPage() {
           </div>
 
           <ul className="grid gap-2 text-sm text-[#2c3a33]">
-            <li className="flex items-center gap-2"><Truck size={17} className="text-[#0f7a4f]" /> {t('Xe lạnh giao tận bếp, khung giờ từ 5 giờ sáng')}</li>
-            <li className="flex items-center gap-2"><ShieldCheck size={17} className="text-[#0f7a4f]" /> {t('Quy trình kiểm soát an toàn thực phẩm ISO 22000 & HACCP')}</li>
+            <li className="flex items-center gap-2"><Truck size={17} className="text-[#0f7a4f]" /> {t('Giao bằng xe lạnh đến tận bếp, sớm nhất từ 5 giờ sáng')}</li>
+            <li className="flex items-center gap-2"><ShieldCheck size={17} className="text-[#0f7a4f]" /> {t('Kiểm soát an toàn thực phẩm theo ISO 22000 và HACCP')}</li>
             <li className="flex items-center gap-2"><MapPin size={17} className="text-[#0f7a4f]" /> {t('Giao tại Đồng Nai, TP.HCM và các tỉnh lân cận')}</li>
           </ul>
         </div>
@@ -154,7 +154,7 @@ export default function ProductDetailPage() {
         </section>
       )}
 
-      {detail && <ProductRail title="Sản phẩm cùng nhóm" products={detail.related} moreTo={storeCategory ? `/danh-muc/${storeCategory.slug}` : undefined} />}
+      {detail && <ProductRail title="Có thể quý khách cũng cần" products={detail.related} moreTo={storeCategory ? `/danh-muc/${storeCategory.slug}` : undefined} />}
 
       {/* Thanh thêm vào giỏ dính đáy trên mobile, nằm trên thanh điều hướng. */}
       <div className="fixed inset-x-0 z-20 border-t border-[#17231d]/10 bg-white/95 px-3 py-2.5 backdrop-blur md:hidden" style={{ bottom: 'calc(60px + env(safe-area-inset-bottom))' }}>

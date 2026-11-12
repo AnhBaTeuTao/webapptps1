@@ -33,17 +33,17 @@ export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) 
             <BadgeCheck size={14} /> {t('Đạt chuẩn ISO 22000 & HACCP')}
           </p>
           <h1 className="mt-3 text-2xl font-black leading-tight sm:text-4xl">
-            {t('Thực phẩm tươi cho bếp ăn,')}<br className="hidden sm:block" /> {t('giao tận nơi mỗi sáng')}
+            {t('Nguồn thực phẩm sạch cho bếp ăn,')}<br className="hidden sm:block" /> {t('giao tận nơi theo nhu cầu của bếp.')}
           </h1>
           <p className="mt-2 text-sm text-emerald-50/85 sm:text-base">
-            {t('Hơn 5.000 mặt hàng: rau củ, thịt cá, hàng đông lạnh, gia vị và đồ khô cho nhà hàng, bếp công ty, trường học.')}
+            {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng một nơi.')}
           </p>
           <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-emerald-50/90">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-black/15 px-3 py-1.5"><Truck size={14} /> {t('Xe lạnh giao tận bếp')}</span>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-black/15 px-3 py-1.5"><Clock3 size={14} /> {t('Giao từ 5 giờ sáng')}</span>
           </div>
           <Link to="/danh-muc" className="mt-5 inline-flex h-11 items-center gap-2 rounded-xl bg-[#e0742f] px-5 text-sm font-bold text-white shadow-lg shadow-black/20 hover:bg-[#c4601f]">
-            {t('Xem danh mục hàng')} <ArrowRight size={16} />
+            {t('Bắt đầu chọn hàng')} <ArrowRight size={16} />
           </Link>
         </div>
       </section>

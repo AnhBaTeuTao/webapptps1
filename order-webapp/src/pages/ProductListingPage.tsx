@@ -159,8 +159,8 @@ export default function ProductListingPage({ mode }: { mode: 'categories' | 'cat
       ) : sorted.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-3xl bg-white px-6 py-14 text-center ring-1 ring-[#17231d]/6">
           <PackageSearch size={40} className="text-[#59665f]/40" />
-          <p className="font-bold text-[#17231d]">{mode === 'search' ? t('Không tìm thấy mặt hàng phù hợp') : t('Danh mục đang cập nhật')}</p>
-          <p className="max-w-sm text-sm text-[#59665f]">{t('Quý khách có thể thêm hàng ngoài danh mục trong giỏ hàng, TPS1 sẽ báo giá riêng.')}</p>
+          <p className="font-bold text-[#17231d]">{mode === 'search' ? t('Chưa tìm thấy mặt hàng phù hợp') : t('Nhóm hàng này đang được bổ sung')}</p>
+          <p className="max-w-sm text-sm text-[#59665f]">{t('Chưa thấy mặt hàng cần tìm? Quý khách có thể ghi tên hàng trong giỏ hàng, TPS1 sẽ báo giá riêng.')}</p>
           <Link to="/gio-hang" className="mt-1 text-sm font-bold text-[#0f7a4f] hover:underline">{t('Mở giỏ hàng')}</Link>
         </div>
       ) : (

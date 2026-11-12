@@ -22,7 +22,7 @@ function CartLineRow({ item }: { item: OrderItem }) {
         {productUnit(item.product.unit || 'Kg')} ·{' '}
         {item.product.isUnlisted
           ? <span className="text-amber-700">{t('Hàng ngoài danh mục · chờ báo giá')}</span>
-          : priced ? money(item.product.price) : <span className="text-[#c4601f]">{t('Chờ sale báo giá')}</span>}
+          : priced ? money(item.product.price) : <span className="text-[#c4601f]">{t('Chờ báo giá')}</span>}
       </p>
     </>
   );
@@ -81,12 +81,12 @@ export default function CartPage() {
       <div className="flex min-h-[60vh] items-center justify-center p-2">
         <div className="w-full max-w-md space-y-4 rounded-3xl bg-white p-8 text-center shadow-xl shadow-black/5 ring-1 ring-[#17231d]/8">
           <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-emerald-50 text-[#0f7a4f] ring-1 ring-emerald-200"><CheckCircle2 size={42} /></div>
-          <h1 className="text-2xl font-black text-[#17231d]">{t('Gửi đơn đặt hàng thành công!')}</h1>
+          <h1 className="text-2xl font-black text-[#17231d]">{t('Cảm ơn quý khách, TPS1 đã nhận được đơn!')}</h1>
           <p className="text-sm text-[#59665f]">
-            {t('Mã đơn hàng:')} <strong className="rounded-lg bg-[#0f7a4f]/10 px-2 py-0.5 font-mono text-base text-[#0f7a4f]">{successOrder.code}</strong>. {t('TPS1 sẽ liên hệ xác nhận giá và lịch giao hàng.')}
+            {t('Mã đơn hàng:')} <strong className="rounded-lg bg-[#0f7a4f]/10 px-2 py-0.5 font-mono text-base text-[#0f7a4f]">{successOrder.code}</strong>. {t('Đội ngũ TPS1 sẽ liên hệ xác nhận giá và lịch giao trong thời gian sớm nhất.')}
           </p>
-          {session?.verificationStatus === 'pending' && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Đã gửi đơn, chờ TPS1 xác minh tài khoản và xác nhận đơn.')}</p>}
-          {successOrder.pendingPriceCount > 0 && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Có mặt hàng đang chờ sale báo giá. Sale sẽ nhập giá hoặc bỏ mặt hàng không có hàng trước khi xác nhận đơn.')}</p>}
+          {session?.verificationStatus === 'pending' && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Tài khoản của quý khách đang chờ xác minh. TPS1 sẽ xác minh tài khoản và xác nhận đơn cùng lúc.')}</p>}
+          {successOrder.pendingPriceCount > 0 && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Đơn có mặt hàng chưa có giá. Nhân viên kinh doanh sẽ báo giá, hoặc bỏ món tạm hết hàng, trước khi xác nhận đơn với quý khách.')}</p>}
           <div className="flex flex-col justify-center gap-3 pt-2 sm:flex-row">
             <button type="button" onClick={() => { clearSuccess(); navigate('/'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-[#17231d]/15 px-5 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]"><ShoppingBag size={16} /> {t('Tiếp tục mua hàng')}</button>
             <button type="button" onClick={() => { clearSuccess(); navigate('/don-hang'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white hover:bg-[#0b4f34]">{t('Đơn hàng của tôi')} <ArrowRight size={16} /></button>
@@ -102,7 +102,7 @@ export default function CartPage() {
         <div className="mx-auto flex size-20 items-center justify-center rounded-2xl bg-[#f5f7f3] text-[#59665f]/40"><ShoppingCart size={36} /></div>
         <div>
           <h1 className="text-lg font-bold text-[#17231d]">{t('Giỏ hàng đang trống')}</h1>
-          <p className="mt-1 text-sm text-[#59665f]">{t('Chọn hàng từ danh mục, hoặc thêm mặt hàng ngoài danh mục để TPS1 báo giá riêng.')}</p>
+          <p className="mt-1 text-sm text-[#59665f]">{t('Quý khách chọn hàng từ danh mục, hoặc ghi tên mặt hàng chưa có sẵn để TPS1 báo giá riêng.')}</p>
         </div>
         <Link to="/" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-6 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
         {session && <UnlistedItemEntry onAdd={addUnlisted} />}

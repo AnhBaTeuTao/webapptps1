@@ -42,10 +42,10 @@ function RailSkeleton() {
 }
 
 const TRUST = [
-  { icon: ShieldCheck, title: 'ISO 22000 & HACCP', text: 'Quy trình an toàn thực phẩm' },
+  { icon: ShieldCheck, title: 'ISO 22000 & HACCP', text: 'Kiểm soát an toàn từng khâu' },
   { icon: Truck, title: 'Xe lạnh giao tận bếp', text: 'Đồng Nai, TP.HCM và lân cận' },
   { icon: BadgeCheck, title: 'Hóa đơn VAT đầy đủ', text: 'Công nợ theo thỏa thuận' },
-  { icon: Zap, title: 'Hơn 5.000 mặt hàng', text: 'Một nhà cung cấp cho cả bếp' },
+  { icon: Zap, title: 'Hơn 5.000 mặt hàng', text: 'Cả bếp chỉ cần đặt một nơi' },
 ];
 
 export default function StoreHomePage() {
@@ -86,18 +86,18 @@ export default function StoreHomePage() {
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-[#59665f]">{t('Xin chào')}</p>
                 <p className="mt-1 line-clamp-2 text-lg font-black text-[#17231d]">{session.company || session.name}</p>
-                <p className="mt-1 text-xs text-[#59665f]">{t('Giá hiển thị theo hợp đồng của quý khách.')}</p>
+                <p className="mt-1 text-xs text-[#59665f]">{t('Giá trên cửa hàng đã là giá hợp đồng của quý khách.')}</p>
               </div>
               <div className="mt-4 grid gap-2">
-                <Link to="/dat-hang" className="flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-4 text-sm font-bold text-white hover:bg-[#0b4f34]"><RotateCcw size={16} /> {t('Đặt nhanh / đặt lại đơn cũ')}</Link>
+                <Link to="/dat-hang" className="flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-4 text-sm font-bold text-white hover:bg-[#0b4f34]"><RotateCcw size={16} /> {t('Đặt nhanh hoặc đặt lại đơn cũ')}</Link>
                 <Link to="/dat-hang/excel" className="flex h-11 items-center gap-2 rounded-xl border border-[#0f7a4f]/25 px-4 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]"><FileSpreadsheet size={16} /> {t('Đặt hàng từ file Excel')}</Link>
               </div>
             </div>
           ) : (
             <div className="flex flex-1 flex-col justify-between rounded-3xl bg-gradient-to-br from-[#fef5ee] to-white p-5 ring-1 ring-[#e0742f]/15">
               <div>
-                <p className="text-lg font-black leading-snug text-[#17231d]">{t('Nhận giá theo hợp đồng cho bếp của quý khách')}</p>
-                <p className="mt-2 text-sm text-[#59665f]">{t('Đăng ký miễn phí để xem giá riêng, đặt hàng từ Excel và theo dõi đơn giao.')}</p>
+                <p className="text-lg font-black leading-snug text-[#17231d]">{t('Giá riêng cho bếp của quý khách')}</p>
+                <p className="mt-2 text-sm text-[#59665f]">{t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}</p>
               </div>
               <div className="mt-4 grid gap-2">
                 <Link to="/dang-ky" className="flex h-11 items-center justify-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white hover:bg-[#c4601f]">{t('Đăng ký tài khoản')}</Link>
@@ -131,12 +131,12 @@ export default function StoreHomePage() {
       )}
 
       {frequent.length > 0 && (
-        <ProductRail title="Hàng bếp của quý khách hay đặt" subtitle="Đặt lại nhanh những mặt hàng quen thuộc" products={frequent} icon={<Heart size={20} className="text-[#e0742f]" />} moreTo="/dat-hang" />
+        <ProductRail title="Những món quý khách hay đặt" subtitle="Thêm lại vào giỏ chỉ với một lần bấm" products={frequent} icon={<Heart size={20} className="text-[#e0742f]" />} moreTo="/dat-hang" />
       )}
 
       {loading && <><RailSkeleton /><RailSkeleton /></>}
       {error && !data && (
-        <p className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">{t('Không tải được trang cửa hàng. Vui lòng kiểm tra kết nối và thử lại.')}</p>
+        <p className="rounded-2xl bg-amber-50 p-4 text-sm text-amber-900">{t('Chưa tải được cửa hàng. Quý khách vui lòng kiểm tra kết nối mạng và thử lại.')}</p>
       )}
 
       {data?.collections.map((collection) => (
@@ -154,8 +154,8 @@ export default function StoreHomePage() {
       ))}
 
       <ProductRail
-        title={session ? 'Gợi ý cho bếp của quý khách' : 'Gợi ý cho bếp ăn'}
-        subtitle={session ? 'Chọn theo những mặt hàng quý khách thường đặt' : 'Những mặt hàng được nhiều bếp lựa chọn'}
+        title={session ? 'Gợi ý dành riêng cho bếp của quý khách' : 'Được nhiều bếp ăn tin chọn'}
+        subtitle={session ? 'Dựa trên những mặt hàng bếp của quý khách vẫn thường dùng' : 'Những mặt hàng các bếp ăn khác thường chọn'}
         products={recommendedOnly}
         icon={<Sparkles size={20} className="text-[#0f7a4f]" />}
       />

@@ -121,7 +121,7 @@ export default function CartSummarySidebar({
                         {item.product.isUnlisted ? (
                           <span className="text-amber-700">{t('Ngoài danh mục · 0đ · Chờ báo giá')}</span>
                         ) : item.product.priceOnRequest ? (
-                          <span className="text-[#e0742f]">{t('Chờ sale báo giá')}</span>
+                          <span className="text-[#e0742f]">{t('Chờ báo giá')}</span>
                         ) : (
                           money(item.product.price)
                         )}
@@ -179,7 +179,7 @@ export default function CartSummarySidebar({
                     </div>
 
                     <div className="text-right font-mono font-bold text-xs text-[#0f7a4f]">
-                      {item.product.isUnlisted ? '0đ' : item.product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
+                      {item.product.isUnlisted ? '0đ' : item.product.priceOnRequest ? t('Chờ báo giá') : money(lineTotal)}
                     </div>
                   </div>
 
@@ -330,7 +330,7 @@ export default function CartSummarySidebar({
                   className="text-[11px] text-[#0f7a4f] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                 >
                   <MapPin size={12} />
-                  <span>{t('Nạp lại địa chỉ mặc định của công ty')}</span>
+                  <span>{t('Dùng địa chỉ giao mặc định')}</span>
                 </button>
               )}
             </div>
@@ -354,10 +354,10 @@ export default function CartSummarySidebar({
               <Info size={12} className="text-[#e0742f] shrink-0" />
               <span>{guest
                 ? t('Đây là giá tham khảo. Sau khi đăng nhập, giỏ hàng tự cập nhật theo giá hợp đồng của quý khách.')
-                : t('Giá hiển thị theo bảng giá hiện tại. TPS1 sẽ xác nhận lại các mặt hàng cần báo giá hoặc có điều chỉnh.')}</span>
+                : t('Giá đang theo bảng giá hiện hành. Mặt hàng nào cần báo giá hoặc có thay đổi, TPS1 sẽ xác nhận lại với quý khách.')}</span>
             </p>
             {!guest && earliestDate && <p className="text-xs text-[#59665f]">{t('Ngày giao sớm nhất')}: {earliestDate}{cutoffTimeStr ? ` · ${t('Giờ chốt đơn')}: ${cutoffTimeStr}` : ''}</p>}
-            {pendingPriceCount > 0 && <p className="text-xs font-semibold text-amber-800 rounded-xl bg-amber-50 p-2">{t('Tạm tính chưa gồm hàng chờ giá')} ({pendingPriceCount}). {t('Sale sẽ nhập giá hoặc bỏ mặt hàng không có hàng trước khi xác nhận đơn.')}</p>}
+            {pendingPriceCount > 0 && <p className="text-xs font-semibold text-amber-800 rounded-xl bg-amber-50 p-2">{t('Tạm tính chưa gồm hàng chờ giá')} ({pendingPriceCount}). {t('Nhân viên kinh doanh sẽ báo giá, hoặc bỏ món tạm hết hàng, trước khi xác nhận đơn với quý khách.')}</p>}
           </div>
 
           {errorMessage && (

@@ -146,7 +146,7 @@ export default function StoreLayout() {
       <main className="mx-auto w-full max-w-[1320px] flex-1 px-3 py-4 pb-28 sm:px-5 md:pb-8">
         {session?.verificationStatus === 'pending' && (
           <div role="status" className="mb-3 rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900 ring-1 ring-amber-200">
-            {t('Tài khoản đang chờ TPS1 xác minh. Quý khách vẫn đặt hàng được; giá sẽ được xác nhận khi chốt đơn.')}
+            {t('Tài khoản của quý khách đang chờ TPS1 xác minh. Quý khách vẫn đặt hàng bình thường, giá sẽ được xác nhận khi chốt đơn.')}
           </div>
         )}
         <Outlet />
@@ -156,7 +156,7 @@ export default function StoreLayout() {
         <div className="mx-auto grid max-w-[1320px] gap-6 px-5 py-8 text-sm text-[#59665f] md:grid-cols-3">
           <div>
             <img src={`${import.meta.env.BASE_URL}images/tps1-logo-horizontal.png`} alt="Thực Phẩm Số Một" className="h-9 w-auto" />
-            <p className="mt-3">{t('Nhà cung cấp thực phẩm cho nhà hàng, bếp ăn công ty và trường học tại Đồng Nai, TP.HCM và các tỉnh lân cận.')}</p>
+            <p className="mt-3">{t('Đồng hành cùng nhà hàng, bếp ăn công ty và trường học tại Đồng Nai, TP.HCM và các tỉnh lân cận, đưa thực phẩm tươi đến tận bếp.')}</p>
           </div>
           <div>
             <p className="font-bold text-[#17231d]">{t('Liên hệ')}</p>
