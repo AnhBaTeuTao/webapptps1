@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Building2, KeyRound, MapPin, Phone, Mail, LogOut, ChevronRight, ShieldCheck, Plus, Trash2, Pencil } from 'lucide-react';
+import { Building2, KeyRound, MapPin, Phone, Mail, LogOut, ChevronRight, ShieldCheck, Plus, Trash2, Pencil, Loader2 } from 'lucide-react';
 import { api, ApiError, type AccountProfile } from '../lib/api';
+import { resizeImageFile } from '../lib/resizeImage';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -35,7 +36,20 @@ export default function AccountPage() {
   return <div className="mx-auto max-w-3xl space-y-5 pb-6">
     <header className="flex items-start justify-between gap-3"><div><h1 className="text-2xl font-black text-[#17382a]">{t('Tài khoản của tôi')}</h1></div><button onClick={() => { logout(); navigate('/dang-nhap'); }} className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-rose-200 bg-white px-3 text-sm font-bold text-rose-700"><LogOut size={16}/>{t('Đăng xuất')}</button></header>
     <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b4f34] to-[#13875b] p-5 text-white shadow-lg sm:p-7">
-      <div className="flex items-start justify-between gap-3"><label className="relative flex size-14 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white/15 text-xl font-black">{profile?.avatarUrl ? <img src={profile.avatarUrl} alt={t('Ảnh đại diện')} className="size-full object-cover" /> : (profile?.name || session?.name || 'K').slice(0,1).toUpperCase()}<input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={async event => { const file = event.target.files?.[0]; if (!file) return; setProfileBusy(true); setProfileError(''); try { const result = await api.uploadAvatar(file); setProfile(result.account); } catch { setProfileError(t('Không lưu được ảnh đại diện')); } finally { setProfileBusy(false); event.target.value = ''; } }} /></label>
+      <div className="flex items-start justify-between gap-3"><label className="relative flex size-14 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white/15 text-xl font-black">{profile?.avatarUrl ? <img src={profile.avatarUrl} alt={t('Ảnh đại diện')} className="size-full object-cover" /> : (profile?.name || session?.name || 'K').slice(0,1).toUpperCase()}{profileBusy && <span className="absolute inset-0 flex items-center justify-center bg-black/35"><Loader2 size={20} className="animate-spin" /></span>}<input type="file" accept="image/*" className="sr-only" disabled={profileBusy} onChange={async event => {
+          const input = event.target;
+          const file = input.files?.[0];
+          if (!file) return;
+          setProfileBusy(true); setProfileError('');
+          try {
+            // Ảnh chụp điện thoại thường vài MB, vượt giới hạn 2 MB → thu nhỏ trên máy trước khi gửi.
+            const small = await resizeImageFile(file, 1024);
+            const result = await api.uploadAvatar(small);
+            setProfile(result.account);
+          } catch (cause) {
+            setProfileError(cause instanceof ApiError ? errorText(cause) : t('Không lưu được ảnh đại diện'));
+          } finally { setProfileBusy(false); input.value = ''; }
+        }} /></label>
         <span className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold">{session?.verificationStatus === 'pending' ? t('Chưa xác minh') : session?.verificationStatus === 'rejected' ? t('Đã từ chối') : t('Đã xác minh')}</span></div>
       <h2 className="mt-4 text-xl font-extrabold">{profile?.name || session?.name || session?.company}</h2><p className="mt-1 text-sm text-white/75">{t('Mã khách hàng')}: <strong className="font-mono text-white">{session?.code}</strong> · {t('Chạm ảnh để đổi')}</p>
     </section>
