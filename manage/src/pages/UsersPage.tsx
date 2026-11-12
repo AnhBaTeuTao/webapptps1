@@ -15,6 +15,7 @@ export const ROLE_LABELS: Record<string, string> = {
   kho: 'Kho / Soạn hàng',
   ke_toan: 'Kế toán',
   tai_xe: 'Tài xế',
+  ban_hang_online: 'Admin bán hàng',
 };
 
 function accessLabel(user: Pick<AdminUser, 'role' | 'position'>): string {
@@ -41,6 +42,7 @@ const ROLE_BADGE_COLORS: Record<string, string> = {
   kho: 'bg-amber-50 text-amber-700 border-amber-200',
   ke_toan: 'bg-indigo-50 text-indigo-700 border-indigo-200',
   tai_xe: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  ban_hang_online: 'bg-orange-50 text-orange-700 border-orange-200',
 };
 
 function generateRandomPassword(): string {

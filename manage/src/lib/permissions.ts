@@ -14,9 +14,10 @@ export type Role =
   | 'thu_mua'
   | 'kho'
   | 'ke_toan'
-  | 'tai_xe';
+  | 'tai_xe'
+  | 'ban_hang_online';
 
-/** Nhãn hiển thị cho từng role. */
+/** Nhãn hiển thị cho từng role — dùng trong UI và thông báo lỗi. */
 export const ROLE_LABELS: Record<string, string> = {
   admin: 'Quản trị hệ thống',
   ban_giam_doc: 'Ban Giám đốc',
@@ -26,12 +27,17 @@ export const ROLE_LABELS: Record<string, string> = {
   kho: 'Kho / Soạn hàng',
   ke_toan: 'Kế toán',
   tai_xe: 'Tài xế',
+  ban_hang_online: 'Admin bán hàng',
 };
 
+/**
+ * Ma trận quyền — mỗi key là 1 permission, value là danh sách role được phép.
+ * Thêm permission mới ở đây, không rải Set([...]) rải rác trong các route.
+ */
 const PERMISSIONS: Record<string, Role[]> = {
   // ─── Đơn hàng ───────────────────────────────────────────────────
   /** Xem danh sách đơn hàng (mọi đơn) */
-  'orders.view': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'kho', 'ke_toan'],
+  'orders.view': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'kho', 'ke_toan', 'ban_hang_online'],
   /** Tạo đơn hàng mới (POS) */
   'orders.create': ['admin', 'ban_giam_doc', 'truong_phong', 'sale'],
   /** Xác nhận/chốt đơn hàng hàng loạt của phòng Vận hành */
@@ -39,7 +45,7 @@ const PERMISSIONS: Record<string, Role[]> = {
   /** Sale/Văn phòng vận hành phân loại khách, chốt giá và chuyển Thu mua */
   'orders.finalize_pricing': ['admin', 'ban_giam_doc', 'truong_phong', 'sale'],
   /** Sửa thông tin đơn trước khi chốt, bổ sung giá tham khảo/ghi chú */
-  'orders.edit': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua'],
+  'orders.edit': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'ban_hang_online'],
   /** Duyệt yêu cầu điều chỉnh sau khi đơn đã xác nhận */
   'orders.approve_adjustment': ['admin', 'ban_giam_doc', 'truong_phong'],
   /** Duyệt đơn vượt hạn mức công nợ */
@@ -67,13 +73,15 @@ const PERMISSIONS: Record<string, Role[]> = {
 
   // ─── Hàng hóa ───────────────────────────────────────────────────
   /** Xem danh sách hàng hóa */
-  'products.view': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'kho', 'ke_toan'],
+  'products.view': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'kho', 'ke_toan', 'ban_hang_online'],
   /** Tạo sản phẩm mới */
   'products.create': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'ke_toan'],
   /** Sửa thông tin sản phẩm (giá, mô tả, danh mục…) */
   'products.edit': ['admin', 'ban_giam_doc', 'truong_phong', 'thu_mua', 'ke_toan'],
   /** Nhập kho (tăng tồn kho qua inventory_transactions) */
   'products.stock_in': ['admin', 'ban_giam_doc', 'thu_mua'],
+  /** Sửa NỘI DUNG hiển thị (ảnh, mô tả, ẩn/hiện online) — không gồm giá, giá vốn */
+  'products.edit_content': ['admin', 'ban_giam_doc', 'truong_phong', 'thu_mua', 'ke_toan', 'ban_hang_online'],
 
   // ─── Bảng giá ───────────────────────────────────────────────────
   /** Áp giá hàng ngày / sửa bảng giá */
@@ -82,11 +90,17 @@ const PERMISSIONS: Record<string, Role[]> = {
 
   // ─── Khách hàng ─────────────────────────────────────────────────
   /** Xem danh sách khách hàng */
-  'customers.view': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'ke_toan'],
+  'customers.view': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'thu_mua', 'ke_toan', 'ban_hang_online'],
   /** Tạo/sửa khách hàng, địa chỉ, xác thực tài khoản khách */
   'customers.edit': ['admin', 'ban_giam_doc', 'truong_phong', 'sale'],
   /** Phân công người phụ trách, đổi mã hoặc khóa/mở khách hàng */
   'customers.assign_rep': ['admin', 'ban_giam_doc', 'truong_phong'],
+  /** Duyệt (xác thực/từ chối) tài khoản khách tự đăng ký */
+  'customers.verify': ['admin', 'ban_giam_doc', 'truong_phong', 'sale', 'ban_hang_online'],
+
+  // ─── Cửa hàng online ────────────────────────────────────────────
+  /** Quản lý banner, bộ sưu tập, danh mục hiển thị của cửa hàng online */
+  'store.manage': ['admin', 'ban_giam_doc', 'ban_hang_online'],
 
   // ─── Công nợ / Thanh toán ───────────────────────────────────────
   /** Xem công nợ */
@@ -142,6 +156,10 @@ export function canForProfile(profile: StaffPermissionProfile | null | undefined
     }
     if (perm === 'customers.assign_rep') {
       return group === 'operations' || group === 'business_marketing';
+    }
+    // Trưởng phòng Kinh doanh & Marketing phụ trách nội dung cửa hàng online.
+    if (perm === 'store.manage') {
+      return group === 'business_marketing';
     }
     const inheritedRole = group === 'operations'
       ? 'sale'

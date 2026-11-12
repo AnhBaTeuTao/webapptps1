@@ -43,6 +43,14 @@ const DatHangPage = lazyPage(() => import('./pages/DatHangPage'));
 const DatHangExcelPage = lazyPage(() => import('./pages/DatHangExcelPage'));
 const DonTongPage = lazyPage(() => import('./pages/DonTongPage'));
 const PriceBooksPage = lazyPage(() => import('./pages/PriceBooksPage'));
+const StoreAdminLayout = lazyPage(() => import('./pages/store/StoreAdminLayout'));
+const StoreOverviewPage = lazyPage(() => import('./pages/store/StoreOverviewPage'));
+const StoreBannersPage = lazyPage(() => import('./pages/store/StoreBannersPage'));
+const StoreCollectionsPage = lazyPage(() => import('./pages/store/StoreCollectionsPage'));
+const StoreCategoriesPage = lazyPage(() => import('./pages/store/StoreCategoriesPage'));
+const StoreProductsPage = lazyPage(() => import('./pages/store/StoreProductsPage'));
+const StoreOrdersPage = lazyPage(() => import('./pages/store/StoreOrdersPage'));
+const StoreCustomersPage = lazyPage(() => import('./pages/store/StoreCustomersPage'));
 
 const LoadingScreen = () => (
   <div className="min-h-screen flex items-center justify-center bg-[#0B130E] text-white">Đang tải...</div>
@@ -117,6 +125,16 @@ function App() {
             <Route path="don-tong" element={<StaffOnlyRoute perm="procurement.view"><DonTongPage /></StaffOnlyRoute>} />
             <Route path="cong-no" element={<StaffOnlyRoute perm="finance.view"><CongNoPage /></StaffOnlyRoute>} />
             <Route path="bao-cao" element={<StaffOnlyRoute perm="reports.view"><BaoCaoPage /></StaffOnlyRoute>} />
+            {/* GĐ3: khu "Cửa hàng online" cho Admin bán hàng */}
+            <Route path="cua-hang" element={<StaffOnlyRoute perm="store.manage"><StoreAdminLayout /></StaffOnlyRoute>}>
+              <Route index element={<StoreOverviewPage />} />
+              <Route path="banner" element={<StoreBannersPage />} />
+              <Route path="bo-suu-tap" element={<StoreCollectionsPage />} />
+              <Route path="danh-muc" element={<StoreCategoriesPage />} />
+              <Route path="san-pham" element={<StaffOnlyRoute perm="products.view"><StoreProductsPage /></StaffOnlyRoute>} />
+              <Route path="don-hang" element={<StaffOnlyRoute perm="orders.view"><StoreOrdersPage /></StaffOnlyRoute>} />
+              <Route path="khach-dang-ky" element={<StaffOnlyRoute perm="customers.view"><StoreCustomersPage /></StaffOnlyRoute>} />
+            </Route>
             <Route path="don-hang-cua-toi" element={<CustomerOnlyRoute><MyOrdersPage /></CustomerOnlyRoute>} />
             <Route path="don-hang-cua-toi/:id" element={<CustomerOnlyRoute><MyOrderDetailPage /></CustomerOnlyRoute>} />
             <Route path="dat-hang/excel" element={<CustomerOnlyRoute><DatHangExcelPage /></CustomerOnlyRoute>} />

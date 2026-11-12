@@ -4,12 +4,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { can, ROLE_LABELS } from '../lib/permissions';
 import {
   LayoutDashboard, ShoppingCart, Users, PackageOpen, LogOut, PlusSquare, Package,
-  Wallet, BarChart3, MoreHorizontal, X, ClipboardList, Tag, FileSpreadsheet,
+  Wallet, BarChart3, MoreHorizontal, X, ClipboardList, Tag, FileSpreadsheet, Store,
 } from 'lucide-react';
 
 const NAV_GROUPS = [
   { key: 'overview', label: 'Tổng quan' },
   { key: 'sales', label: 'Bán hàng & khách' },
+  { key: 'online', label: 'Bán hàng online' },
   { key: 'products', label: 'Quản lý Hàng hóa' },
   { key: 'operations', label: 'Thu mua & vận hành' },
   { key: 'finance', label: 'Tài chính & báo cáo' },
@@ -21,6 +22,7 @@ const NAV_GROUP_BY_PATH: Record<string, string> = {
   '/hoa-don': 'sales',
   '/tao-don-hang': 'sales',
   '/khach-hang': 'sales',
+  '/cua-hang': 'online',
   '/ap-gia-hang-ngay': 'sales',
   '/hang-hoa': 'products',
   '/thiet-lap-gia': 'products',
@@ -64,6 +66,8 @@ export default function SaleLayout() {
           label: 'Thu mua & Soạn hàng',
           perm: 'procurement.view',
         },
+        // Cửa hàng online (GĐ3) — Admin bán hàng, BGĐ, Admin
+        can(role, 'store.manage') && { path: '/cua-hang', icon: <Store size={20} />, label: 'Cửa hàng online', perm: 'store.manage' },
         // Khách hàng
         can(role, 'customers.view') && { path: '/khach-hang', icon: <Users size={20} />, label: 'Quản lý Khách hàng', perm: 'customers.view' },
         // Quản lý Hàng hóa: chỉ có 2 mục Danh sách hàng hóa và Thiết lập giá
@@ -76,7 +80,10 @@ export default function SaleLayout() {
       ].filter(Boolean) as { path: string; icon: React.ReactNode; label: string; perm: string | null }[];
 
   // Mobile: chỉ hiện 4 mục dùng nhiều nhất, còn lại gom vào nút "Thêm".
-  const MOBILE_PRIMARY_PATHS = ['/', '/don-hang', '/tao-don-hang', '/hang-hoa'];
+  // Admin bán hàng không tạo đơn POS → đưa Cửa hàng online lên thanh dưới.
+  const MOBILE_PRIMARY_PATHS = can(role, 'orders.create')
+    ? ['/', '/don-hang', '/tao-don-hang', '/hang-hoa']
+    : ['/', '/don-hang', '/cua-hang', '/hang-hoa'];
   const primaryItems = isCustomer ? navItems : navItems.filter((i) => MOBILE_PRIMARY_PATHS.includes(i.path));
   const moreItems = isCustomer ? [] : navItems.filter((i) => !MOBILE_PRIMARY_PATHS.includes(i.path));
 
