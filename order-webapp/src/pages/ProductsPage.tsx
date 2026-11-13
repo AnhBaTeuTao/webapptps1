@@ -479,7 +479,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-3.5 sm:gap-4 pb-24 lg:pb-0">
+    <div className="flex flex-col min-w-0 w-full max-w-full gap-3.5 sm:gap-4 pb-24 lg:pb-0">
       {/* 1. Header trang: Lời chào & Giờ chốt đơn */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-0.5">
         <div>
@@ -499,7 +499,7 @@ export default function ProductsPage() {
         categories={categories} selectedCategory={selectedCategory} onSelectCategory={(category) => { setSelectedCategory(category); }} onAddProduct={handleAddProduct} />}
 
       {/* 2. Tiêu đề khu vực sản phẩm & Thanh lọc nhóm hàng khi tìm kiếm */}
-      <div ref={gridTopRef} className="space-y-2.5 scroll-mt-44">
+      <div ref={gridTopRef} className="space-y-2.5 min-w-0 w-full scroll-mt-44">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-sm font-bold text-[#17231d] uppercase tracking-wider flex items-center gap-2">
             <span>
@@ -567,7 +567,7 @@ export default function ProductsPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 items-start min-w-0 w-full">
         <div ref={productGridWrapRef} className="space-y-3 min-w-0">
           <ProductGrid
             products={visibleProducts}

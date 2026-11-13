@@ -109,8 +109,8 @@ export default function StoreLayout() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f5f7f3] selection:bg-[#0f7a4f] selection:text-white">
-      <header className="sticky top-0 z-30 border-b border-[#17231d]/8 bg-white/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
+    <div className="flex min-h-screen w-full max-w-full overflow-x-clip flex-col bg-[#f5f7f3] selection:bg-[#0f7a4f] selection:text-white">
+      <header className="sticky top-0 z-30 w-full max-w-full border-b border-[#17231d]/8 bg-white/95 pt-[env(safe-area-inset-top,0px)] backdrop-blur-md">
         <TrustMarquee />
 
         {/* TẦNG 1: Cùng hàng với Logo */}
@@ -461,7 +461,7 @@ export default function StoreLayout() {
         </div>
       )}
 
-      <main className="mx-auto w-full max-w-330 flex-1 px-3 py-4 pb-28 sm:px-5 md:pb-8">
+      <main className="mx-auto w-full max-w-330 min-w-0 flex-1 px-3 py-4 pb-28 sm:px-5 md:pb-8">
         {session?.verificationStatus === 'pending' && (
           <div role="status" className="mb-3 rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900 ring-1 ring-amber-200">
             {t('Tài khoản của quý khách đang chờ TPS1 xác minh. Quý khách vẫn đặt hàng bình thường, giá sẽ được xác nhận khi chốt đơn.')}

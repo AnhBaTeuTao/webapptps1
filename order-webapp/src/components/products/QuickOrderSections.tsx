@@ -71,7 +71,7 @@ export default function QuickOrderSections({
   if (!hasAnyQuickSection) return null;
 
   return (
-    <section className="space-y-4 rounded-2xl border border-[#17231d]/10 bg-white p-3 shadow-sm sm:p-4">
+    <section className="space-y-4 min-w-0 w-full max-w-full overflow-hidden rounded-2xl border border-[#17231d]/10 bg-white p-3 shadow-sm sm:p-4">
       {latestOrder && <button
           type="button"
           onClick={onReorderLatest}
@@ -84,7 +84,7 @@ export default function QuickOrderSections({
 
       {/* 1. Mặt hàng thường mua */}
       {frequentProducts.length > 0 && (
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center justify-between mb-1.5">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1">
               <span>{t('Hàng thường mua')}</span>
@@ -142,7 +142,7 @@ export default function QuickOrderSections({
 
       {/* 2. Sản phẩm yêu thích */}
       {favoriteProducts.length > 0 && (
-        <div>
+        <div className="min-w-0">
           <div className="mb-1.5 flex items-center justify-between gap-2">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1.5">
               <Heart size={13} className="fill-rose-500 text-rose-500" />
@@ -192,7 +192,7 @@ export default function QuickOrderSections({
 
       {/* 3. Danh mục sản phẩm (Category chips) */}
       {categories.length > 0 && (
-        <div>
+        <div className="min-w-0">
           <div className="mb-1.5 flex items-center justify-between gap-2">
             <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1">
               <FolderOpen size={13} className="text-[#0f7a4f]" />

@@ -64,31 +64,31 @@ export default function ProductCard({
       }`}
     >
       {/* PHẦN TRÊN */}
-      <div className="p-2.5 sm:p-3.5 flex-1 flex flex-col">
+      <div className="p-2 sm:p-3.5 flex-1 flex flex-col min-w-0">
         {/* TẦNG 1: Khung thông tin đầu thẻ */}
-        <div>
+        <div className="min-w-0">
           {/* Hàng trên Tầng 1: Ảnh + Mã SKU + ĐVT + Nút tim */}
-          <div className="relative flex items-start gap-2 min-h-11 sm:min-h-13">
+          <div className="relative flex items-start gap-1.5 sm:gap-2 min-h-10.5 sm:min-h-13">
             {/* Nút yêu thích góc trên phải */}
             <button
               type="button"
               onClick={() => onToggleFavorite(product.id)}
-              className="absolute -right-1 -top-1 z-10 p-1 text-[#59665f]/60 hover:text-rose-500 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+              className="absolute -right-1 -top-1 z-10 p-0.5 sm:p-1 text-[#59665f]/60 hover:text-rose-500 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
               title={isFavorite ? t('Bỏ yêu thích') : t('Thêm vào món yêu thích của bếp')}
               aria-label={`${t(isFavorite ? 'Bỏ yêu thích' : 'Thêm vào món yêu thích của bếp')} ${productName(product.name)}`}
             >
-              <Heart size={15} className={isFavorite ? 'fill-rose-500 text-rose-500' : ''} />
+              <Heart size={14} className={isFavorite ? 'fill-rose-500 text-rose-500' : ''} />
             </button>
 
             {/* Ảnh đại diện sản phẩm */}
-            <ProductThumbnail product={product} size="md" className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl shrink-0" />
+            <ProductThumbnail product={product} size="md" className="w-10 h-10 sm:w-13 sm:h-13 rounded-xl shrink-0" />
 
             {/* Cụm bên phải ảnh: SKU & ĐVT */}
-            <div className="min-w-0 flex-1 pr-5 flex flex-col justify-center gap-1">
-              {/* Dòng 1: Mã SKU */}
-              <div>
+            <div className="min-w-0 flex-1 pr-4 sm:pr-5 flex flex-col justify-center gap-1">
+              {/* Dòng 1: Mã SKU (không dùng truncate để không bị ... theo yêu cầu) */}
+              <div className="min-w-0">
                 {product.sku ? (
-                  <span className="inline-block max-w-full truncate text-[8.5px] sm:text-[9.5px] font-sans font-bold tracking-tight text-[#17231d] bg-[#eaf0ec] px-1.5 py-0.5 rounded leading-none">
+                  <span className="inline-block text-[8px] sm:text-[9.5px] font-sans font-bold tracking-tighter sm:tracking-tight text-[#17231d] bg-[#eaf0ec] px-1 sm:px-1.5 py-0.5 rounded leading-none whitespace-nowrap">
                     {product.sku}
                   </span>
                 ) : (
@@ -104,7 +104,7 @@ export default function ProductCard({
           </div>
 
           {/* Hàng dưới Tầng 1: Nhóm hàng + Trạng thái chọn hàng full chiều ngang thẻ */}
-          <div className="mt-1.5 space-y-1">
+          <div className="mt-1.5 space-y-1 min-w-0">
             {/* Dòng 3: Phân nhóm hàng */}
             <div className="h-4 flex items-center text-[9.5px] sm:text-[10.5px] tracking-tight text-[#2c3a33] font-semibold leading-none whitespace-nowrap">
               {t('Nhóm:')} <span className="ml-1 font-bold text-[#17231d]">{product.category ? productName(product.category) : t('Khác')}</span>
