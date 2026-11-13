@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   X,
   Calendar,
@@ -10,13 +10,12 @@ import {
   AlertCircle,
   ArrowRight,
   Info,
-  ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 import type { CustomerSession, Product } from '../../lib/api';
 import type { OrderTab } from './OrderTabsBar';
 import ProductThumbnail from './ProductThumbnail';
 import UnlistedItemEntry from './UnlistedItemEntry';
+import LineNoteEditor from './LineNoteEditor';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 function money(v: number) {
@@ -57,7 +56,6 @@ export default function CartCheckoutDrawer({
   cutoffTimeStr,
 }: CartCheckoutDrawerProps) {
   const { t, productName, productUnit } = useLanguage();
-  const [isDeliveryExpanded, setIsDeliveryExpanded] = useState(true);
 
   if (!isOpen) return null;
 
@@ -162,6 +160,7 @@ export default function CartCheckoutDrawer({
                           min={0.001}
                           step="any"
                           value={item.quantity}
+                          onWheel={(e) => (e.currentTarget as HTMLElement).blur()}
                           onChange={(e) => {
                             const val = parseFloat(e.target.value);
                             onUpdateQty(item.lineKey || item.product.id, isNaN(val) ? 0 : val);
@@ -190,16 +189,12 @@ export default function CartCheckoutDrawer({
                       </div>
                     </div>
 
-                    {/* Ghi chú từng dòng */}
-                    <div>
-                      <input
-                        type="text"
-                        value={item.note || ''}
-                        onChange={(e) => onUpdateNote(item.lineKey || item.product.id, e.target.value)}
-                        placeholder={t('Ghi chú quy cách (vd: sơ chế, thái lát...)')}
-                        className="w-full text-xs py-1.5 px-2.5 bg-white border border-[#17231d]/15 rounded-lg text-[#17231d] placeholder:text-[#59665f]/50 focus:outline-none focus:border-[#0f7a4f]"
-                      />
-                    </div>
+                    {/* Ghi chú từng dòng: Enter khóa lại, có nút Sửa */}
+                    <LineNoteEditor
+                      size="comfortable"
+                      note={item.note}
+                      onSave={(value) => onUpdateNote(item.lineKey || item.product.id, value)}
+                    />
                   </div>
                 );
               })
@@ -223,20 +218,14 @@ export default function CartCheckoutDrawer({
 
           {/* Thông tin giao hàng */}
           <div className="border border-[#17231d]/10 rounded-2xl overflow-hidden">
-            <button
-              type="button"
-              onClick={() => setIsDeliveryExpanded(!isDeliveryExpanded)}
-              className="w-full p-3 bg-[#f8faf7] flex items-center justify-between text-xs font-bold text-[#17231d]"
-            >
+            <div className="w-full p-3 bg-[#f8faf7] flex items-center justify-between text-xs font-bold text-[#17231d]">
               <span className="flex items-center gap-1.5">
                 <MapPin size={14} className="text-[#0f7a4f]" />
                 <span>{t('Địa chỉ và thời gian nhận hàng')}</span>
               </span>
-              {isDeliveryExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-            </button>
+            </div>
 
-            {isDeliveryExpanded && (
-              <div className="p-3.5 space-y-3 bg-white text-xs">
+            <div className="p-3.5 space-y-3 bg-white text-xs">
                 {/* Ngày giao & Ca giao */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
@@ -342,9 +331,8 @@ export default function CartCheckoutDrawer({
                   </button>
                 )}
               </div>
-            )}
+            </div>
           </div>
-        </div>
 
         {/* Footer: Tổng tiền & Nút Gửi đơn */}
         <div className="p-4 border-t border-[#17231d]/10 bg-[#fbfcfb] space-y-3">

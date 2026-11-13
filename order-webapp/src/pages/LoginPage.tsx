@@ -103,14 +103,14 @@ export default function LoginPage() {
             </div>
 
             <label className="flex min-h-9 items-center gap-2.5 text-[13px] text-[#536d5c]">
-              <input type="checkbox" checked={rememberCode} onChange={event => setRememberCode(event.target.checked)} className="size-[18px] accent-[#0b8b60]" />
+              <input type="checkbox" checked={rememberCode} onChange={event => setRememberCode(event.target.checked)} className="size-4.5 accent-[#0b8b60]" />
               {t('Ghi nhớ đăng nhập')}
             </label>
 
             {error && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
 
             <button type="submit" disabled={loading}
-              className="flex h-[52px] w-full items-center justify-center gap-2 rounded-xl bg-[#087d57] text-base font-bold text-white shadow-[0_8px_18px_rgba(8,125,87,.18)] transition active:scale-[.99] disabled:opacity-60">
+              className="flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-[#087d57] text-base font-bold text-white shadow-[0_8px_18px_rgba(8,125,87,.18)] transition active:scale-[.99] disabled:opacity-60">
               {loading ? t('Đang xử lý...') : t('Đăng nhập')}
               {!loading && <ArrowRight size={18} />}
             </button>

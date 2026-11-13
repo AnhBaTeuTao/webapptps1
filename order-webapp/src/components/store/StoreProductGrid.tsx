@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import type { Product } from '../../lib/api';
 import StoreProductCard from './StoreProductCard';
 
-/** Lưới sản phẩm dùng chung: 3 cột điện thoại → 7 cột màn hình lớn. */
-export const STORE_GRID = 'grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-2.5 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7';
+/** Lưới sản phẩm dùng chung: 2 cột điện thoại → 7 cột màn hình lớn. */
+export const STORE_GRID = 'grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7';
 
 // Khớp các mốc màn hình của Tailwind trong STORE_GRID.
-function columnsFor(width: number) {
+export function columnsFor(width: number): number {
   if (width >= 1280) return 7;
   if (width >= 1024) return 6;
   if (width >= 768) return 5;
   if (width >= 640) return 4;
-  return 3;
+  return 2;
 }
 
 export function useGridColumns() {
-  const [columns, setColumns] = useState(() => (typeof window === 'undefined' ? 3 : columnsFor(window.innerWidth)));
+  const [columns, setColumns] = useState(() => (typeof window === 'undefined' ? 2 : columnsFor(window.innerWidth)));
   useEffect(() => {
     const onResize = () => setColumns(columnsFor(window.innerWidth));
     window.addEventListener('resize', onResize);

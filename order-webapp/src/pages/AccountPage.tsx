@@ -35,7 +35,7 @@ export default function AccountPage() {
   ];
   return <div className="mx-auto max-w-3xl space-y-5 pb-6">
     <header className="flex items-start justify-between gap-3"><div><h1 className="text-2xl font-black text-[#17382a]">{t('Tài khoản của tôi')}</h1></div><button onClick={() => { logout(); navigate('/dang-nhap'); }} className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-rose-200 bg-white px-3 text-sm font-bold text-rose-700"><LogOut size={16}/>{t('Đăng xuất')}</button></header>
-    <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-[#0b4f34] to-[#13875b] p-5 text-white shadow-lg sm:p-7">
+    <section className="overflow-hidden rounded-3xl bg-linear-to-br from-[#0b4f34] to-[#13875b] p-5 text-white shadow-lg sm:p-7">
       <div className="flex items-start justify-between gap-3"><label className="relative flex size-14 cursor-pointer items-center justify-center overflow-hidden rounded-2xl bg-white/15 text-xl font-black">{profile?.avatarUrl ? <img src={profile.avatarUrl} alt={t('Ảnh đại diện')} className="size-full object-cover" /> : (profile?.name || session?.name || 'K').slice(0,1).toUpperCase()}{profileBusy && <span className="absolute inset-0 flex items-center justify-center bg-black/35"><Loader2 size={20} className="animate-spin" /></span>}<input type="file" accept="image/*" className="sr-only" disabled={profileBusy} onChange={async event => {
           const input = event.target;
           const file = input.files?.[0];

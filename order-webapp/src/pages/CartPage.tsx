@@ -1,11 +1,13 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, FileSpreadsheet, Info, Minus, Plus, ShoppingBag, ShoppingCart, Trash2, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowRight, Check, CheckCircle2, Info, Minus, Plus, ShoppingBag, ShoppingCart, Trash2, X } from 'lucide-react';
 import { useCart, lineKeyOf } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useOrderSubmit } from '../hooks/useOrderSubmit';
 import CartSummarySidebar from '../components/products/CartSummarySidebar';
 import UnlistedItemEntry from '../components/products/UnlistedItemEntry';
+import ExcelOrderSection from '../components/cart/ExcelOrderSection';
 import { ProductImage, money, stepOf } from '../components/store/StoreProductCard';
 import type { OrderItem } from '../components/products/OrderTabsBar';
 
@@ -15,6 +17,25 @@ function CartLineRow({ item }: { item: OrderItem }) {
   const key = lineKeyOf(item);
   const step = stepOf(item.product);
   const priced = !item.product.isUnlisted && !item.product.priceOnRequest && item.product.price > 0;
+
+  const [isEditingNote, setIsEditingNote] = useState(false);
+  const [draftNote, setDraftNote] = useState(item.note || '');
+
+  useEffect(() => {
+    setDraftNote(item.note || '');
+  }, [item.note]);
+
+  const commitNote = () => {
+    const trimmed = draftNote.trim();
+    updateNote(key, trimmed);
+    setIsEditingNote(false);
+  };
+
+  const cancelEditNote = () => {
+    setDraftNote(item.note || '');
+    setIsEditingNote(false);
+  };
+
   const content = (
     <>
       <p className="line-clamp-2 text-sm font-semibold text-[#17231d]">{productName(item.product.name)}</p>
@@ -57,13 +78,91 @@ function CartLineRow({ item }: { item: OrderItem }) {
           </div>
           <p className="text-base font-black text-[#0b4f34]">{priced ? money(item.quantity * item.product.price) : '—'}</p>
         </div>
-        <input
-          type="text"
-          value={item.note || ''}
-          onChange={(e) => updateNote(key, e.target.value)}
-          placeholder={t('Ghi chú cho mặt hàng (cách sơ chế, quy cách...)')}
-          className="h-9 w-full rounded-lg border border-transparent bg-[#f5f7f3] px-3 text-xs focus:border-[#0f7a4f]/40 focus:bg-white focus:outline-none"
-        />
+
+        {/* Khóa ghi chú khi bấm Enter hoặc click ✓ */}
+        {isEditingNote ? (
+          <div className="flex items-center gap-1.5 pt-0.5">
+            <input
+              type="text"
+              autoFocus
+              value={draftNote}
+              onChange={(e) => setDraftNote(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  commitNote();
+                } else if (e.key === 'Escape') {
+                  cancelEditNote();
+                }
+              }}
+              onBlur={commitNote}
+              placeholder={t('Ghi chú cho mặt hàng (cách sơ chế, quy cách...)')}
+              className="h-8 min-w-0 flex-1 rounded-lg border border-[#0f7a4f]/50 bg-white px-2.5 text-xs text-[#17231d] shadow-2xs focus:border-[#0f7a4f] focus:outline-none focus:ring-1 focus:ring-[#0f7a4f]"
+            />
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                commitNote();
+              }}
+              aria-label={t('Lưu ghi chú')}
+              title={t('Lưu')}
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#0f7a4f] text-white hover:bg-[#0b4f34] transition"
+            >
+              <Check size={14} />
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                cancelEditNote();
+              }}
+              aria-label={t('Hủy')}
+              title={t('Hủy')}
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#17231d]/8 text-[#59665f] hover:bg-[#17231d]/15 transition"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ) : item.note ? (
+          <div className="flex items-center justify-between gap-2 rounded-lg bg-emerald-50/80 px-2.5 py-1.5 text-xs text-[#0b4f34] ring-1 ring-emerald-200/60">
+            <span className="min-w-0 flex-1 break-words font-medium">
+              📝 <strong className="font-semibold">{t('Ghi chú')}:</strong> {item.note}
+            </span>
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  setDraftNote(item.note || '');
+                  setIsEditingNote(true);
+                }}
+                className="text-[11px] font-bold text-[#0f7a4f] hover:underline px-1 py-0.5 rounded hover:bg-emerald-100/50"
+              >
+                {t('Sửa')}
+              </button>
+              <button
+                type="button"
+                onClick={() => updateNote(key, '')}
+                aria-label={t('Xóa ghi chú')}
+                title={t('Xóa')}
+                className="text-[#59665f] hover:text-red-600 p-0.5 rounded"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              setDraftNote('');
+              setIsEditingNote(true);
+            }}
+            className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#59665f] hover:text-[#0f7a4f] hover:underline pt-0.5"
+          >
+            <span>+</span> <span>{t('Ghi chú cho mặt hàng (cách sơ chế, quy cách...)')}</span>
+          </button>
+        )}
       </div>
     </li>
   );
@@ -71,10 +170,20 @@ function CartLineRow({ item }: { item: OrderItem }) {
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isExcel = searchParams.get('excel') === '1';
+  const excelSectionRef = useRef<HTMLDivElement>(null);
+
   const { session } = useAuth();
   const { t } = useLanguage();
   const { tab, updateTab, updateQty, removeItem, addUnlisted, repricedCount, dismissRepriced } = useCart();
   const { submit, submitting, errorMessage, successOrder, clearSuccess, cutoffInfo } = useOrderSubmit();
+
+  useEffect(() => {
+    if (isExcel && excelSectionRef.current) {
+      excelSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [isExcel]);
 
   if (successOrder) {
     return (
@@ -98,17 +207,20 @@ export default function CartPage() {
 
   if (tab.items.length === 0) {
     return (
-      <div className="mx-auto my-6 max-w-md space-y-4 rounded-3xl bg-white px-6 py-12 text-center ring-1 ring-[#17231d]/8">
-        <div className="mx-auto flex size-20 items-center justify-center rounded-2xl bg-[#f5f7f3] text-[#59665f]/40"><ShoppingCart size={36} /></div>
-        <div>
-          <h1 className="text-lg font-bold text-[#17231d]">{t('Giỏ hàng đang trống')}</h1>
-          <p className="mt-1 text-sm text-[#59665f]">{t('Quý khách chọn hàng từ danh mục, hoặc ghi tên mặt hàng chưa có sẵn để TPS1 báo giá riêng.')}</p>
+      <div className="mx-auto my-4 max-w-4xl space-y-5">
+        <div className="mx-auto max-w-md space-y-4 rounded-3xl bg-white px-6 py-10 text-center ring-1 ring-[#17231d]/8 shadow-xs">
+          <div className="mx-auto flex size-18 items-center justify-center rounded-2xl bg-[#f5f7f3] text-[#59665f]/40"><ShoppingCart size={32} /></div>
+          <div>
+            <h1 className="text-lg font-bold text-[#17231d]">{t('Giỏ hàng đang trống')}</h1>
+            <p className="mt-1 text-sm text-[#59665f]">{t('Quý khách chọn hàng từ cửa hàng, hoặc tải file Excel lên để lên đơn nhanh chóng.')}</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2">
+            <Link to="/" className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          <Link to="/" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#0f7a4f] px-6 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
-          {session && <Link to="/dat-hang/excel" className="inline-flex h-11 items-center gap-2 rounded-xl border border-[#0f7a4f]/30 px-5 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]"><FileSpreadsheet size={16} /> {t('Đặt từ Excel')}</Link>}
-        </div>
-        {session && <UnlistedItemEntry onAdd={addUnlisted} />}
+
+        {session && <ExcelOrderSection ref={excelSectionRef} autoFocusHighlight={isExcel} />}
+        {session && <div className="rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6"><UnlistedItemEntry onAdd={addUnlisted} /></div>}
       </div>
     );
   }
@@ -131,18 +243,19 @@ export default function CartPage() {
       )}
 
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="space-y-3">
+        <div className="space-y-4">
+          {session && <ExcelOrderSection ref={excelSectionRef} autoFocusHighlight={isExcel} />}
+
           <ul className="divide-y divide-[#17231d]/6 overflow-hidden rounded-3xl bg-white ring-1 ring-[#17231d]/6">
             {tab.items.map((item) => <CartLineRow key={lineKeyOf(item)} item={item} />)}
           </ul>
           {session && <div className="rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6"><UnlistedItemEntry onAdd={addUnlisted} /></div>}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><ShoppingBag size={15} /> {t('Tiếp tục chọn hàng')}</Link>
-            {session && <Link to="/dat-hang/excel" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><FileSpreadsheet size={15} /> {t('Thêm hàng từ file Excel')}</Link>}
           </div>
         </div>
 
-        <div className="lg:sticky lg:top-[150px]">
+        <div className="lg:sticky lg:top-37.5">
           <CartSummarySidebar
             session={session}
             activeTab={tab}

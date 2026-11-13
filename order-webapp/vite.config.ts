@@ -54,10 +54,10 @@ export default defineConfig(({ mode }) => ({
   server: {
     port: 5174,
     proxy: {
-      // Dev: trỏ thẳng sang Next.js app chạy ở cổng 3001 (giống sale-webapp).
       '/api': {
-        target: 'http://localhost:3001',
+        target: process.env.VITE_BACKEND_URL || 'https://thucphamsomot.vn',
         changeOrigin: true,
+        secure: false,
       },
     },
   },
@@ -65,8 +65,9 @@ export default defineConfig(({ mode }) => ({
     port: 5174,
     proxy: {
       '/api': {
-        target: 'http://localhost:3001',
+        target: process.env.VITE_BACKEND_URL || 'https://thucphamsomot.vn',
         changeOrigin: true,
+        secure: false,
       },
     },
   },

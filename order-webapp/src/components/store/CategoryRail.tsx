@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { PackageOpen } from 'lucide-react';
 import type { StoreCategory } from '../../lib/api';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 
 function CategoryImage({ category }: { category: StoreCategory }) {
   const [failed, setFailed] = useState(false);
@@ -16,20 +17,21 @@ function CategoryImage({ category }: { category: StoreCategory }) {
 /** Danh mục có ảnh: hàng trượt ngang trên mobile, lưới trên desktop. */
 export default function CategoryRail({ categories, layout = 'rail' }: { categories: StoreCategory[]; layout?: 'rail' | 'grid' }) {
   const { t } = useLanguage();
+  const railRef = useHorizontalScroll<HTMLDivElement>();
   if (categories.length === 0) return null;
   const wrapper = layout === 'grid'
     ? 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5'
-    : 'no-scrollbar -mx-1 flex gap-3 overflow-x-auto px-1 pb-1 lg:grid lg:grid-cols-10 lg:overflow-visible';
+    : 'no-scrollbar -mx-1 flex gap-2.5 sm:gap-3 overflow-x-auto px-1 pb-1 lg:grid lg:grid-cols-10 lg:overflow-visible overscroll-contain select-none cursor-grab';
 
   return (
-    <div className={wrapper}>
+    <div ref={layout === 'rail' ? railRef : undefined} className={wrapper}>
       {categories.map((category) => (
         <Link
           key={category.slug}
           to={`/danh-muc/${category.slug}`}
-          className={`group flex flex-col items-center gap-2 text-center ${layout === 'rail' ? 'w-[78px] shrink-0 lg:w-auto' : ''}`}
+          className={`group flex flex-col items-center gap-2 text-center ${layout === 'rail' ? 'w-21 shrink-0 sm:w-23 lg:w-auto' : ''}`}
         >
-          <span className={`flex items-center justify-center overflow-hidden rounded-2xl bg-[#eaf6ef] ring-1 ring-[#0f7a4f]/10 ${layout === 'grid' ? 'aspect-square w-full' : 'size-[72px] lg:size-20'}`}>
+          <span className={`flex items-center justify-center overflow-hidden rounded-2xl bg-[#eaf6ef] ring-1 ring-[#0f7a4f]/12 shadow-xs transition group-hover:-translate-y-0.5 group-hover:ring-[#0f7a4f]/35 ${layout === 'grid' ? 'aspect-square w-full' : 'size-17 sm:size-19 lg:size-20'}`}>
             <CategoryImage category={category} />
           </span>
           <span className="line-clamp-2 text-[12px] font-semibold leading-tight text-[#17231d] group-hover:text-[#0b4f34] sm:text-[13px]">

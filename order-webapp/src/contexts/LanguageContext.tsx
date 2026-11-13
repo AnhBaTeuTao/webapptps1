@@ -399,6 +399,7 @@ const translations: Record<string, [string, string]> = {
   'Dựa trên những mặt hàng bếp của quý khách vẫn thường dùng': ['Based on what your kitchen usually orders', '根据您厨房常用的商品推荐'],
   'Những mặt hàng các bếp ăn khác thường chọn': ['Items other kitchens often choose', '其他厨房常选的商品'],
   'Tìm rau củ, thịt cá, gia vị...': ['Search vegetables, meat, spices...', '搜索蔬菜、肉类、调味品……'],
+  'Tìm rau củ, thịt cá...': ['Search vegetables, meat...', '搜索蔬菜、肉类……'],
   'Tổng đài đặt hàng': ['Order hotline', '订货热线'],
   'Đăng ký': ['Sign up', '注册'],
   'Tất cả danh mục': ['All categories', '全部分类'],
@@ -550,6 +551,13 @@ Object.assign(translations, {
   'SĐT dùng cho nhiều tài khoản. Hãy dùng tên đăng nhập hoặc mã khách hàng.': ['This phone is linked to multiple accounts. Use your username or customer code.', '此手机号关联多个账户，请使用用户名或客户代码登录。'],
   'Tài khoản chưa được phép đặt hàng': ['This account cannot place orders.', '此账户无法下单。'],
   'Đã quá giờ chốt đơn. Vui lòng chọn ngày giao mới.': ['The order cutoff has passed. Choose another delivery date.', '已超过截单时间，请选择其他送货日期。'],
+  'Đặt nhanh & Đặt lại đơn': ['Quick & Re-order', '快速下单与再次订购'],
+  'BẾP ĐỐI TÁC TPS1': ['TPS1 PARTNER KITCHEN', 'TPS1 合作食堂'],
+  'Giá hiển thị đã áp dụng theo hợp đồng của bếp.': ['Displayed prices reflect your contract rates.', '显示价格已适用食堂合同价。'],
+  'Hơn 5.000+ mặt hàng sẵn có': ['5,000+ items in stock', '5,000+ 现货品类'],
+  'Giao đúng hẹn 99,8% ca sáng': ['99.8% on-time morning delivery', '早班 99.8% 准时送达'],
+  'Nguồn thực phẩm sạch cho': ['Clean ingredients for', '优质食材供应商，服务于'],
+  'theo nhu cầu của bếp.': ['to meet your kitchen needs.', '按食堂实际需求送达。'],
 });
 
 type LanguageContextValue = { language: Language; setLanguage: (value: Language) => void; t: (value: string) => string; productName: (value: string) => string; productUnit: (value: string) => string; errorText: (error: { code?: string; message?: string }) => string };

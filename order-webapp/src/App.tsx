@@ -20,7 +20,6 @@ const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const OrdersPage = lazy(() => import('./pages/OrdersPage'));
 const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage'));
-const ExcelOrderPage = lazy(() => import('./pages/ExcelOrderPage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
 
 const LoadingScreen = () => (
@@ -96,7 +95,7 @@ function App() {
               <Route path="yeu-thich" element={<PasswordGate><FavoritesPage /></PasswordGate>} />
               {/* Bắt đăng nhập */}
               <Route path="dat-hang" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
-              <Route path="dat-hang/excel" element={<ProtectedRoute><ExcelOrderPage /></ProtectedRoute>} />
+              <Route path="dat-hang/excel" element={<Navigate to="/gio-hang?excel=1" replace />} />
               <Route path="don-hang" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
               <Route path="don-hang/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
               <Route path="tai-khoan" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />

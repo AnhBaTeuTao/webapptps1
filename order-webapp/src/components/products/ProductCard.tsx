@@ -8,6 +8,9 @@ function money(v: number) {
   return new Intl.NumberFormat('vi-VN').format(Number(v) || 0) + 'đ';
 }
 
+const NO_SPINNER =
+  '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none';
+
 interface ProductCardProps {
   product: Product;
   quantityInCart: number;
@@ -30,190 +33,253 @@ export default function ProductCard({
   onUpdateNote,
 }: ProductCardProps) {
   const { t, productName, productUnit } = useLanguage();
-  const [showNoteInput, setShowNoteInput] = useState(Boolean(itemNote));
+  const [isEditingNote, setIsEditingNote] = useState(false);
   const [tempNote, setTempNote] = useState(itemNote);
   const [draftQuantity, setDraftQuantity] = useState('1');
 
   useEffect(() => {
     setTempNote(itemNote);
-    if (itemNote) setShowNoteInput(true);
   }, [itemNote]);
 
   const isInCart = quantityInCart > 0;
 
+  // Rời khỏi giỏ => đóng chế độ sửa ghi chú
+  useEffect(() => {
+    if (!isInCart) setIsEditingNote(false);
+  }, [isInCart]);
+
   const handleNoteSave = () => {
     onUpdateNote(product.id, tempNote.trim());
+    setIsEditingNote(false);
   };
+
+  const unitLabel = productUnit(product.unit || 'Kg');
 
   return (
     <div
-      className={`relative bg-white rounded-2xl border transition-all duration-200 flex flex-col justify-between overflow-hidden group ${
+      className={`relative bg-white rounded-2xl border transition-all duration-200 flex flex-col justify-between h-full overflow-hidden group ${
         isInCart
-          ? 'border-[#0f7a4f]/40 shadow-sm shadow-[#0f7a4f]/5 ring-1 ring-[#0f7a4f]/20 bg-gradient-to-b from-white to-[#f5fbf7]'
+          ? 'border-[#0f7a4f]/40 shadow-sm shadow-[#0f7a4f]/5 ring-1 ring-[#0f7a4f]/20 bg-linear-to-b from-white to-[#f5fbf7]'
           : 'border-[#17231d]/10 hover:border-[#0f7a4f]/30 hover:shadow-md'
       }`}
     >
-      {/* Phần trên: Ảnh, Thông tin sản phẩm, Nút tim */}
-      <div className="p-3 sm:p-3.5 space-y-2">
-        <div className="flex items-start gap-3">
-          {/* Thumbnail */}
-          <ProductThumbnail product={product} size="md" />
+      {/* PHẦN TRÊN */}
+      <div className="p-2.5 sm:p-3.5 flex-1 flex flex-col">
+        {/* TẦNG 1: Khung thông tin đầu thẻ */}
+        <div>
+          {/* Hàng trên Tầng 1: Ảnh + Mã SKU + ĐVT + Nút tim */}
+          <div className="relative flex items-start gap-2 min-h-11 sm:min-h-13">
+            {/* Nút yêu thích góc trên phải */}
+            <button
+              type="button"
+              onClick={() => onToggleFavorite(product.id)}
+              className="absolute -right-1 -top-1 z-10 p-1 text-[#59665f]/60 hover:text-rose-500 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+              title={isFavorite ? t('Bỏ yêu thích') : t('Thêm vào món yêu thích của bếp')}
+              aria-label={`${t(isFavorite ? 'Bỏ yêu thích' : 'Thêm vào món yêu thích của bếp')} ${productName(product.name)}`}
+            >
+              <Heart size={15} className={isFavorite ? 'fill-rose-500 text-rose-500' : ''} />
+            </button>
 
-          {/* Chi tiết tên, SKU, ĐVT */}
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-1">
-              <div className="min-w-0 flex-1">
-                {product.sku && (
-                  <span className="inline-block text-[10px] font-mono font-bold text-[#59665f] bg-[#17231d]/5 px-1.5 py-0.2 rounded mb-0.5">
+            {/* Ảnh đại diện sản phẩm */}
+            <ProductThumbnail product={product} size="md" className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl shrink-0" />
+
+            {/* Cụm bên phải ảnh: SKU & ĐVT */}
+            <div className="min-w-0 flex-1 pr-5 flex flex-col justify-center gap-1">
+              {/* Dòng 1: Mã SKU */}
+              <div>
+                {product.sku ? (
+                  <span className="inline-block max-w-full truncate text-[8.5px] sm:text-[9.5px] font-sans font-bold tracking-tight text-[#17231d] bg-[#eaf0ec] px-1.5 py-0.5 rounded leading-none">
                     {product.sku}
                   </span>
+                ) : (
+                  <span className="text-[10px] text-[#8a9690] leading-none">—</span>
                 )}
-                <h3
-                  className="font-bold text-sm text-[#17231d] leading-snug line-clamp-2"
-                  title={product.name}
-                >
-                  {productName(product.name)}
-                </h3>
-                {productName(product.name) !== product.name && <p className="text-[11px] text-[#59665f] line-clamp-1" title={product.name}>{product.name}</p>}
               </div>
 
-              {/* Nút tim yêu thích */}
-              <button
-                type="button"
-                onClick={() => onToggleFavorite(product.id)}
-                className="p-1.5 -mr-1 -mt-1 text-[#59665f]/50 hover:text-rose-500 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
-                title={isFavorite ? t('Bỏ yêu thích') : t('Thêm vào món yêu thích của bếp')}
-                aria-label={`${t(isFavorite ? 'Bỏ yêu thích' : 'Thêm vào món yêu thích của bếp')} ${productName(product.name)}`}
-              >
-                <Heart
-                  size={16}
-                  className={isFavorite ? 'fill-rose-500 text-rose-500' : ''}
-                />
-              </button>
+              {/* Dòng 2: Đơn vị tính */}
+              <div className="text-[10px] sm:text-[10.5px] text-[#2c3a33] font-semibold leading-none whitespace-nowrap">
+                {t('ĐVT:')} <strong className="text-[#17231d] font-bold">{unitLabel}</strong>
+              </div>
+            </div>
+          </div>
+
+          {/* Hàng dưới Tầng 1: Nhóm hàng + Trạng thái chọn hàng full chiều ngang thẻ */}
+          <div className="mt-1.5 space-y-1">
+            {/* Dòng 3: Phân nhóm hàng */}
+            <div className="h-4 flex items-center text-[9.5px] sm:text-[10.5px] tracking-tight text-[#2c3a33] font-semibold leading-none whitespace-nowrap">
+              {t('Nhóm:')} <span className="ml-1 font-bold text-[#17231d]">{product.category ? productName(product.category) : t('Khác')}</span>
             </div>
 
-            {/* Đơn vị tính & Nhóm */}
-            <p className="text-xs text-[#59665f] mt-0.5 font-medium">
-              {t('ĐVT:')} <strong className="text-[#17231d]">{productUnit(product.unit || 'Kg')}</strong>
-              {product.category && (
-                <span className="text-[#59665f]/70 font-normal"> · {productName(product.category)}</span>
+            {/* Dòng 4: Trạng thái chọn hàng */}
+            <div className="h-4.5 flex items-center">
+              {isInCart ? (
+                <span className="inline-flex items-center text-[9.5px] sm:text-[10px] font-bold text-[#0f7a4f] bg-[#0f7a4f]/12 px-2 py-0.5 rounded-full leading-none whitespace-nowrap">
+                  {t('Đã chọn:')} {quantityInCart} {unitLabel}
+                </span>
+              ) : (
+                <span className="text-[9.5px] sm:text-[10px] text-[#0f7a4f] font-semibold leading-none whitespace-nowrap">
+                  {t('Sẵn hàng giao bếp')}
+                </span>
               )}
-            </p>
+            </div>
           </div>
         </div>
 
-        {/* Giá sản phẩm */}
-        <div className="pt-1 flex items-baseline justify-between">
-          <div className="text-sm sm:text-base font-extrabold text-[#0f7a4f]">
+        {/* TẦNG 2: Tên sản phẩm khóa chuẩn 2 dòng h-9 sm:h-10 */}
+        <div className="mt-2">
+          <h3
+            className="font-bold text-[12.5px] sm:text-sm text-[#17231d] leading-4.5 sm:leading-5 line-clamp-2 h-9 sm:h-10 overflow-hidden"
+            title={product.name}
+          >
+            {productName(product.name)}
+          </h3>
+        </div>
+
+        {/* TẦNG 3: Giá / Chờ sale báo giá khóa chuẩn h-7.5 sm:h-8.5 */}
+        <div className="mt-1.5 pt-1.5 border-t border-dashed border-[#17231d]/10 h-7.5 sm:h-8.5 flex items-center justify-between">
+          <div className="flex items-baseline min-w-0">
             {product.priceOnRequest ? (
-              <span className="text-[#e0742f] text-xs font-bold">{t('Chờ sale báo giá')}</span>
+              <span className="text-[#e0742f] text-[11.5px] sm:text-[13px] font-extrabold whitespace-nowrap">
+                {t('Chờ sale báo giá')}
+              </span>
             ) : (
-              money(product.price)
+              <span className="text-[#0f7a4f] text-[13.5px] sm:text-base font-extrabold whitespace-nowrap">
+                {money(product.price)}
+              </span>
             )}
-            <span className="text-[11px] font-normal text-[#59665f] ml-1">
-              /{productUnit(product.unit || 'Kg')}
-            </span>
+            <span className="text-[10px] sm:text-[11px] font-semibold text-[#17231d]/80 ml-0.5 sm:ml-1 whitespace-nowrap">/{unitLabel}</span>
           </div>
-
-          {isInCart && (
-            <span className="text-[11px] font-bold text-[#0f7a4f] bg-[#0f7a4f]/10 px-2 py-0.5 rounded-full">
-              {t('Đã chọn:')} {quantityInCart} {productUnit(product.unit || 'Kg')}
-            </span>
-          )}
         </div>
 
-        {/* Ô ghi chú quy cách sơ chế nếu đã thêm hoặc mở */}
+        {/* Hàng 4 (TẦNG 4): Ghi chú quy cách sơ chế */}
         {isInCart && (
-          <div className="pt-1">
-            {!showNoteInput && !itemNote ? (
-              <button
-                type="button"
-                onClick={() => setShowNoteInput(true)}
-                className="text-[11px] text-[#59665f] hover:text-[#0f7a4f] flex items-center gap-1 cursor-pointer font-medium"
-              >
-                <MessageSquarePlus size={13} />
-                <span>+ {t('Thêm quy cách / ghi chú sơ chế')}</span>
-              </button>
-            ) : (
-              <div className="flex items-center gap-1.5 mt-1">
+          <div className="mt-2 min-h-8 flex items-center">
+            {isEditingNote ? (
+              <div className="w-full flex items-center gap-1.5">
                 <input
                   type="text"
+                  autoFocus
                   value={tempNote}
                   onChange={(e) => setTempNote(e.target.value)}
-                  onBlur={handleNoteSave}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleNoteSave();
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleNoteSave();
+                      e.currentTarget.blur();
+                    } else if (e.key === 'Escape') {
+                      setTempNote(itemNote);
+                      setIsEditingNote(false);
+                    }
                   }}
                   placeholder={t('Vd: Sơ chế sẵn, thái lát mỏng...')}
-                  className="flex-1 text-xs py-1 px-2.5 bg-[#f8faf7] border border-[#17231d]/15 rounded-lg focus:outline-none focus:border-[#0f7a4f] focus:bg-white text-[#17231d]"
+                  className="min-w-0 flex-1 text-xs py-1 px-2.5 bg-[#f8faf7] border border-[#0f7a4f]/40 rounded-lg focus:outline-none focus:border-[#0f7a4f] focus:bg-white text-[#17231d]"
                 />
-                {tempNote !== itemNote && (
-                  <button
-                    type="button"
-                    onClick={handleNoteSave}
-                    className="p-1 text-[#0f7a4f] bg-[#0f7a4f]/10 rounded hover:bg-[#0f7a4f]/20"
-                    title={t('Lưu ghi chú')}
-                  >
-                    <Check size={14} />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={handleNoteSave}
+                  className="shrink-0 p-1.5 text-[#0f7a4f] bg-[#0f7a4f]/10 rounded-lg hover:bg-[#0f7a4f]/20 cursor-pointer"
+                  title={t('Lưu ghi chú')}
+                  aria-label={t('Lưu ghi chú')}
+                >
+                  <Check size={14} />
+                </button>
               </div>
+            ) : itemNote ? (
+              <div className="w-full flex items-center justify-between gap-1.5 rounded-lg border border-[#0f7a4f]/25 bg-[#eaf6ef]/70 px-2.5 py-1 text-[11px] text-[#0b4f34]">
+                <span className="truncate font-medium" title={itemNote}>📝 {itemNote}</span>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingNote(true)}
+                  className="shrink-0 font-bold text-[#0f7a4f] hover:underline cursor-pointer"
+                >
+                  {t('Sửa')}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsEditingNote(true)}
+                className="text-[11px] text-[#17231d]/85 hover:text-[#0f7a4f] flex items-center gap-1 cursor-pointer font-semibold"
+              >
+                <MessageSquarePlus size={13} className="shrink-0" />
+                <span>+ {t('Thêm quy cách / ghi chú')}</span>
+              </button>
             )}
           </div>
         )}
       </div>
 
-      {/* Phần dưới: Nút Thêm hoặc Bộ Stepper tăng giảm >= 44px */}
-      <div className="p-2.5 sm:p-3 pt-0 border-t border-[#17231d]/5 mt-1 bg-white/60">
+      {/* PHẦN DƯỚI: Nút Thêm hoặc Stepper */}
+      <div className="p-2 sm:p-3 pt-2 sm:pt-3 border-t border-[#17231d]/5 mt-auto bg-white/60">
         {!isInCart ? (
-          <div className="flex items-center gap-2">
-            <div className="flex h-11 min-w-0 flex-1 items-center rounded-xl border border-[#17231d]/12 bg-[#f8faf7]">
-              <button type="button" onClick={() => setDraftQuantity(value => String(Math.max(0.1, (Number(value) || 1) - 1)))} aria-label={t('Giảm số lượng')} className="flex size-10 shrink-0 items-center justify-center text-[#466253]"><Minus size={16}/></button>
-              <input type="number" min="0.1" step="any" value={draftQuantity} onChange={e => setDraftQuantity(e.target.value)} aria-label={`Số lượng ${product.name}`} className="w-full min-w-0 bg-transparent text-center text-sm font-bold text-[#17382a] outline-none" />
-              <span className="pr-1 text-[11px] text-[#718579]">{productUnit(product.unit || 'Kg')}</span>
-              <button type="button" onClick={() => setDraftQuantity(value => String((Number(value) || 0) + 1))} aria-label={t('Tăng số lượng')} className="flex size-10 shrink-0 items-center justify-center text-[#0f7a4f]"><Plus size={16}/></button>
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            <div className="flex h-9 sm:h-11 min-w-0 flex-1 items-center justify-between gap-0.5 rounded-xl border border-[#17231d]/12 bg-[#f8faf7] px-0.5 sm:px-1 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setDraftQuantity((value) => String(Math.max(0.1, (Number(value) || 1) - 1)))}
+                aria-label={t('Giảm số lượng')}
+                className="flex size-6.5 sm:size-8 shrink-0 items-center justify-center rounded-lg text-[#466253] hover:bg-white cursor-pointer"
+              >
+                <Minus size={14} strokeWidth={2.5} />
+              </button>
+              <input
+                type="number"
+                min="0.1"
+                step="any"
+                value={draftQuantity}
+                onChange={(e) => setDraftQuantity(e.target.value)}
+                aria-label={`Số lượng ${product.name}`}
+                className={`w-full min-w-0 flex-1 bg-transparent text-center text-xs sm:text-sm font-extrabold text-[#17382a] outline-none ${NO_SPINNER}`}
+              />
+              <button
+                type="button"
+                onClick={() => setDraftQuantity((value) => String((Number(value) || 0) + 1))}
+                aria-label={t('Tăng số lượng')}
+                className="flex size-6.5 sm:size-8 shrink-0 items-center justify-center rounded-lg text-[#0f7a4f] hover:bg-white cursor-pointer"
+              >
+                <Plus size={14} strokeWidth={2.5} />
+              </button>
             </div>
-            <button type="button" onClick={() => onAdd(product, Math.max(0.1, Number(draftQuantity) || 1))} aria-label={t('Thêm vào đơn')} className="flex h-11 w-12 shrink-0 items-center justify-center rounded-xl bg-[#0f7a4f] text-white shadow-sm"><Plus size={20}/></button>
+            <button
+              type="button"
+              onClick={() => onAdd(product, Math.max(0.1, Number(draftQuantity) || 1))}
+              aria-label={t('Thêm vào đơn')}
+              className="flex h-9 w-9 sm:h-11 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-[#0f7a4f] text-white shadow-sm hover:bg-[#0b4f34] cursor-pointer"
+            >
+              <Plus size={18} className="sm:size-5" />
+            </button>
           </div>
         ) : (
-          <div className="flex items-center justify-between gap-1.5 bg-[#f5f7f3] p-1 rounded-xl border border-[#17231d]/10">
-            {/* Nút giảm */}
+          <div className="flex h-9 sm:h-10 w-full min-w-0 items-center justify-between gap-1 rounded-xl border border-[#0f7a4f]/25 bg-[#f3f8f5] p-1 overflow-hidden">
             <button
               type="button"
               onClick={() => onUpdateQty(product.id, Math.max(0, Number((quantityInCart - 1).toFixed(2))))}
-              className="w-10 h-10 sm:w-9 sm:h-9 rounded-lg bg-white border border-[#17231d]/10 text-[#17231d] hover:bg-rose-50 hover:text-rose-600 active:scale-95 flex items-center justify-center font-bold text-base transition-colors cursor-pointer select-none touch-target"
+              className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg bg-white border border-[#17231d]/10 text-[#17231d] hover:bg-rose-50 hover:text-rose-600 active:scale-95 transition-colors cursor-pointer"
               aria-label={t('Giảm số lượng')}
             >
-              <Minus size={15} strokeWidth={2.5} />
+              <Minus size={13} strokeWidth={2.5} />
             </button>
 
-            {/* Ô nhập số lượng (cho phép số thập phân như 1.5, 2.25) */}
-            <div className="flex-1 flex items-center justify-center">
-              <input
-                type="number"
-                min={0}
-                step="any"
-                value={quantityInCart}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  onUpdateQty(product.id, isNaN(val) ? 0 : Math.max(0, val));
-                }}
-                className="w-16 sm:w-20 text-center font-extrabold text-sm sm:text-base text-[#0b4f34] bg-transparent focus:outline-none"
-                aria-label={`Số lượng ${product.name}`}
-              />
-              <span className="text-[11px] font-semibold text-[#59665f] -ml-1">
-                {productUnit(product.unit || 'Kg')}
-              </span>
-            </div>
+            <input
+              type="number"
+              min={0}
+              step="any"
+              value={quantityInCart}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                onUpdateQty(product.id, isNaN(val) ? 0 : Math.max(0, val));
+              }}
+              className={`w-full min-w-0 flex-1 text-center font-extrabold text-xs sm:text-base text-[#0b4f34] bg-transparent focus:outline-none ${NO_SPINNER}`}
+              aria-label={`Số lượng ${product.name}`}
+            />
 
-            {/* Nút tăng */}
             <button
               type="button"
               onClick={() => onUpdateQty(product.id, Number((quantityInCart + 1).toFixed(2)))}
-              className="w-10 h-10 sm:w-9 sm:h-9 rounded-lg bg-white border border-[#17231d]/10 text-[#0f7a4f] hover:bg-[#0f7a4f] hover:text-white active:scale-95 flex items-center justify-center font-bold text-base transition-colors cursor-pointer select-none touch-target"
+              className="flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg bg-[#0f7a4f] text-white hover:bg-[#0b4f34] active:scale-95 transition-colors cursor-pointer shadow-xs"
               aria-label={t('Tăng số lượng')}
             >
-              <Plus size={15} strokeWidth={2.5} />
+              <Plus size={13} strokeWidth={2.5} />
             </button>
           </div>
         )}

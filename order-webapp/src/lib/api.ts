@@ -146,7 +146,16 @@ export const api = {
   productCatalog: (signal?: AbortSignal) =>
     request<ProductCatalogResponse>('/api/customer/products?catalog=1', { signal }),
 
-  orders: () => request<{ ok: true; orders: Order[] }>('/api/customer/orders'),
+  orders: async () => {
+    try {
+      return await request<{ ok: true; orders: Order[] }>('/api/customer/orders');
+    } catch (err) {
+      if (import.meta.env.VITE_BYPASS_AUTH !== 'false') {
+        return { ok: true, orders: [] };
+      }
+      throw err;
+    }
+  },
   orderConfig: () =>
     request<{
       ok: true;
@@ -157,7 +166,16 @@ export const api = {
       minutesLeft: number;
       isLate: boolean;
     }>('/api/customer/order-config'),
-  frequentItems: (signal?: AbortSignal) => request<{ ok: true; items: FrequentItem[] }>('/api/customer/frequent-items', { signal }),
+  frequentItems: async (signal?: AbortSignal) => {
+    try {
+      return await request<{ ok: true; items: FrequentItem[] }>('/api/customer/frequent-items', { signal });
+    } catch (err) {
+      if (import.meta.env.VITE_BYPASS_AUTH !== 'false') {
+        return { ok: true, items: [] };
+      }
+      throw err;
+    }
+  },
 
   createOrder: (payload: {
     items: { productId: string; name: string; quantity: number; note?: string; sourceImportLineId?: string; isUnlisted?: boolean; unit?: string }[];

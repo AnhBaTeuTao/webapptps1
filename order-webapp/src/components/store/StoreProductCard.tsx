@@ -31,11 +31,15 @@ export function PriceTag({ product, large = false }: { product: Product; large?:
   }
   return (
     <div className="min-w-0">
-      <p className={`${large ? 'text-2xl' : 'text-[15px]'} font-black leading-tight text-[#0b4f34]`}>
-        {money(product.price)}
-        <span className={`${large ? 'text-sm' : 'text-[11px]'} font-semibold text-[#59665f]`}> / {productUnit(product.unit || 'Kg')}</span>
-      </p>
-      {!session && <p className="text-[10.5px] font-semibold text-[#8a9690]">{t('Giá tham khảo')}</p>}
+      <div className="flex flex-wrap items-baseline gap-x-1.5 leading-tight">
+        <span className={`${large ? 'text-2xl' : 'text-[15px]'} font-black text-[#0b4f34]`}>
+          {money(product.price)}
+        </span>
+        <span className={`${large ? 'text-sm' : 'text-[11.5px]'} font-semibold text-[#59665f] whitespace-nowrap`}>
+          / {productUnit(product.unit || 'Kg')}
+        </span>
+      </div>
+      {!session && <p className="mt-0.5 text-[10.5px] font-medium text-[#8a9690]">{t('Giá tham khảo')}</p>}
     </div>
   );
 }
@@ -92,9 +96,9 @@ export function FavoriteButton({ productId, className = '' }: { productId: strin
       aria-pressed={active}
       aria-label={active ? t('Bỏ khỏi yêu thích') : t('Thêm vào yêu thích')}
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(productId); }}
-      className={`flex ${/(^| )size-/.test(className) ? '' : 'size-9'} items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition active:scale-90 ${active ? 'text-[#e0742f]' : 'text-[#59665f] hover:text-[#e0742f]'} ${className}`}
+      className={`flex ${/(^| )size-/.test(className) ? '' : 'size-9'} items-center justify-center rounded-full bg-white/95 shadow-sm ring-1 ring-black/5 transition active:scale-90 ${active ? 'text-rose-500' : 'text-[#2c3a33] hover:text-rose-500'} ${className}`}
     >
-      <Heart size={16} fill={active ? 'currentColor' : 'none'} strokeWidth={active ? 2 : 2.2} />
+      <Heart size={16} className={active ? 'fill-rose-500 text-rose-500' : 'fill-none text-[#2c3a33] hover:text-rose-500'} strokeWidth={active ? 2 : 2.2} />
     </button>
   );
 }
@@ -179,7 +183,7 @@ export default function StoreProductCard({ product }: { product: Product }) {
         {priced ? (
           <p className="text-[13.5px] font-black leading-tight sm:text-[14.5px] text-[#0b4f34]">
             {money(product.price)}
-            {!session && <span className="ml-1 text-[10px] font-semibold text-[#8a9690]">{t('Giá tham khảo')}</span>}
+            {!session && <span className="ml-1 text-[10px] font-semibold text-[#8a9690] whitespace-nowrap">{t('Giá tham khảo')}</span>}
           </p>
         ) : (
           <p className="truncate text-[12px] font-bold leading-[1.45] text-[#c4601f]">{t('Liên hệ báo giá')}</p>

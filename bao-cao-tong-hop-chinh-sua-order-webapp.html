@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo Cáo Tổng Hợp Chỉnh Sửa & Nâng Cấp UI/UX — TPS1 Order Webapp (B2B)</title>
+  <style>
+    :root {
+      --primary: #0f7a4f;
+      --primary-dark: #0b4f34;
+      --primary-light: #eaf6ef;
+      --accent: #e0742f;
+      --accent-light: #fef5ee;
+      --bg: #f5f7f3;
+      --card: #ffffff;
+      --text: #17231d;
+      --muted: #59665f;
+      --border: #dfe5e0;
+      --rose: #e11d48;
+      --blue: #0284c7;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 28px 16px 64px;
+    }
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+    .hero {
+      background: linear-gradient(135deg, #0b4f34 0%, #0f7a4f 100%);
+      color: #fff;
+      border-radius: 20px;
+      padding: 28px 32px;
+      box-shadow: 0 12px 30px rgba(11, 79, 52, 0.16);
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    .hero h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .hero p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.88);
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .hero-badge {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .stat-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+    .stat-sub {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+    .section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .pill-new {
+      background: #e0f2fe;
+      color: var(--blue);
+    }
+    .pill-mod {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .pill-hot {
+      background: var(--accent-light);
+      color: #c4601f;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 13.5px;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 122, 79, 0.12);
+    }
+    .filter-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      text-align: left;
+      background: #f8faf7;
+      color: var(--muted);
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+    }
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #edf1ee;
+      vertical-align: top;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background-color: #fbfcfa;
+    }
+    code.filepath {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: #f1f6f3;
+      padding: 3px 7px;
+      border-radius: 6px;
+      display: inline-block;
+      word-break: break-all;
+    }
+    .diff-stat {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .diff-add {
+      color: #15803d;
+    }
+    .diff-del {
+      color: #b91c1c;
+    }
+    ul.change-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+    ul.change-list li {
+      margin-bottom: 4px;
+    }
+    ul.change-list li:last-child {
+      margin-bottom: 0;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .feature-card {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: #fcfdfa;
+    }
+    .feature-card h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text);
+    }
+    @media print {
+      body {
+        padding: 0;
+        background: #fff;
+      }
+      .toolbar {
+        display: none;
+      }
+      .section, .stat-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HERO HEADER -->
+    <header class="hero">
+      <div>
+        <h1>BÁO CÁO TỔNG HỢP CHỈNH SỬA &amp; NÂNG CẤP GIAO DIỆN B2B (`order-webapp`)</h1>
+        <p>Hệ thống Đặt Hàng Thực Phẩm Số Một (TPS1) — Tổng hợp toàn bộ các file đã tạo mới và chỉnh sửa</p>
+      </div>
+      <div class="hero-badges">
+        <span class="hero-badge">Tổng số file: 30 files</span>
+        <span class="hero-badge">Tạo mới: 4 files</span>
+        <span class="hero-badge">Cập nhật: 26 files</span>
+        <span class="hero-badge">+2.103 / -738 dòng code</span>
+      </div>
+    </header>
+
+    <!-- SUMMARY STATS -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Header 2 Tầng &amp; Smart Search</div>
+        <div class="stat-value">Kamereo B2B</div>
+        <div class="stat-sub">Drawer Danh mục 2 cột + Gợi ý tìm kiếm thông minh + 1 nút X</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Bảng Đặt Nhanh (`/dat-hang`)</div>
+        <div class="stat-value">Chuẩn OCD 100%</div>
+        <div class="stat-sub">Lưới 2 cột Mobile, khóa chiều cao thẻ, không cắt chữ thông tin phụ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Đơn Hàng &amp; Giỏ Hàng Excel</div>
+        <div class="stat-value">Tích Hợp 3-in-1</div>
+        <div class="stat-sub">Khóa ghi chú phím Enter + nút Sửa, cuộn mượt, đồng bộ Excel vào Giỏ</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Kiểm Thử Đa Thiết Bị (F12)</div>
+        <div class="stat-value">7 Điện Thoại + PC</div>
+        <div class="stat-sub">iPhone SE, 16, 16 Pro Max, Pixel 9/9 Pro/10, Galaxy A55 &amp; Desktop</div>
+      </div>
+    </div>
+
+    <!-- 10 KEY HIGHLIGHTS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">1. Tóm tắt 10 Hạng Mục Nâng Cấp Trọng Tâm</h2>
+        <span class="pill pill-hot">Hoàn tất 100%</span>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>1. Header 2 Tầng &amp; Drawer Danh Mục 2 Cột</h3>
+          <p>Bổ sung 3 thẻ trạng thái vận hành B2B ở tầng 1 (Ca giao sớm 05:00-07:00, Điểm giao mặc định, Tổng đài 24/7). Tầng 2 gồm nút Tất cả danh mục (mở Drawer 2 cột kiểu Kamereo chỉ hiện mục con khi server thực sự có dữ liệu), thanh tìm kiếm giãn khít và 3 nút Đặt nhanh, Đặt từ Excel, Đơn hàng.</p>
+        </div>
+        <div class="feature-card">
+          <h3>2. Thanh Tìm Kiếm Thông Minh (`SmartSearchBox`)</h3>
+          <p>Loại bỏ nút X thừa (chỉ giữ 1 nút X cạnh nút Tìm). Khi focus lúc rỗng: mở Popover tiện ích đặt bếp, lịch sử tìm kiếm, từ khóa thịnh hành và nhóm hàng xu hướng. Khi gõ chữ: gợi ý sản phẩm trực tiếp kèm giá, SKU và nút <code>+</code> thêm nhanh vào đơn.</p>
+        </div>
+        <div class="feature-card">
+          <h3>3. Thẻ Sản Phẩm (`ProductCard`) Không Nhảy Layout</h3>
+          <p>Cố định chiều cao từng tầng: chỉ duy nhất Tên sản phẩm được phép <code>...</code> (2 dòng); toàn bộ Mã SKU, ĐVT, Nhóm hàng, trạng thái <em>Sẵn hàng giao bếp / Đã chọn</em> hiển thị đầy đủ 100% không bị cắt chữ và không đè lên nút Tim trên cả Mobile 2 cột lẫn Desktop.</p>
+        </div>
+        <div class="feature-card">
+          <h3>4. Bảng Đặt Hàng Bên Phải (`CartSummarySidebar`)</h3>
+          <p>Căn phẳng mép trên &amp; mép dưới ngang bằng với lưới sản phẩm (chuẩn OCD). Đưa cụm tăng giảm số lượng <code>[ - 1 + ]</code> nằm kế bên tên món, tự bật thanh cuộn dọc khi có từ 2 món, bỏ nút thu gọn ở Thông tin nhận hàng và cho phép lăn chuột cuộn trang mượt mà khi chưa focus ô nhập.</p>
+        </div>
+        <div class="feature-card">
+          <h3>5. Khóa Ghi Chú Phím Enter &amp; Nút "Sửa"</h3>
+          <p>Khi nhập quy cách/ghi chú món ăn trong Thẻ sản phẩm, Sidebar Đặt hàng hoặc Giỏ hàng và nhấn phím <code>Enter</code>, ghi chú được khóa lại thành badge gọn gàng kèm nút <strong>"Sửa"</strong> rõ ràng bên phải.</p>
+        </div>
+        <div class="feature-card">
+          <h3>6. Phân Trang Gọn Gàng &amp; Thanh Lọc Tìm Kiếm</h3>
+          <p>Thay nút "Xem thêm" bằng Phân trang chẵn cột trên <code>/dat-hang</code>, <code>/danh-muc/:slug</code> và <code>/tim-kiem</code>. Thanh lọc nhóm hàng trên trang Tìm kiếm chỉ hiện các nhóm thực sự có sản phẩm khớp (<code>count &gt; 0</code>) và lọc tại chỗ không bị nhảy trang.</p>
+        </div>
+        <div class="feature-card">
+          <h3>7. Vuốt Ngang Bằng Con Lăn Chuột &amp; Auto-Scroll</h3>
+          <p>Tất cả các dải sản phẩm ngang đều hỗ trợ lăn chuột dọc để trượt ngang, kéo thả chuột và khóa <code>overscroll</code>. Riêng dải <em>Hàng bán chạy</em> tự động trôi chậm qua lại và tạm dừng khi rê chuột vào.</p>
+        </div>
+        <div class="feature-card">
+          <h3>8. Giỏ Hàng &amp; Đặt Hàng Từ Excel &amp; Yêu Thích 0ms</h3>
+          <p>Tích hợp khung Đặt hàng Excel vào thẳng <code>/gio-hang</code> với 3 khối rộng bằng khít nhau (<code>w-full</code> trong <code>max-w-3xl</code>). Icon Trái tim tô kín full màu đỏ khi có món yêu thích; bỏ yêu thích tại <code>/yeu-thich</code> xóa thẻ tức thì 0ms không nháy trắng trang.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FULL FILE INVENTORY TABLE -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">2. Danh Sách Chi Tiết 30 File Đã Tạo Mới &amp; Chỉnh Sửa</h2>
+        <div class="toolbar" style="margin-bottom: 0;">
+          <input
+            type="text"
+            id="fileSearch"
+            class="search-input"
+            placeholder="Tìm theo tên file, đường dẫn hoặc tính năng (vd: ProductCard, SmartSearchBox, Excel)..."
+            oninput="filterTable()"
+          />
+          <button class="filter-btn active" onclick="setFilter('all', this)">Tất cả (30)</button>
+          <button class="filter-btn" onclick="setFilter('new', this)">File Tạo Mới (4)</button>
+          <button class="filter-btn" onclick="setFilter('mod', this)">File Chỉnh Sửa (26)</button>
+        </div>
+      </div>
+
+      <table id="filesTable">
+        <thead>
+          <tr>
+            <th style="width: 48px;">STT</th>
+            <th style="width: 310px;">Đường dẫn File (`order-webapp/`)</th>
+            <th style="width: 115px;">Trạng thái</th>
+            <th style="width: 110px;">Thay đổi dòng</th>
+            <th>Chi tiết nội dung đã chỉnh sửa / bổ sung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- NHÓM 1: FILE TẠO MỚI (4 FILES) -->
+          <tr data-status="new">
+            <td>1</td>
+            <td><code class="filepath">order-webapp/src/components/store/SmartSearchBox.tsx</code></td>
+            <td><span class="pill pill-new">Tạo mới</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+533</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Thanh tìm kiếm thông minh kiểu Kamereo với duy nhất 1 nút <code>X</code> nằm sát nút <code>Tìm</code>.</li>
+                <li>Popover khi ô tìm kiếm rỗng: Tiện ích đặt bếp nhanh (Bảng đặt nhanh, Đặt từ file Excel), Lịch sử tìm kiếm gần đây (<code>localStorage</code>), Từ khóa thịnh hành và Nhóm hàng xu hướng.</li>
+                <li>Popover khi gõ từ khóa: Live Autocomplete hiển thị ảnh, tên, mã SKU, ĐVT, giá và nút <code>+</code> thêm trực tiếp vào đơn.</li>
+                <li>Tối ưu responsive trên cả 7 dòng điện thoại (không bị che placeholder và bung full chiều ngang màn hình mobile).</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="new">
+            <td>2</td>
+            <td><code class="filepath">order-webapp/src/components/cart/ExcelOrderSection.tsx</code></td>
+            <td><span class="pill pill-new">Tạo mới</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+785</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Component Đặt hàng nhanh bằng file Excel tích hợp trực tiếp vào trang Giỏ hàng (<code>/gio-hang</code>).</li>
+                <li>Hỗ trợ tải file mẫu Excel B2B, tải file lên tự động nhận diện cột SKU/Tên/Số lượng/ĐVT/Ghi chú, đối chiếu sản phẩm và thêm hàng loạt vào giỏ.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="new">
+            <td>3</td>
+            <td><code class="filepath">order-webapp/src/hooks/useHorizontalScroll.ts</code></td>
+            <td><span class="pill pill-new">Tạo mới</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+192</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Custom Hook xử lý chuyển đổi con lăn chuột dọc thành cuộn ngang mượt mà, khóa <code>overscroll</code> (không làm trôi trang dọc khi đang cuộn ngang).</li>
+                <li>Hỗ trợ kéo thả chuột (drag-to-scroll) và chế độ <code>autoScroll</code> tự động trôi chậm hai chiều cho dải <em>Hàng bán chạy</em>.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="new">
+            <td>4</td>
+            <td><code class="filepath">order-webapp/src/components/products/LineNoteEditor.tsx</code></td>
+            <td><span class="pill pill-new">Tạo mới</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+96</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Component chỉnh sửa ghi chú từng dòng món hàng dùng chung, hỗ trợ nhấn phím <code>Enter</code> để khóa ghi chú và hiện nút <strong>"Sửa"</strong>.</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- NHÓM 2: BỐ CỤC CHUNG & HEADER 2 TẦNG -->
+          <tr data-status="mod">
+            <td>5</td>
+            <td><code class="filepath">order-webapp/src/layouts/StoreLayout.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+401</span> / <span class="diff-del">-107</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Thiết kế lại Header 2 tầng cân đối: bổ sung 3 thẻ thông tin vận hành B2B ở giữa Tầng 1 (Khung giờ giao bếp, Điểm giao mặc định, Tổng đài B2B 089 890 2222).</li>
+                <li>Cập nhật icon Trái tim (Header &amp; Bottom Nav) chuyển sang <strong>full màu đỏ (<code>fill-rose-500 text-rose-500</code>)</strong> khi có sản phẩm yêu thích và rỗng trắng ở giữa khi bằng 0.</li>
+                <li>Xây dựng Drawer <em>Tất cả danh mục</em> 2 cột kiểu Kamereo (chỉ mở cột phụ khi danh mục thực sự có <code>productCategories.length &gt; 1</code>).</li>
+                <li>Đổi liên kết nút <em>Đặt từ Excel</em> về <code>/gio-hang?excel=1</code> kèm trạng thái active chuẩn xác.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>6</td>
+            <td><code class="filepath">order-webapp/src/App.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+2</span> / <span class="diff-del">-1</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Cấu hình điều hướng route <code>/dat-hang/excel</code> tự động chuyển tiếp mượt về <code>/gio-hang?excel=1</code>.</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- NHÓM 3: ĐẶT HÀNG NHANH (/dat-hang) & GIỎ HÀNG BÊN PHẢI -->
+          <tr data-status="mod">
+            <td>7</td>
+            <td><code class="filepath">order-webapp/src/pages/ProductsPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+190</span> / <span class="diff-del">-52</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Bỏ thanh tìm kiếm trùng lặp bên dưới, đồng bộ hoàn toàn với thanh tìm kiếm thông minh trên Header.</li>
+                <li>Thay nút "Xem thêm sản phẩm" bằng thanh <strong>Phân trang</strong> gọn gàng theo bội số cột (12/9/8 sản phẩm/trang).</li>
+                <li>Đưa tiêu đề <code>TẤT CẢ SẢN PHẨM</code> lên trên khung 2 cột và dùng <code>ResizeObserver</code> đồng bộ chiều cao giữa lưới sản phẩm và <code>CartSummarySidebar</code> (chuẩn OCD).</li>
+                <li>Tăng khoảng đệm đáy trên mobile (<code>pb-24</code>) để thanh nổi <code>CartFloatingBar</code> không che khuất nút Phân trang.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>8</td>
+            <td><code class="filepath">order-webapp/src/components/products/ProductGrid.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+2</span> / <span class="diff-del">-2</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Chuyển lưới sản phẩm và lưới Skeleton trên bản Mobile từ 1 cột sang <strong>2 sản phẩm/hàng (<code>grid-cols-2</code>)</strong> giúp khách bếp duyệt hàng nhanh gấp đôi.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>9</td>
+            <td><code class="filepath">order-webapp/src/components/products/ProductCard.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+198</span> / <span class="diff-del">-100</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Thiết kế lại bố cục 4 tầng cố định chiều cao: chỉ Tên sản phẩm được phép <code>...</code> (<code>line-clamp-2</code>); Mã SKU, ĐVT, Nhóm hàng và trạng thái hiển thị đầy đủ 100% không có dấu <code>...</code>.</li>
+                <li>Thu gọn font Mã SKU và tách dòng <code>Nhóm: (Tên Nhóm Hàng)</code> chiếm trọn 100% chiều ngang bên dưới ảnh để không bao giờ đè lên nút Tim hay bị cắt chữ trên màn hình nhỏ (375px).</li>
+                <li>Cố định vị trí dòng Giá / <code>Chờ sale báo giá</code> thẳng hàng tuyệt đối; bỏ chữ đơn vị thừa trong ô số lượng <code>[ - 1 + ]</code>; thêm tính năng bấm <code>Enter</code> khóa ghi chú kèm nút <strong>"Sửa"</strong>.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>10</td>
+            <td><code class="filepath">order-webapp/src/components/products/CartSummarySidebar.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+342</span> / <span class="diff-del">-240</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Đưa bộ nút tăng giảm số lượng <code>[ - 1 + ]</code> lên nằm ngay kế bên tên sản phẩm với khoảng cách hài hòa; tự động bật thanh cuộn dọc khi thêm từ 2 sản phẩm trở lên.</li>
+                <li>Bỏ nút mũi tên thu gọn (<code>^</code>/<code>v</code>) ở mục <em>Thông tin nhận hàng</em> để luôn hiển thị rõ ràng.</li>
+                <li>Sửa hành vi cuộn chuột: khi chỉ đưa chuột vào bảng Đặt hàng vẫn cuộn trang chính bình thường; chỉ khi click vào điền thông tin (<code>input</code>/<code>select</code>/<code>textarea</code>) mới khóa cuộn ngoài.</li>
+                <li>Bổ sung khóa ghi chú khi nhấn <code>Enter</code> kèm nút <strong>"Sửa"</strong> và tăng độ đậm màu chữ các nhãn phụ.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>11</td>
+            <td><code class="filepath">order-webapp/src/components/products/CartCheckoutDrawer.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+28</span> / <span class="diff-del">-10</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Đồng bộ tính năng nhấn <code>Enter</code> khóa ghi chú và hiện nút <strong>"Sửa"</strong> trong ngăn kéo giỏ hàng trên Mobile.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>12</td>
+            <td><code class="filepath">order-webapp/src/components/products/CartFloatingBar.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+9</span> / <span class="diff-del">-5</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Căn chỉnh khoảng cách đáy có tính <code>env(safe-area-inset-bottom)</code> để thanh nổi trên Mobile nằm cách thanh điều hướng đáy 8px, không bị đè khuất.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>13</td>
+            <td><code class="filepath">order-webapp/src/components/products/QuickOrderSections.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+62</span> / <span class="diff-del">-24</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Gắn <code>useHorizontalScroll</code> và nút mũi tên <code>&lt;</code> <code>&gt;</code> cho cả 3 dải ngang (<em>Hàng thường mua</em>, <em>Món yêu thích của bếp</em>, <em>Duyệt theo nhóm hàng</em>).</li>
+                <li>Tăng độ đậm sắc nét cho chữ trên các nút nhóm hàng (<code>Bún tươi</code>, <code>Rau củ</code>...) và mã SKU, bỏ dấu <code>...</code> ở dòng giá/mã.</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- NHÓM 4: TRANG CHỦ, TÌM KIẾM, DANH MỤC, GIỎ HÀNG & YÊU THÍCH -->
+          <tr data-status="mod">
+            <td>14</td>
+            <td><code class="filepath">order-webapp/src/pages/ProductListingPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+415</span> / <span class="diff-del">-80</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Thêm thanh công cụ kết quả tìm kiếm trên <code>/tim-kiem</code>: ô <em>Sắp xếp theo</em> nằm cùng hàng với các nút lọc nhanh Nhóm hàng liên quan (không có Xuất xứ &amp; Thương hiệu).</li>
+                <li>Sửa triệt để lỗi nhảy sang trang danh mục và chỉ hiển thị các nhóm hàng thực sự có sản phẩm khớp với từ khóa (<code>count &gt; 0</code>).</li>
+                <li>Thay nút "Xem thêm" bằng thanh Phân trang chẵn cột (<code>columns * 4</code> sản phẩm/trang).</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>15</td>
+            <td><code class="filepath">order-webapp/src/pages/FavoritesPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+68</span> / <span class="diff-del">-22</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Bổ sung bộ nhớ đệm <code>favoriteProductCache</code> cấp module để khi bấm bỏ yêu thích trên trang <code>/yeu-thich</code>, sản phẩm biến mất tức thì (0ms) mà không gọi lại mạng hay nháy trắng màn hình 1 giây.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>16</td>
+            <td><code class="filepath">order-webapp/src/pages/CartPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+125</span> / <span class="diff-del">-32</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Tích hợp <code>ExcelOrderSection</code> vào trang <code>/gio-hang</code>; căn chỉnh 3 khối (<em>Giỏ hàng đang trống</em>, <em>Đặt hàng nhanh bằng file Excel</em>, <em>Thêm sản phẩm ngoài danh mục</em>) có chiều ngang đồng đều bằng khít nhau (<code>w-full</code> trong <code>max-w-3xl</code>).</li>
+                <li>Đổi các nút <em>Xem cửa hàng</em> / <em>Tiếp tục chọn hàng</em> trỏ về <code>/dat-hang</code>; thêm nút <strong>"Sửa"</strong> khi khóa ghi chú từng món.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>17</td>
+            <td><code class="filepath">order-webapp/src/pages/StoreHomePage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Tinh chỉnh bố cục trang chủ gọn gàng, bật hiệu ứng tự động chạy ngang chậm (<code>autoScroll</code>) cho mục <em>Hàng bán chạy</em>.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>18</td>
+            <td><code class="filepath">order-webapp/src/components/store/ProductRail.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+76</span> / <span class="diff-del">-15</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Tích hợp <code>useHorizontalScroll</code> hỗ trợ lăn chuột ngang, kéo thả chuột và tự động trôi chậm mượt mà cho dải sản phẩm.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>19</td>
+            <td><code class="filepath">order-webapp/src/components/store/StoreProductCard.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+12</span> / <span class="diff-del">-8</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Đổi màu icon Trái tim yêu thích trên thẻ sản phẩm cửa hàng sang <strong>full đỏ (<code>fill-rose-500 text-rose-500</code>)</strong> và làm đậm chữ ĐVT/Giá.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>20</td>
+            <td><code class="filepath">order-webapp/src/components/store/StoreProductGrid.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+6</span> / <span class="diff-del">-4</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Tối ưu lưới hiển thị 7 cột trên Desktop lớn và 2 cột trên Mobile, đồng bộ với bộ tính số sản phẩm mỗi trang.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>21</td>
+            <td><code class="filepath">order-webapp/src/components/store/BannerCarousel.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+34</span> / <span class="diff-del">-12</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Hỗ trợ vuốt/kéo ngang mượt mà trên cả chuột máy tính và màn hình cảm ứng điện thoại.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>22</td>
+            <td><code class="filepath">order-webapp/src/components/store/CategoryRail.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+7</span> / <span class="diff-del">-3</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Tích hợp lăn chuột ngang và làm rõ độ tương phản tên danh mục.</li>
+              </ul>
+            </td>
+          </tr>
+
+          <!-- NHÓM 5: CẤU HÌNH HỆ THỐNG, AUTH DEMO & API -->
+          <tr data-status="mod">
+            <td>23</td>
+            <td><code class="filepath">order-webapp/src/contexts/AuthContext.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+34</span> / <span class="diff-del">-2</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Bổ sung phiên khách hàng B2B mẫu (<code>DEMO_CUSTOMER_SESSION</code> — <em>Bếp Ăn Mẫu TPS1</em>) để trải nghiệm trực tiếp toàn bộ tính năng đặt hàng B2B mà không bị chặn bởi màn hình đăng nhập.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>24</td>
+            <td><code class="filepath">order-webapp/src/lib/api.ts</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+18</span> / <span class="diff-del">-4</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Cấu hình fallback an toàn cho <code>orders()</code> và <code>frequentItems()</code> khi chạy chế độ Demo B2B trực tuyến, kết nối trực tiếp dữ liệu catalog thật từ <code>https://thucphamsomot.vn</code>.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>25</td>
+            <td><code class="filepath">order-webapp/src/contexts/LanguageContext.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+8</span> / <span class="diff-del">-0</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Bổ sung từ điển đa ngôn ngữ (Việt / Anh) cho các nhãn tiện ích B2B mới trên Header và Popover tìm kiếm.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>26</td>
+            <td><code class="filepath">order-webapp/src/pages/AccountPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+1</span> / <span class="diff-del">-1</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Đồng bộ hiển thị thông tin tài khoản B2B.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>27</td>
+            <td><code class="filepath">order-webapp/src/pages/ExcelOrderPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+0</span> / <span class="diff-del">-1</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Làm sạch import thừa sau khi tích hợp luồng Excel vào <code>CartPage.tsx</code>.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>28</td>
+            <td><code class="filepath">order-webapp/src/pages/LoginPage.tsx</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+2</span> / <span class="diff-del">-2</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Điều chỉnh điều hướng mặc định sau đăng nhập về trang Đặt hàng nhanh.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>29</td>
+            <td><code class="filepath">order-webapp/vite.config.ts</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+6</span> / <span class="diff-del">-1</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Cấu hình proxy <code>/api</code> trỏ tới <code>https://thucphamsomot.vn</code> khi chạy môi trường dev cục bộ.</li>
+              </ul>
+            </td>
+          </tr>
+          <tr data-status="mod">
+            <td>30</td>
+            <td><code class="filepath">order-webapp/src/vite-env.d.ts</code></td>
+            <td><span class="pill pill-mod">Chỉnh sửa</span></td>
+            <td><span class="diff-stat"><span class="diff-add">+1</span> / <span class="diff-del">-0</span></span></td>
+            <td>
+              <ul class="change-list">
+                <li>Khai báo kiểu TypeScript cho biến môi trường <code>VITE_BYPASS_AUTH</code>.</li>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    let currentStatusFilter = 'all';
+
+    function setFilter(status, btn) {
+      currentStatusFilter = status;
+      document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      filterTable();
+    }
+
+    function filterTable() {
+      const q = (document.getElementById('fileSearch').value || '').toLowerCase().trim();
+      const rows = document.querySelectorAll('#filesTable tbody tr');
+      rows.forEach((row) => {
+        const status = row.getAttribute('data-status');
+        const text = row.innerText.toLowerCase();
+        const matchStatus = currentStatusFilter === 'all' || status === currentStatusFilter;
+        const matchQuery = !q || text.includes(q);
+        row.style.display = matchStatus && matchQuery ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

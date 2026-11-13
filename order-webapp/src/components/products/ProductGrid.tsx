@@ -36,7 +36,7 @@ export default function ProductGrid({
 
   if (loading && products.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-3.5" aria-label="Đang tải hàng hóa">
+      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3.5" aria-label="Đang tải hàng hóa">
         {Array.from({ length: 8 }).map((_, index) => (
           <div key={index} className="h-48 rounded-2xl border border-[#17231d]/10 bg-white p-4 animate-pulse">
             <div className="flex gap-3">
@@ -73,7 +73,7 @@ export default function ProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-3.5">
+    <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-3.5">
       {products.map((product) => {
         const inCartInfo = cartMap.get(product.id);
         const qty = inCartInfo?.quantity || 0;

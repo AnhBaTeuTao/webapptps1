@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BadgeCheck } from 'lucide-react';
 import type { StoreBanner } from '../../lib/api';
+import { useAuth } from '../../contexts/AuthContext';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 
 function isInternal(url: string) {
   return url.startsWith('/');
@@ -10,24 +12,45 @@ function isInternal(url: string) {
 
 /** Khung thương hiệu khi admin chưa thêm banner: gọn trên điện thoại để gian hàng hiện sớm. */
 function BrandHero() {
+  const { session } = useAuth();
   const { t } = useLanguage();
+
+  const handleStartShopping = (e: MouseEvent) => {
+    if (!session) {
+      const el = document.getElementById('store-home-catalog');
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
   return (
     <section className="relative overflow-hidden rounded-2xl bg-[#0b4f34] text-white sm:rounded-3xl">
       <img src={`${import.meta.env.BASE_URL}images/store-hero.webp`} alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#062b1c] via-[#0b4f34]/90 to-transparent" />
-      <div className="relative max-w-[640px] px-4 py-4 sm:px-7 sm:py-6">
+      <div className="absolute inset-0 bg-linear-to-r from-[#062b1c] via-[#0b4f34]/90 to-transparent" />
+      <div className="relative max-w-160 px-4 py-4 sm:px-7 sm:py-6">
         <p className="hidden items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-emerald-100 ring-1 ring-white/20 sm:inline-flex">
           <BadgeCheck size={14} /> {t('Đạt chuẩn ISO 22000 & HACCP')}
         </p>
-        <h1 className="text-balance text-[18px] font-black leading-[1.25] sm:mt-2.5 sm:text-[26px] lg:text-[28px]">
-          <span className="sm:block sm:whitespace-nowrap">{t('Nguồn thực phẩm sạch cho bếp ăn,')}</span>{' '}
-          <span className="sm:block sm:whitespace-nowrap">{t('giao tận nơi theo nhu cầu của bếp.')}</span>
+        <h1 className="text-balance text-[18px] sm:text-[22px] lg:text-[26px] font-black leading-[1.28] sm:mt-2.5">
+          <span>{t('Nguồn thực phẩm sạch cho')}</span> <span className="inline-block">{t('bếp ăn,')}</span>{' '}
+          <span>{t('giao')}</span> <span className="inline-block">{t('tận nơi')}</span> <span>{t('theo nhu cầu của bếp.')}</span>
         </h1>
-        <p className="mt-2 hidden max-w-[520px] text-pretty text-[13.5px] leading-relaxed text-emerald-50/85 sm:block">
-          {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng một nơi.')}
+        <p className="mt-2 hidden max-w-130 text-pretty text-[13.5px] leading-relaxed text-emerald-50/85 sm:block">
+          {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng')} <span className="inline-block">{t('một nơi.')}</span>
         </p>
-        <Link to="/danh-muc" className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-xl bg-[#e0742f] px-4 text-[13px] font-bold text-white shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-4 sm:h-10 sm:px-5 sm:text-sm">
-          {t('Bắt đầu chọn hàng')} <ArrowRight size={16} />
+        <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-[12px] font-medium text-emerald-100/90">
+          <span className="inline-flex items-center gap-1">✓ {t('Chuẩn ISO 22000 & HACCP')}</span>
+          <span className="inline-flex items-center gap-1">✓ {t('Hơn 5.000+ mặt hàng sẵn có')}</span>
+          <span className="inline-flex items-center gap-1">✓ {t('Giao đúng hẹn 99,8% ca sáng')}</span>
+        </div>
+        <Link
+          to={session ? '/dat-hang' : '#store-home-catalog'}
+          onClick={handleStartShopping}
+          className="mt-3 inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-[#e0742f] px-5 text-[13px] font-bold text-white whitespace-nowrap shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-4 sm:text-sm"
+        >
+          <span>{t('Bắt đầu chọn hàng')}</span> <ArrowRight size={16} />
         </Link>
       </div>
     </section>
@@ -41,6 +64,7 @@ function BrandHero() {
 export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) {
   const { t } = useLanguage();
   const row = useRef<HTMLDivElement>(null);
+  useHorizontalScroll(row);
   const [index, setIndex] = useState(0);
   const paused = useRef(false);
 
@@ -74,7 +98,7 @@ export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) 
       onPointerEnter={() => { paused.current = true; }}
       onPointerLeave={() => { paused.current = false; }}
     >
-      <div ref={row} onScroll={onScroll} className="tps1-snap-row -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 lg:mx-0 lg:gap-0 lg:px-0">
+      <div ref={row} onScroll={onScroll} className="tps1-snap-row -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 lg:mx-0 lg:gap-0 lg:px-0 overscroll-contain select-none cursor-grab">
         {banners.map((banner) => {
           const image = (
             <picture className="block aspect-[2/1] w-full overflow-hidden rounded-2xl bg-[#eaf6ef] lg:aspect-[3/1] lg:rounded-2xl">

@@ -9,7 +9,6 @@ import { Capacitor } from '@capacitor/core';
 import { saveDocument } from '../lib/android-document';
 
 const columns = ['sku', 'name', 'quantity', 'unit', 'note'] as const;
-type Column = typeof columns[number];
 type RowEdit = { name: string; quantity: string; unit: string; note: string };
 const keyFor = (row: ExcelMatchResult) => `${row.sourceSheet}:${row.row}`;
 const money = (value: number) => new Intl.NumberFormat('vi-VN').format(Number(value) || 0) + 'đ';

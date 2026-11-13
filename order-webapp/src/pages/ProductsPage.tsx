@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Clock } from 'lucide-react';
 import { searchProducts } from '../lib/productSearch';
 import {
@@ -16,7 +16,6 @@ import { useOrderSubmit } from '../hooks/useOrderSubmit';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
-import ProductSearchBar from '../components/products/ProductSearchBar';
 import QuickOrderSections from '../components/products/QuickOrderSections';
 import ProductGrid from '../components/products/ProductGrid';
 import CartSummarySidebar from '../components/products/CartSummarySidebar';
@@ -77,27 +76,41 @@ export default function ProductsPage() {
   } = useCart();
   const { submit, submitting, errorMessage, setErrorMessage, successOrder, clearSuccess, cutoffInfo } = useOrderSubmit();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const urlQuery = searchParams.get('q') || '';
+
   // 2. Search & Catalog state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
+  const [searchCategoryFilter, setSearchCategoryFilter] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [initialProducts, setInitialProducts] = useState<Product[]>([]);
   const [catalogProducts, setCatalogProducts] = useState<Product[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
-  const [browseLimit, setBrowseLimit] = useState(40);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+  const gridTopRef = useRef<HTMLDivElement>(null);
+  const productGridWrapRef = useRef<HTMLDivElement>(null);
+  const [sidebarHeight, setSidebarHeight] = useState<number | undefined>(undefined);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
   const [frequentItems, setFrequentItems] = useState<FrequentItem[]>([]);
   const [loadingLatestOrder, setLoadingLatestOrder] = useState(false);
-  const hasSubmittedSearch = Boolean(searchQuery.trim()) && searchInput.trim() === searchQuery.trim();
+  const hasSubmittedSearch = Boolean(searchQuery.trim());
+
+  useEffect(() => {
+    setSearchQuery(urlQuery);
+  }, [urlQuery]);
+
+  useEffect(() => {
+    setSearchCategoryFilter('');
+  }, [searchQuery]);
   // Hàng yêu thích dùng chung với cửa hàng (FavoritesContext).
   const { ids: favoriteIds, toggle: toggleFavorite } = useFavorites();
 
   // Mobile Checkout Drawer & Success Modal state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const searchTimeoutRef = useRef<any>(null);
   const searchAbortRef = useRef<AbortController | null>(null);
   const searchRequestRef = useRef(0);
@@ -245,8 +258,9 @@ export default function ProductsPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'F3') {
         e.preventDefault();
-        searchInputRef.current?.focus();
-        searchInputRef.current?.select();
+        const headerInput = document.querySelector('header form[role="search"] input') as HTMLInputElement | null;
+        headerInput?.focus();
+        headerInput?.select();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -282,9 +296,10 @@ export default function ProductsPage() {
   ) => {
     addProduct(product, Math.max(0.1, Number(quantityToAdd) || 1));
 
-    if (options?.resetSearch) { setSearchQuery(''); setSearchInput(''); }
+    if (options?.resetSearch) { setSearchQuery(''); }
     if (options?.keepFocus) {
-      searchInputRef.current?.focus();
+      const headerInput = document.querySelector('header form[role="search"] input') as HTMLInputElement | null;
+      headerInput?.focus();
     }
   };
 
@@ -356,6 +371,16 @@ export default function ProductsPage() {
     return hasSubmittedSearch ? searchResults : [];
   }, [hasSubmittedSearch, searchResults]);
 
+  const searchResultCategories = useMemo(() => {
+    if (!hasSubmittedSearch) return [];
+    return Array.from(new Set(searchResults.map((p) => (p.category || '').trim()).filter(Boolean)));
+  }, [hasSubmittedSearch, searchResults]);
+
+  const filteredSearchResults = useMemo(() => {
+    if (!searchCategoryFilter) return displayedProducts;
+    return displayedProducts.filter((p) => (p.category || '').trim() === searchCategoryFilter);
+  }, [displayedProducts, searchCategoryFilter]);
+
   const categories = useMemo(() => [...new Set(catalogProducts.map(p => String(p.category || '').trim()).filter(Boolean))].sort((a,b) => a.localeCompare(b,'vi')), [catalogProducts]);
   const browseProducts = useMemo(
     () => {
@@ -364,7 +389,60 @@ export default function ProductsPage() {
     },
     [catalogProducts, initialProducts, selectedCategory]
   );
-  const visibleProducts = hasSubmittedSearch ? displayedProducts : browseProducts.slice(0, browseLimit);
+  const sourceProducts = hasSubmittedSearch ? filteredSearchResults : browseProducts;
+  const totalPages = Math.max(1, Math.ceil(sourceProducts.length / pageSize));
+  const safePage = Math.min(currentPage, totalPages);
+  const visibleProducts = sourceProducts.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  // Khớp chiều cao CartSummarySidebar trên Desktop với Lưới sản phẩm (chống lệch OCD)
+  useEffect(() => {
+    if (!productGridWrapRef.current) return;
+    const el = productGridWrapRef.current;
+    const updateHeight = () => {
+      if (window.innerWidth >= 1024 && visibleProducts.length >= 5) {
+        const h = Math.round(el.getBoundingClientRect().height);
+        if (h > 400) {
+          setSidebarHeight(h);
+          return;
+        }
+      }
+      setSidebarHeight(undefined);
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [visibleProducts.length]);
+
+  // Số sản phẩm/trang theo số cột thực tế của lưới (1/2/3/4 cột)
+  useEffect(() => {
+    const updatePageSize = () => {
+      const w = window.innerWidth;
+      if (w >= 1536) setPageSize(12); // 4 cột x 3 hàng
+      else if (w >= 1280) setPageSize(9); // 3 cột x 3 hàng
+      else setPageSize(8); // 2 cột x 4 hàng / mobile
+    };
+    updatePageSize();
+    window.addEventListener('resize', updatePageSize);
+    return () => window.removeEventListener('resize', updatePageSize);
+  }, []);
+
+  // Về trang 1 khi đổi nhóm hàng hoặc từ khóa
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.min(Math.max(1, page), totalPages));
+    gridTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const pageNumbers: (number | string)[] = (() => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    if (safePage <= 4) return [1, 2, 3, 4, 5, '...', totalPages];
+    if (safePage >= totalPages - 3) return [1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    return [1, '...', safePage - 1, safePage, safePage + 1, '...', totalPages];
+  })();
 
 
   const addOrderAgain = (order: Order) => {
@@ -399,7 +477,7 @@ export default function ProductsPage() {
   };
 
   return (
-      <div className="flex flex-col gap-3.5 sm:gap-4 pb-12 lg:pb-0">
+    <div className="flex flex-col gap-3.5 sm:gap-4 pb-24 lg:pb-0">
       {/* 1. Header trang: Lời chào & Giờ chốt đơn */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 px-0.5">
         <div>
@@ -413,31 +491,82 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#17231d]/10 bg-white p-3 shadow-sm sm:p-4">
-        <ProductSearchBar value={searchInput} onChange={setSearchInput} inputRef={searchInputRef}
-          onSubmit={() => { const query = searchInput.trim(); setSearchQuery(query); if (!query) setSearchResults([]); }} />
-      </div>
-
       {/* Thao tác đặt nhanh và danh mục chỉ hiện khi chưa gửi từ khóa. */}
       {!hasSubmittedSearch && <QuickOrderSections latestOrder={latestOrder} loadingLatestOrder={loadingLatestOrder} onReorderLatest={loadLatestOrderAndAdd}
         frequentProducts={frequentProducts} favoriteProducts={favoriteProducts} favoriteIds={favoriteIds} onToggleFavorite={toggleFavorite}
-        categories={categories} selectedCategory={selectedCategory} onSelectCategory={(category) => { setSelectedCategory(category); setBrowseLimit(40); }} onAddProduct={handleAddProduct} />}
+        categories={categories} selectedCategory={selectedCategory} onSelectCategory={(category) => { setSelectedCategory(category); }} onAddProduct={handleAddProduct} />}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_370px] gap-4 items-start">
-        <div className="space-y-3 min-w-0">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold text-[#17231d] uppercase tracking-wider flex items-center gap-2">
-              <span>
-                {hasSubmittedSearch
-                  ? `${t('Kết quả tìm kiếm')} ("${searchQuery}")`
-                  : selectedCategory ? productName(selectedCategory) : t('Tất cả sản phẩm')}
-              </span>
-              <span className="text-xs font-mono font-normal text-[#59665f]">
-                ({hasSubmittedSearch ? displayedProducts.length : browseProducts.length} {t('mặt hàng')})
-              </span>
-            </h2>
+      {/* 2. Tiêu đề khu vực sản phẩm & Thanh lọc nhóm hàng khi tìm kiếm */}
+      <div ref={gridTopRef} className="space-y-2.5 scroll-mt-44">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-sm font-bold text-[#17231d] uppercase tracking-wider flex items-center gap-2">
+            <span>
+              {hasSubmittedSearch
+                ? `${t('Kết quả tìm kiếm')} ("${searchQuery}")`
+                : selectedCategory ? productName(selectedCategory) : t('Tất cả sản phẩm')}
+            </span>
+            <span className="text-xs font-mono font-normal text-[#59665f]">
+              ({hasSubmittedSearch ? (searchCategoryFilter ? filteredSearchResults.length : displayedProducts.length) : browseProducts.length} {t('mặt hàng')})
+            </span>
+          </h2>
+          {hasSubmittedSearch && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchParams((prev) => {
+                  const next = new URLSearchParams(prev);
+                  next.delete('q');
+                  return next;
+                }, { replace: true });
+                setSearchQuery('');
+                setSearchResults([]);
+                setSearchCategoryFilter('');
+              }}
+              className="text-xs font-bold text-[#0f7a4f] hover:underline flex items-center gap-1 transition"
+            >
+              ✕ {t('Xóa tìm kiếm')}
+            </button>
+          )}
+        </div>
+
+        {/* Thanh lọc nhóm hàng nhanh khi tìm kiếm trên trang Đặt hàng */}
+        {hasSubmittedSearch && searchResultCategories.length > 0 && (
+          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1 overscroll-contain select-none">
+            <button
+              type="button"
+              onClick={() => setSearchCategoryFilter('')}
+              className={`h-8 shrink-0 rounded-full px-3.5 text-xs font-bold ring-1 transition cursor-pointer ${
+                !searchCategoryFilter
+                  ? 'bg-[#eaf6ef] text-[#0f7a4f] ring-[#0f7a4f]'
+                  : 'bg-white text-[#17231d] ring-[#17231d]/15 hover:ring-[#0f7a4f]'
+              }`}
+            >
+              {t('Tất cả')} ({searchResults.length})
+            </button>
+            {searchResultCategories.map((cat) => {
+              const count = searchResults.filter((p) => (p.category || '').trim() === cat).length;
+              const isActive = searchCategoryFilter === cat;
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setSearchCategoryFilter(isActive ? '' : cat)}
+                  className={`h-8 shrink-0 rounded-full px-3.5 text-xs font-bold ring-1 transition cursor-pointer ${
+                    isActive
+                      ? 'bg-[#eaf6ef] text-[#0f7a4f] ring-[#0f7a4f]'
+                      : 'bg-white text-[#17231d] ring-[#17231d]/15 hover:ring-[#0f7a4f]'
+                  }`}
+                >
+                  {productName(cat)} ({count})
+                </button>
+              );
+            })}
           </div>
+        )}
+      </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_380px] gap-4 items-start">
+        <div ref={productGridWrapRef} className="space-y-3 min-w-0">
           <ProductGrid
             products={visibleProducts}
             itemsInCart={activeTab.items}
@@ -449,18 +578,63 @@ export default function ProductsPage() {
             searchQuery={hasSubmittedSearch ? searchQuery : selectedCategory}
             loading={hasSubmittedSearch ? searchLoading : catalogLoading}
           />
-          {!hasSubmittedSearch && visibleProducts.length < browseProducts.length && <button type="button" onClick={() => setBrowseLimit(limit => limit + 40)} className="mx-auto block min-h-11 rounded-xl border border-[#0f7a4f]/25 bg-white px-5 text-sm font-bold text-[#0f7a4f]">{t('Xem thêm sản phẩm')}</button>}
+          {totalPages > 1 && (
+            <nav aria-label="Phân trang" className="flex flex-col items-center gap-2.5 border-t border-[#17231d]/8 pt-4 sm:flex-row sm:justify-between">
+              <p className="text-xs font-medium text-[#59665f]">
+                {t('Trang')} <span className="font-bold text-[#0f7a4f]">{safePage}</span> / {totalPages} ({sourceProducts.length} {t('mặt hàng')})
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => goToPage(safePage - 1)}
+                  disabled={safePage <= 1}
+                  className="h-9 rounded-lg border border-[#17231d]/12 bg-white px-3 text-xs font-bold text-[#17231d] hover:border-[#0f7a4f] hover:text-[#0f7a4f] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {t('Trước')}
+                </button>
+                {pageNumbers.map((p, idx) =>
+                  typeof p === 'string' ? (
+                    <span key={`dots-${idx}`} className="px-1 text-xs text-[#8a9690]">...</span>
+                  ) : (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => goToPage(p)}
+                      aria-current={p === safePage ? 'page' : undefined}
+                      className={`size-9 rounded-lg border text-xs transition ${
+                        p === safePage
+                          ? 'border-[#0f7a4f] bg-[#0f7a4f] font-bold text-white'
+                          : 'border-[#17231d]/12 bg-white font-semibold text-[#17231d] hover:border-[#0f7a4f] hover:text-[#0f7a4f]'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+                <button
+                  type="button"
+                  onClick={() => goToPage(safePage + 1)}
+                  disabled={safePage >= totalPages}
+                  className="h-9 rounded-lg border border-[#17231d]/12 bg-white px-3 text-xs font-bold text-[#17231d] hover:border-[#0f7a4f] hover:text-[#0f7a4f] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {t('Sau')}
+                </button>
+              </div>
+            </nav>
+          )}
         </div>
 
         {/* CỘT PHẢI (Desktop): Sidebar Tóm tắt đơn & Gửi đơn */}
         <div className="hidden lg:block min-w-0">
           <CartSummarySidebar
+            matchedHeight={sidebarHeight}
             session={session}
             earliestDate={cutoffInfo?.earliestDate}
             cutoffTimeStr={cutoffInfo?.cutoffTimeStr}
             activeTab={activeTab}
             onUpdateTab={updateActiveTab}
             onUpdateQty={handleUpdateQty}
+            onUpdateNote={handleUpdateItemNote}
             onRemoveItem={handleRemoveItem}
             onAddUnlisted={handleAddUnlisted}
             onSubmitOrder={handleSubmitOrder}

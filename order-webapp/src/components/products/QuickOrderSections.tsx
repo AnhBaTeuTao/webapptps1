@@ -1,10 +1,34 @@
-import { Repeat2, Heart, FolderOpen } from 'lucide-react';
+import type { RefObject } from 'react';
+import { Repeat2, Heart, FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Product, Order } from '../../lib/api';
 import ProductThumbnail from './ProductThumbnail';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useHorizontalScroll } from '../../hooks/useHorizontalScroll';
 
 function money(v: number) {
   return new Intl.NumberFormat('vi-VN').format(Number(v) || 0) + 'đ';
+}
+
+function scrollByAmount(ref: RefObject<HTMLDivElement | null>, direction: 'left' | 'right') {
+  const el = ref.current;
+  if (!el) return;
+  const step = Math.max(160, Math.round(el.getBoundingClientRect().width * 0.7));
+  el.scrollBy({ left: direction === 'left' ? -step : step, behavior: 'smooth' });
+}
+
+function RailArrows({ targetRef }: { targetRef: RefObject<HTMLDivElement | null> }) {
+  const base =
+    'flex size-7 items-center justify-center rounded-full border border-[#17231d]/12 bg-white text-[#59665f] hover:border-[#0f7a4f] hover:text-[#0f7a4f] transition cursor-pointer';
+  return (
+    <div className="flex items-center gap-1.5 shrink-0">
+      <button type="button" onClick={() => scrollByAmount(targetRef, 'left')} className={base} aria-label="Cuộn sang trái">
+        <ChevronLeft size={15} />
+      </button>
+      <button type="button" onClick={() => scrollByAmount(targetRef, 'right')} className={base} aria-label="Cuộn sang phải">
+        <ChevronRight size={15} />
+      </button>
+    </div>
+  );
 }
 
 interface QuickOrderSectionsProps {
@@ -35,6 +59,9 @@ export default function QuickOrderSections({
   onAddProduct,
 }: QuickOrderSectionsProps) {
   const { t, productName, productUnit } = useLanguage();
+  const frequentRail = useHorizontalScroll<HTMLDivElement>();
+  const favoriteRail = useHorizontalScroll<HTMLDivElement>();
+  const categoryRail = useHorizontalScroll<HTMLDivElement>();
   const hasAnyQuickSection =
     Boolean(latestOrder) ||
     frequentProducts.length > 0 ||
@@ -59,20 +86,21 @@ export default function QuickOrderSections({
       {frequentProducts.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-[#59665f] flex items-center gap-1">
+            <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1">
               <span>{t('Hàng thường mua')}</span>
               <span className="px-1.5 py-0.2 rounded-full bg-[#0f7a4f]/10 text-[#0f7a4f] text-[10px] font-mono">
                 {frequentProducts.length}
               </span>
             </p>
+            <RailArrows targetRef={frequentRail} />
           </div>
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+          <div ref={frequentRail} className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing">
             {frequentProducts.map((product) => {
               const isFavorite = favoriteIds.includes(product.id);
               return (
                 <div
                   key={product.id}
-                  className="min-w-[210px] max-w-[240px] flex items-center gap-2 p-2 rounded-xl border border-[#17231d]/10 bg-[#f8faf7] hover:border-[#0f7a4f]/30 hover:bg-[#f3f7f4] transition-colors"
+                  className="min-w-57.5 max-w-65 flex items-center gap-2 p-2 rounded-xl border border-[#17231d]/10 bg-[#f8faf7] hover:border-[#0f7a4f]/30 hover:bg-[#f3f7f4] transition-colors"
                 >
                   <button
                     type="button"
@@ -85,8 +113,8 @@ export default function QuickOrderSections({
                       <span className="block text-xs font-semibold truncate text-[#17231d] group-hover:text-[#0f7a4f] transition-colors">
                         {productName(product.name)}
                       </span>
-                      {product.sku && <span className="block text-[10px] text-[#59665f] truncate">{product.sku}</span>}
-                      <span className="block text-[11px] text-[#59665f] mt-0.5">
+                      {product.sku && <span className="block text-[10px] text-[#2c3a33] font-semibold">{product.sku}</span>}
+                      <span className="block text-[11px] text-[#2c3a33] font-semibold mt-0.5">
                         {productUnit(product.unit || 'Kg')} •{' '}
                         <strong className="text-[#0f7a4f]">
                           {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
@@ -115,18 +143,21 @@ export default function QuickOrderSections({
       {/* 2. Sản phẩm yêu thích */}
       {favoriteProducts.length > 0 && (
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[#59665f] mb-1.5 flex items-center gap-1.5">
-            <Heart size={13} className="fill-rose-500 text-rose-500" />
-            <span>{t('Món yêu thích của bếp')}</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-rose-50 text-rose-700 text-[10px] font-mono border border-rose-200">
-              {favoriteProducts.length}
-            </span>
-          </p>
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+          <div className="mb-1.5 flex items-center justify-between gap-2">
+            <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1.5">
+              <Heart size={13} className="fill-rose-500 text-rose-500" />
+              <span>{t('Món yêu thích của bếp')}</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-rose-50 text-rose-700 text-[10px] font-mono border border-rose-200">
+                {favoriteProducts.length}
+              </span>
+            </p>
+            <RailArrows targetRef={favoriteRail} />
+          </div>
+          <div ref={favoriteRail} className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing">
             {favoriteProducts.map((product) => (
               <div
                 key={product.id}
-                className="min-w-[190px] max-w-[230px] flex items-center gap-2 p-2 rounded-xl border border-rose-100 bg-rose-50/40 hover:bg-rose-50/80 transition-colors"
+                className="min-w-57.5 max-w-65 flex items-center gap-2 p-2 rounded-xl border border-rose-100 bg-rose-50/40 hover:bg-rose-50/80 transition-colors"
               >
                 <button
                   type="button"
@@ -138,7 +169,7 @@ export default function QuickOrderSections({
                     <span className="block text-xs font-semibold truncate text-[#17231d] group-hover:text-rose-700">
                       {productName(product.name)}
                     </span>
-                    {product.sku && <span className="block text-[10px] text-[#59665f] truncate">{product.sku}</span>}
+                    {product.sku && <span className="block text-[10px] text-[#2c3a33] font-semibold">{product.sku}</span>}
                     <span className="block text-[11px] text-[#0f7a4f] font-bold mt-0.5">
                       {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
                     </span>
@@ -162,18 +193,21 @@ export default function QuickOrderSections({
       {/* 3. Danh mục sản phẩm (Category chips) */}
       {categories.length > 0 && (
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[#59665f] mb-1.5 flex items-center gap-1">
-            <FolderOpen size={13} className="text-[#0f7a4f]" />
-            <span>{t('Duyệt theo nhóm hàng')}</span>
-          </p>
-          <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          <div className="mb-1.5 flex items-center justify-between gap-2">
+            <p className="text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1">
+              <FolderOpen size={13} className="text-[#0f7a4f]" />
+              <span>{t('Duyệt theo nhóm hàng')}</span>
+            </p>
+            <RailArrows targetRef={categoryRail} />
+          </div>
+          <div ref={categoryRail} className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing">
             <button
               type="button"
               onClick={() => onSelectCategory('')}
-              className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all cursor-pointer touch-target ${
+              className={`shrink-0 px-3.5 py-2 rounded-xl text-xs transition-all cursor-pointer touch-target ${
                 !selectedCategory
-                  ? 'bg-[#0f7a4f] text-white border-[#0f7a4f] shadow-sm shadow-[#0f7a4f]/20'
-                  : 'bg-[#f8faf7] text-[#59665f] border-[#17231d]/10 hover:border-[#0f7a4f]/30 hover:text-[#17231d]'
+                  ? 'bg-[#0f7a4f] text-white border-[#0f7a4f] shadow-sm shadow-[#0f7a4f]/20 font-bold'
+                  : 'bg-white text-[#17231d] font-bold border border-[#17231d]/20 shadow-2xs hover:border-[#0f7a4f] hover:text-[#0f7a4f] hover:bg-[#eaf6ef]/40'
               }`}
             >
               {t('Tất cả nhóm')}
@@ -185,10 +219,10 @@ export default function QuickOrderSections({
                   key={cat}
                   type="button"
                   onClick={() => onSelectCategory(cat)}
-                  className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer touch-target ${
+                  className={`shrink-0 px-3.5 py-2 rounded-xl text-xs transition-all cursor-pointer touch-target ${
                     isSelected
                       ? 'bg-[#0f7a4f] text-white border-[#0f7a4f] shadow-sm shadow-[#0f7a4f]/20 font-bold'
-                      : 'bg-[#f8faf7] text-[#59665f] border-[#17231d]/10 hover:border-[#0f7a4f]/30 hover:text-[#17231d]'
+                      : 'bg-white text-[#17231d] font-bold border border-[#17231d]/20 shadow-2xs hover:border-[#0f7a4f] hover:text-[#0f7a4f] hover:bg-[#eaf6ef]/40'
                   }`}
                 >
                   {productName(cat)}
