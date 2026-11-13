@@ -50,25 +50,24 @@ function localDateOffset(days: number): string {
 }
 
 export const DEMO_CUSTOMER_SESSION: CustomerSession = {
-  id: 'demo-cust-001',
+  id: 'demo-bep-truong-001',
   code: 'KH-BEP01',
-  name: 'Nguyễn Văn An (Demo)',
-  phone: '0909123456',
-  company: 'Bếp Trung Tâm Á Âu - Demo',
-  email: 'bep.aau@tps1-demo.vn',
+  name: 'Nguyễn Văn An (Bếp Trưởng)',
+  phone: '089 890 2222',
+  company: 'Bếp Ăn Mẫu TPS1',
+  email: 'bep.mau@thucphamsomot.vn',
   taxCode: '0312345678',
-  address: '125 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
+  address: '123 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
   defaultShippingAddress: {
-    alias: 'Bếp Trung Tâm Q1',
-    address: '125 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
+    alias: 'Bếp chính',
+    address: '123 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
     name: 'Nguyễn Văn An',
-    phone: '0909123456',
+    phone: '089 890 2222',
   },
-  tier: 'VIP2',
+  tier: 'VIP',
   discountPercent: 5,
   verificationStatus: 'verified',
   mustChangePassword: false,
-  orderSessionToken: 'demo-order-session-token',
 };
 
 type RawMockProduct = [
@@ -429,37 +428,9 @@ export function handleOrderDemoRequest<T>(
     }
     return { ok: true } as T;
   }
-  if (pathname === '/api/customer/products') {
-    if (params.get('meta') === '1') {
-      const categories = [...new Set(DEMO_PRODUCTS.map((p) => p.category).filter(Boolean))] as string[];
-      return { ok: true, categories } as T;
-    }
-    if (params.get('catalog') === '1') {
-      return DEMO_PRODUCT_CATALOG as T;
-    }
-    const q = (params.get('search') || '').trim().toLowerCase();
-    const cat = (params.get('category') || '').trim();
-    const page = Math.max(0, Number(params.get('page') || 0));
-    const pageSize = 50;
-    const filtered = DEMO_PRODUCTS.filter((p) => {
-      if (cat && p.category !== cat) return false;
-      if (!q) return true;
-      return (
-        p.name.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q) ||
-        (p.category || '').toLowerCase().includes(q)
-      );
-    });
-    return {
-      ok: true,
-      total: filtered.length,
-      page,
-      pageSize,
-      products: filtered.slice(page * pageSize, (page + 1) * pageSize),
-    } as T;
-  }
+  // Không chặn /api/customer/products và /api/customer/frequent-items để luôn lấy 5.295+ sản phẩm & ảnh thật từ https://thucphamsomot.vn
   if (pathname === '/api/customer/frequent-items') {
-    return { ok: true, items: DEMO_FREQUENT_ITEMS } as T;
+    return { ok: true, items: [] } as T;
   }
   if (pathname === '/api/customer/order-config') {
     const tomorrow = localDateOffset(1);

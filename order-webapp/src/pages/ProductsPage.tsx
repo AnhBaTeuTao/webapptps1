@@ -145,8 +145,10 @@ export default function ProductsPage() {
       } catch (err) {
         if (controller.signal.aborted) return;
         if (err instanceof ApiError && err.status === 401) {
-          logout();
-          navigate('/dang-nhap');
+          if (import.meta.env.VITE_BYPASS_AUTH === 'false') {
+            logout();
+            navigate('/dang-nhap');
+          }
         }
       } finally {
         if (requestId === searchRequestRef.current) setSearchLoading(false);

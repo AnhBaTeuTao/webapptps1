@@ -13,11 +13,18 @@ const API_BASE = (
 ).replace(/\/$/, '');
 
 const TOKEN_KEY = 'tps1_order_session_token';
+const FAKE_DEMO_TOKENS = new Set(['demo-order-session-token', 'demo-session-token']);
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  const raw = localStorage.getItem(TOKEN_KEY);
+  if (raw && FAKE_DEMO_TOKENS.has(raw)) {
+    localStorage.removeItem(TOKEN_KEY);
+    return null;
+  }
+  return raw;
 }
 export function setToken(token: string) {
+  if (FAKE_DEMO_TOKENS.has(token)) return;
   localStorage.setItem(TOKEN_KEY, token);
 }
 export function clearToken() {
@@ -40,16 +47,16 @@ async function request<T = any>(
   path: string,
   opts: { method?: string; body?: unknown; auth?: boolean; formData?: FormData; signal?: AbortSignal } = {}
 ): Promise<T> {
-  if (IS_DEMO_MODE) {
+  const token = getToken();
+  if ((IS_DEMO_MODE || import.meta.env.VITE_BYPASS_AUTH !== 'false') && !token) {
     const mocked = handleOrderDemoRequest<T>(path, opts);
     if (mocked !== null) return mocked;
   }
   const { method = 'GET', body, auth = true, formData, signal } = opts;
   const headers: Record<string, string> = {};
   if (!formData) headers['Content-Type'] = 'application/json';
-  if (auth) {
-    const token = getToken();
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+  if (auth && token) {
+    headers['Authorization'] = `Bearer ${token}`;
   }
   const res = await fetch(`${API_BASE}${path}`, {
     method,

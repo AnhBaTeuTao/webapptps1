@@ -42,19 +42,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const refresh = async () => {
-    if (IS_DEMO_MODE) {
-      if (DEMO_CUSTOMER_SESSION.orderSessionToken) {
-        setToken(DEMO_CUSTOMER_SESSION.orderSessionToken);
-      }
-      setSessionState(DEMO_CUSTOMER_SESSION);
-      localStorage.setItem(SESSION_CACHE, JSON.stringify(DEMO_CUSTOMER_SESSION));
-      setLoading(false);
-      return;
-    }
     const token = getToken();
     if (!token) {
-      if (IS_DEMO_BYPASS) {
+      if (IS_DEMO_BYPASS || IS_DEMO_MODE) {
         setSessionState(DEMO_CUSTOMER_SESSION);
+        localStorage.setItem(SESSION_CACHE, JSON.stringify(DEMO_CUSTOMER_SESSION));
       } else {
         setSessionState(null);
       }
@@ -63,14 +55,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     try {
       const res = await api.session();
-      setSessionState(res.session);
-      localStorage.setItem(SESSION_CACHE, JSON.stringify(res.session));
+      setSessionState(res.session || (IS_DEMO_BYPASS ? DEMO_CUSTOMER_SESSION : null));
+      if (res.session) {
+        localStorage.setItem(SESSION_CACHE, JSON.stringify(res.session));
+      }
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        if (IS_DEMO_BYPASS) {
+        clearToken();
+        if (IS_DEMO_BYPASS || IS_DEMO_MODE) {
           setSessionState(DEMO_CUSTOMER_SESSION);
         } else {
-          clearToken();
           localStorage.removeItem(SESSION_CACHE);
           setSessionState(null);
         }
@@ -101,6 +95,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     clearToken();
+    if (IS_DEMO_BYPASS || IS_DEMO_MODE) {
+      setSessionState(DEMO_CUSTOMER_SESSION);
+      return;
+    }
     localStorage.removeItem(SESSION_CACHE);
     setSessionState(null);
   };

@@ -62,7 +62,7 @@ const PasswordGate = ({ children }: { children: React.ReactNode }) => {
 function LoginRoute() {
   const { session, loading } = useAuth();
   if (loading) return <LoadingScreen />;
-  if (IS_DEMO_MODE && session) return <Navigate to="/" replace />;
+  if ((IS_DEMO_MODE || import.meta.env.VITE_BYPASS_AUTH !== 'false') && session) return <Navigate to="/dat-hang" replace />;
   return <LoginPage />;
 }
 
