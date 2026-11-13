@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PackageOpen } from 'lucide-react';
 import type { Product } from '../../lib/api';
+import { getDemoProductThumb, IS_DEMO_MODE } from '../../lib/demoMock';
 
 interface ProductThumbnailProps {
   product: Product;
@@ -9,7 +10,9 @@ interface ProductThumbnailProps {
 }
 
 export function productImage(product: Product): string {
-  return product.thumbUrl || product.imageUrl || '';
+  const src = product.thumbUrl || product.imageUrl || '';
+  if (src) return src;
+  return IS_DEMO_MODE ? getDemoProductThumb(product.category, product.sku) : '';
 }
 
 export default function ProductThumbnail({ product, size = 'md', className = '' }: ProductThumbnailProps) {
