@@ -517,6 +517,22 @@ const translations: Record<string, [string, string]> = {
   'Những món bếp của quý khách thường đặt và các mặt hàng cùng nhóm': ['What your kitchen usually orders, plus related items', '您厨房常订的商品及同类商品'],
   'Khuyến mãi': ['Promotions', '促销'],
   'Ưu đãi đang áp dụng cho quý khách': ['Current offers for you', '当前为您提供的优惠'],
+  // ── Cửa hàng online ──
+  'Cài ứng dụng Thực Phẩm Số Một': ['Install the Thực Phẩm Số Một app', '安装 Thực Phẩm Số Một 应用'],
+  'Mở nhanh từ màn hình chính và nhận thông báo khi đơn hàng thay đổi.': ['Open it from your home screen and get notified when your order changes.', '从主屏幕快速打开，订单有变化时收到通知。'],
+  'Cài đặt': ['Install', '安装'],
+  'Để sau': ['Later', '以后再说'],
+  'Thêm Thực Phẩm Số Một vào màn hình chính': ['Add Thực Phẩm Số Một to your Home Screen', '将 Thực Phẩm Số Một 添加到主屏幕'],
+  'Bấm nút Chia sẻ ở thanh dưới của Safari.': ['Tap the Share button in Safari\'s bottom bar.', '点击 Safari 底部的“分享”按钮。'],
+  'Chọn “Thêm vào MH chính”, rồi bấm “Thêm”.': ['Choose “Add to Home Screen”, then tap “Add”.', '选择“添加到主屏幕”，然后点“添加”。'],
+  'Nếu đang mở trong Zalo hoặc Facebook, quý khách mở trang bằng Safari trước.': ['If you opened this in Zalo or Facebook, open it in Safari first.', '如果在 Zalo 或 Facebook 中打开，请先用 Safari 打开此页面。'],
+  'Đã hiểu': ['Got it', '知道了'],
+  // ── Cửa hàng online ──
+  'Muốn nhận thông báo khi đơn được xác nhận và giao? Quý khách thêm Thực Phẩm Số Một vào màn hình chính (Safari → Chia sẻ → Thêm vào MH chính).': ['Want updates when your order is confirmed and delivered? Add Thực Phẩm Số Một to your Home Screen (Safari → Share → Add to Home Screen).', '想在订单确认和配送时收到通知？请将 Thực Phẩm Số Một 添加到主屏幕（Safari → 分享 → 添加到主屏幕）。'],
+  'Đã bật thông báo. TPS1 sẽ báo khi đơn được xác nhận, đang giao và đã giao.': ['Notifications are on. TPS1 will let you know when your order is confirmed, out for delivery and delivered.', '已开启通知。订单确认、配送中和送达时 TPS1 会通知您。'],
+  'Chưa bật được thông báo. Quý khách kiểm tra quyền thông báo của trình duyệt rồi thử lại bằng nút chuông trên đầu trang.': ['Notifications could not be turned on. Please check your browser\'s notification permission and try again with the bell at the top.', '未能开启通知。请检查浏览器的通知权限，然后用页面顶部的铃铛重试。'],
+  'Bật thông báo để biết ngay khi đơn được xác nhận, đang giao và đã giao.': ['Turn on notifications to know as soon as your order is confirmed, out for delivery and delivered.', '开启通知，订单确认、配送中和送达时第一时间知道。'],
+  'Bật': ['Turn on', '开启'],
 };
 
 const errorTranslations: Record<string, string> = {

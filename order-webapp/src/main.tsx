@@ -2,6 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+// Bắt sự kiện cài app (beforeinstallprompt) càng sớm càng tốt.
+import './lib/installPrompt'
 
 // Có bản app mới: service worker mới tự kích hoạt (skipWaiting + clients.claim
 // trong sw.ts) rồi tiếp quản trang. Tải lại đúng một lần để khách dùng ngay bản
