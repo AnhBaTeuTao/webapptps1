@@ -1,4 +1,4 @@
-import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as NativeApp } from '@capacitor/app';
@@ -59,6 +59,11 @@ const PasswordGate = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+function LegacyOrderRedirect() {
+  const { id = '' } = useParams();
+  return <Navigate to={`/don-hang/${id}`} replace />;
+}
+
 function NativeBackButton() {
   const location = useLocation();
   useEffect(() => {
@@ -99,6 +104,8 @@ function App() {
               <Route path="dat-hang/excel" element={<ProtectedRoute><ExcelOrderPage /></ProtectedRoute>} />
               <Route path="don-hang" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
               <Route path="don-hang/:id" element={<ProtectedRoute><OrderDetailPage /></ProtectedRoute>} />
+              {/* Link cũ trong thông báo yêu cầu sửa đơn (đường dẫn của quanly) */}
+              <Route path="don-hang-cua-toi/:id" element={<LegacyOrderRedirect />} />
               <Route path="tai-khoan" element={<ProtectedRoute><AccountPage /></ProtectedRoute>} />
               <Route path="doi-mat-khau" element={<ProtectedRoute><ChangePasswordPage /></ProtectedRoute>} />
             </Route>

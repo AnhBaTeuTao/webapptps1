@@ -8,6 +8,7 @@ import { LanguageSwitcher, useLanguage } from '../contexts/LanguageContext';
 import { useStoreHome } from '../hooks/useStoreHome';
 import NotificationBell from '../components/NotificationBell';
 import TrustMarquee from '../components/store/TrustMarquee';
+import InstallBanner from '../components/store/InstallBanner';
 
 const HOTLINE = '089 890 2222';
 
@@ -199,6 +200,8 @@ export default function StoreLayout() {
           ))}
         </div>
       </nav>
+
+      <InstallBanner />
     </div>
   );
 }

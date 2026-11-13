@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useOrderSubmit } from '../hooks/useOrderSubmit';
 import CartSummarySidebar from '../components/products/CartSummarySidebar';
+import PushOptIn from '../components/store/PushOptIn';
 import UnlistedItemEntry from '../components/products/UnlistedItemEntry';
 import { ProductImage, money, stepOf } from '../components/store/StoreProductCard';
 import type { OrderItem } from '../components/products/OrderTabsBar';
@@ -87,6 +88,7 @@ export default function CartPage() {
           </p>
           {session?.verificationStatus === 'pending' && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Tài khoản của quý khách đang chờ xác minh. TPS1 sẽ xác minh tài khoản và xác nhận đơn cùng lúc.')}</p>}
           {successOrder.pendingPriceCount > 0 && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Đơn có mặt hàng chưa có giá. Nhân viên kinh doanh sẽ báo giá, hoặc bỏ món tạm hết hàng, trước khi xác nhận đơn với quý khách.')}</p>}
+          <PushOptIn />
           <div className="flex flex-col justify-center gap-3 pt-2 sm:flex-row">
             <button type="button" onClick={() => { clearSuccess(); navigate('/'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-[#17231d]/15 px-5 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]"><ShoppingBag size={16} /> {t('Tiếp tục mua hàng')}</button>
             <button type="button" onClick={() => { clearSuccess(); navigate('/don-hang'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white hover:bg-[#0b4f34]">{t('Đơn hàng của tôi')} <ArrowRight size={16} /></button>
