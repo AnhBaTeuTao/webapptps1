@@ -5,25 +5,6 @@ import { DEMO_CUSTOMER_SESSION, IS_DEMO_MODE } from '../lib/demoMock';
 const SESSION_CACHE = 'tps1_customer_session_snapshot';
 const IS_DEMO_BYPASS = import.meta.env.VITE_BYPASS_AUTH !== 'false';
 
-const DEMO_CUSTOMER_SESSION: CustomerSession = {
-  id: 'demo-bep-truong-001',
-  code: 'KH-BEP01',
-  name: 'Nguyễn Văn An (Bếp Trưởng)',
-  phone: '089 890 2222',
-  company: 'Bếp Ăn Mẫu TPS1',
-  tier: 'VIP',
-  discountPercent: 5,
-  verificationStatus: 'verified',
-  mustChangePassword: false,
-  orderSessionToken: 'demo-session-token',
-  defaultShippingAddress: {
-    alias: 'Bếp chính',
-    address: '123 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM',
-    name: 'Nguyễn Văn An',
-    phone: '089 890 2222',
-  },
-};
-
 interface AuthContextType {
   session: CustomerSession | null;
   loading: boolean;
