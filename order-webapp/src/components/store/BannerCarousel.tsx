@@ -18,7 +18,7 @@ function BrandHero() {
   const handleStartShopping = (e: MouseEvent) => {
     if (!session) {
       const el = document.getElementById('store-home-catalog');
-      if (el) {
+      if (el && el.offsetParent !== null) {
         e.preventDefault();
         el.scrollIntoView({ behavior: 'smooth' });
       }
@@ -42,11 +42,11 @@ function BrandHero() {
         </p>
         <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-[12px] font-medium text-emerald-100/90">
           <span className="inline-flex items-center gap-1">✓ {t('Chuẩn ISO 22000 & HACCP')}</span>
-          <span className="inline-flex items-center gap-1">✓ {t('Hơn 5.000+ mặt hàng sẵn có')}</span>
+          <span className="inline-flex items-center gap-1">✓ {t('Hơn 5.000 mặt hàng sẵn có')}</span>
           <span className="inline-flex items-center gap-1">✓ {t('Giao đúng hẹn 99,8% ca sáng')}</span>
         </div>
         <Link
-          to={session ? '/dat-hang' : '#store-home-catalog'}
+          to={session ? '/dat-hang' : '/danh-muc'}
           onClick={handleStartShopping}
           className="mt-3 inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-[#e0742f] px-5 text-[13px] font-bold text-white whitespace-nowrap shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-4 sm:text-sm"
         >
