@@ -483,7 +483,7 @@ QUY TẮC TUYỆT ĐỐI KHI ĐỌC TÀI LIỆU NÀY:
       <td><strong>28</strong></td>
       <td><code class="filepath">order-webapp/src/pages/StoreHomePage.tsx</code></td>
       <td><span class="pill pill-mod">Chỉnh sửa</span></td>
-      <td class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span><div style="font-size:11px;color:#6e7a73;font-weight:500;">(245 dòng)</div></td>
+      <td class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span><div style="font-size:11px;color:#6e7a73;font-weight:500;">(317 dòng)</div></td>
       <td>Bật hiệu ứng tự động trôi ngang chậm (autoScroll) cho dải Hàng bán chạy và tinh chỉnh bố cục trang chủ B2B.</td>
     </tr>
         </tbody>
@@ -14310,7 +14310,7 @@ export default function ProductsPage() {
             <span class="file-index">#28</span>
             <code class="filepath" style="font-size:14px;">order-webapp/src/pages/StoreHomePage.tsx</code>
             <span class="pill pill-mod">Chỉnh sửa (M)</span>
-            <span class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span> · Tổng 245 dòng</span>
+            <span class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span> · Tổng 317 dòng</span>
           </div>
           <p class="file-spec-note"><strong>Đặc tả kỹ thuật cho AI:</strong> Bật hiệu ứng tự động trôi ngang chậm (autoScroll) cho dải Hàng bán chạy và tinh chỉnh bố cục trang chủ B2B.</p>
         </div>
@@ -14461,11 +14461,22 @@ index 595fbc8..ff4ed08 100644
       </details>
 
       <details class="code-details" open>
-        <summary>📄 2. FULL SOURCE CODE CHUẨN PRODUCTION 100% (245 dòng) — Bản hoàn chỉnh của <code>order-webapp/src/pages/StoreHomePage.tsx</code></summary>
+        <summary>📄 2. FULL SOURCE CODE CHUẨN PRODUCTION 100% (317 dòng) — Bản hoàn chỉnh của <code>order-webapp/src/pages/StoreHomePage.tsx</code></summary>
         <pre class="code-box full-box"><code id="full-code-28">import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BadgePercent, ClipboardList, FileSpreadsheet, Flame, Loader2, RotateCcw, Sparkles } from 'lucide-react';
-import { api, type Product } from '../lib/api';
+import {
+  BadgePercent,
+  ChevronRight,
+  ClipboardList,
+  FileSpreadsheet,
+  Flame,
+  LayoutGrid,
+  Loader2,
+  Package,
+  RotateCcw,
+  Sparkles,
+} from 'lucide-react';
+import { api, type StoreCategory, type Product } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useStoreHome } from '../hooks/useStoreHome';
@@ -14473,6 +14484,61 @@ import BannerCarousel from '../components/store/BannerCarousel';
 import CategoryRail from '../components/store/CategoryRail';
 import ProductRail from '../components/store/ProductRail';
 import StoreProductGrid from '../components/store/StoreProductGrid';
+
+function CategoryThumbnail({ category }: { category: StoreCategory }) {
+  const [error, setError] = useState(false);
+  return (
+    &lt;span className=&quot;flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#eaf6ef] ring-1 ring-[#0f7a4f]/10&quot;&gt;
+      {category.imageUrl &amp;&amp; !error ? (
+        &lt;img
+          src={category.imageUrl}
+          alt=&quot;&quot;
+          loading=&quot;lazy&quot;
+          onError={() =&gt; setError(true)}
+          className=&quot;h-full w-full object-cover&quot;
+        /&gt;
+      ) : (
+        &lt;Package size={16} className=&quot;text-[#0f7a4f]/60&quot; /&gt;
+      )}
+    &lt;/span&gt;
+  );
+}
+
+function CategorySidebar({ categories }: { categories: StoreCategory[] }) {
+  const { t } = useLanguage();
+  return (
+    &lt;nav
+      aria-label={t('Danh mục hàng hóa')}
+      className=&quot;relative hidden min-h-[340px] rounded-2xl bg-white ring-1 ring-[#17231d]/6 lg:block&quot;
+    &gt;
+      &lt;div className=&quot;no-scrollbar absolute inset-0 flex flex-col overflow-y-auto p-1.5&quot;&gt;
+        {categories.map((c) =&gt; (
+          &lt;Link
+            key={c.slug}
+            to={`/danh-muc/${c.slug}`}
+            className=&quot;group flex items-center gap-2.5 rounded-xl px-2 py-1 text-[13.5px] font-semibold text-[#17231d] transition hover:bg-[#eaf6ef] hover:text-[#0b4f34]&quot;
+          &gt;
+            &lt;CategoryThumbnail category={c} /&gt;
+            &lt;span className=&quot;min-w-0 flex-1 truncate&quot;&gt;{t(c.name)}&lt;/span&gt;
+            &lt;ChevronRight
+              size={16}
+              className=&quot;shrink-0 text-[#8a9690] transition group-hover:translate-x-0.5 group-hover:text-[#0f7a4f]&quot;
+            /&gt;
+          &lt;/Link&gt;
+        ))}
+        &lt;Link
+          to=&quot;/danh-muc&quot;
+          className=&quot;mt-auto flex items-center gap-2.5 rounded-xl px-2 py-1 text-[13px] font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]&quot;
+        &gt;
+          &lt;span className=&quot;flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0f7a4f]/10&quot;&gt;
+            &lt;LayoutGrid size={15} /&gt;
+          &lt;/span&gt;
+          {t('Xem tất cả danh mục')}
+        &lt;/Link&gt;
+      &lt;/div&gt;
+    &lt;/nav&gt;
+  );
+}
 
 /** Danh mục không phải thực phẩm: không đưa vào lưới đề xuất. */
 const NON_FOOD_SLUGS = new Set(['dung-cu-bep']);
@@ -14571,72 +14637,78 @@ export default function StoreHomePage() {
     &lt;div className=&quot;space-y-3 sm:space-y-4&quot;&gt;
       {/* Điện thoại: danh mục lên đầu để khách thấy gian hàng ngay; máy tính: banner trước. */}
       &lt;div className=&quot;flex flex-col gap-3&quot;&gt;
-        &lt;div className=&quot;order-2 grid gap-3 lg:order-1 lg:grid-cols-[minmax(0,1fr)_300px]&quot;&gt;
+        &lt;div className=&quot;order-2 grid gap-3 lg:order-1 lg:grid-cols-[250px_minmax(0,1fr)]&quot;&gt;
+          {data &amp;&amp; data.categories.length &gt; 0 ? (
+            &lt;CategorySidebar categories={data.categories} /&gt;
+          ) : (
+            &lt;div className=&quot;hidden animate-pulse rounded-2xl bg-white ring-1 ring-[#17231d]/6 lg:block&quot; aria-hidden=&quot;true&quot; /&gt;
+          )}
           &lt;BannerCarousel banners={data?.banners || []} /&gt;
-          &lt;aside className=&quot;hidden flex-col gap-3 lg:flex&quot;&gt;
-            {session ? (
-              &lt;div className=&quot;flex flex-1 flex-col justify-between rounded-2xl bg-white p-4 ring-1 ring-[#17231d]/6&quot;&gt;
-                &lt;div&gt;
-                  &lt;span className=&quot;inline-block rounded-md bg-[#eaf6ef] px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wider text-[#0f7a4f]&quot;&gt;
-                    {t('BẾP ĐỐI TÁC TPS1')}
-                  &lt;/span&gt;
-                  &lt;p className=&quot;mt-2 line-clamp-2 text-base font-black text-[#17231d]&quot;&gt;{session.company || session.name}&lt;/p&gt;
-                  &lt;p className=&quot;mt-1 text-xs text-[#59665f]&quot;&gt;{t('Giá hiển thị đã áp dụng theo hợp đồng của bếp.')}&lt;/p&gt;
-                &lt;/div&gt;
-                &lt;div className=&quot;mt-3 grid gap-2&quot;&gt;
-                  &lt;Link
-                    to=&quot;/dat-hang&quot;
-                    className=&quot;flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0f7a4f] px-4 py-2.5 text-[13.5px] font-bold text-white whitespace-nowrap shadow-sm shadow-[#0f7a4f]/20 transition hover:bg-[#0b4f34]&quot;
-                  &gt;
-                    &lt;RotateCcw size={16} className=&quot;shrink-0&quot; /&gt;
-                    &lt;span&gt;{t('Đặt nhanh &amp; Đặt lại đơn')}&lt;/span&gt;
-                  &lt;/Link&gt;
-                  &lt;Link
-                    to=&quot;/gio-hang?excel=1&quot;
-                    className=&quot;flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#0f7a4f]/30 bg-[#eaf6ef]/50 px-4 py-2.5 text-[13.5px] font-bold text-[#0b4f34] whitespace-nowrap transition hover:bg-[#eaf6ef]&quot;
-                  &gt;
-                    &lt;FileSpreadsheet size={16} className=&quot;shrink-0&quot; /&gt;
-                    &lt;span&gt;{t('Đặt hàng từ file Excel')}&lt;/span&gt;
-                  &lt;/Link&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            ) : (
-              &lt;div className=&quot;flex flex-1 flex-col justify-between rounded-2xl bg-linear-to-br from-[#fef5ee] to-white p-4 ring-1 ring-[#e0742f]/15&quot;&gt;
-                &lt;div&gt;
-                  &lt;p className=&quot;text-base font-black leading-snug text-[#17231d]&quot;&gt;{t('Giá riêng cho bếp của quý khách')}&lt;/p&gt;
-                  &lt;p className=&quot;mt-1.5 text-[13px] text-[#59665f]&quot;&gt;{t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}&lt;/p&gt;
-                &lt;/div&gt;
-                &lt;div className=&quot;mt-3 grid gap-2&quot;&gt;
-                  &lt;Link to=&quot;/dang-ky&quot; className=&quot;flex min-h-11 items-center justify-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white whitespace-nowrap shadow-sm shadow-[#e0742f]/20 transition hover:bg-[#c4601f]&quot;&gt;{t('Đăng ký tài khoản')}&lt;/Link&gt;
-                  &lt;Link to=&quot;/dang-nhap&quot; className=&quot;flex min-h-11 items-center justify-center rounded-xl border border-[#17231d]/12 bg-white px-4 text-sm font-bold text-[#17231d] whitespace-nowrap transition hover:bg-[#f5f7f3]&quot;&gt;{t('Đăng nhập')}&lt;/Link&gt;
-                &lt;/div&gt;
-              &lt;/div&gt;
-            )}
-          &lt;/aside&gt;
         &lt;/div&gt;
 
-        {/* Lối tắt trên điện thoại/tablet (máy tính đã có khung bên cạnh banner và thanh menu). */}
         {session ? (
-          &lt;div className=&quot;order-3 grid grid-cols-3 gap-2 lg:hidden&quot;&gt;
-            {[
-              { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh' },
-              { to: '/gio-hang?excel=1', icon: FileSpreadsheet, label: 'Đặt từ Excel' },
-              { to: '/don-hang', icon: ClipboardList, label: 'Đơn hàng' },
-            ].map(({ to, icon: Icon, label }) =&gt; (
-              &lt;Link
-                key={to}
-                to={to}
-                className=&quot;flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-white px-2 py-2.5 text-center text-[12px] sm:text-[13px] font-bold text-[#0b4f34] ring-1 ring-[#17231d]/6 whitespace-nowrap active:scale-[0.98]&quot;
-              &gt;
-                &lt;Icon size={16} className=&quot;shrink-0 text-[#0f7a4f]&quot; /&gt;
-                &lt;span&gt;{t(label)}&lt;/span&gt;
-              &lt;/Link&gt;
-            ))}
+          &lt;div className=&quot;order-3 flex flex-col gap-2 lg:order-2 lg:flex-row lg:items-center lg:rounded-2xl lg:bg-white lg:p-2 lg:pl-4 lg:ring-1 lg:ring-[#17231d]/6&quot;&gt;
+            &lt;div className=&quot;hidden min-w-0 flex-1 items-center gap-2.5 lg:flex&quot;&gt;
+              &lt;span className=&quot;shrink-0 rounded-md bg-[#eaf6ef] px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wider text-[#0f7a4f]&quot;&gt;
+                {t('BẾP ĐỐI TÁC TPS1')}
+              &lt;/span&gt;
+              &lt;span className=&quot;truncate text-sm font-black text-[#17231d]&quot;&gt;
+                {session.company || session.name}
+              &lt;/span&gt;
+              &lt;span className=&quot;hidden truncate text-xs text-[#59665f] xl:inline&quot;&gt;
+                {'· '}
+                {t('Giá hiển thị đã áp dụng theo hợp đồng của bếp.')}
+              &lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div className=&quot;grid grid-cols-3 gap-2 lg:flex lg:shrink-0&quot;&gt;
+              {[
+                { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh', desktop: 'Đặt nhanh &amp; Đặt lại đơn' },
+                { to: '/gio-hang?excel=1', icon: FileSpreadsheet, label: 'Đặt từ Excel', desktop: 'Đặt hàng từ file Excel' },
+                { to: '/don-hang', icon: ClipboardList, label: 'Đơn hàng', desktop: 'Đơn hàng' },
+              ].map(({ to, icon: Icon, label, desktop }, idx) =&gt; (
+                &lt;Link
+                  key={to}
+                  to={to}
+                  className={`flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-center text-[12px] font-bold whitespace-nowrap active:scale-[0.98] sm:text-[13px] lg:min-h-10 lg:px-4 ${
+                    idx === 0
+                      ? 'bg-white text-[#0b4f34] ring-1 ring-[#17231d]/6 lg:bg-[#0f7a4f] lg:text-white lg:ring-0 lg:hover:bg-[#0b4f34]'
+                      : 'bg-white text-[#0b4f34] ring-1 ring-[#17231d]/6 lg:ring-[#0f7a4f]/25 lg:hover:bg-[#eaf6ef]'
+                  }`}
+                &gt;
+                  &lt;Icon
+                    size={16}
+                    className={`shrink-0 ${idx === 0 ? 'text-[#0f7a4f] lg:text-white' : 'text-[#0f7a4f]'}`}
+                  /&gt;
+                  &lt;span className=&quot;lg:hidden&quot;&gt;{t(label)}&lt;/span&gt;
+                  &lt;span className=&quot;hidden lg:inline&quot;&gt;{t(desktop)}&lt;/span&gt;
+                &lt;/Link&gt;
+              ))}
+            &lt;/div&gt;
           &lt;/div&gt;
-        ) : null}
+        ) : (
+          &lt;div className=&quot;order-3 hidden items-center gap-3 rounded-2xl bg-linear-to-r from-[#fef5ee] to-white p-2 pl-4 ring-1 ring-[#e0742f]/15 lg:order-2 lg:flex&quot;&gt;
+            &lt;p className=&quot;min-w-0 flex-1 truncate text-sm text-[#59665f]&quot;&gt;
+              &lt;span className=&quot;font-black text-[#17231d]&quot;&gt;{t('Giá riêng cho bếp của quý khách')}&lt;/span&gt;
+              {' · '}
+              {t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}
+            &lt;/p&gt;
+            &lt;Link
+              to=&quot;/dang-ky&quot;
+              className=&quot;flex min-h-10 shrink-0 items-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white hover:bg-[#c4601f]&quot;
+            &gt;
+              {t('Đăng ký tài khoản')}
+            &lt;/Link&gt;
+            &lt;Link
+              to=&quot;/dang-nhap&quot;
+              className=&quot;flex min-h-10 shrink-0 items-center rounded-xl border border-[#17231d]/12 bg-white px-4 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]&quot;
+            &gt;
+              {t('Đăng nhập')}
+            &lt;/Link&gt;
+          &lt;/div&gt;
+        )}
 
         {data &amp;&amp; data.categories.length &gt; 0 &amp;&amp; (
-          &lt;section id=&quot;store-home-catalog&quot; className=&quot;order-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 sm:p-4 lg:order-2&quot;&gt;
+          &lt;section id=&quot;store-home-catalog&quot; className=&quot;order-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 sm:p-4 lg:hidden&quot;&gt;
             &lt;div className=&quot;mb-3 flex items-center justify-between&quot;&gt;
               &lt;h2 className=&quot;text-base font-black text-[#17231d] sm:text-lg&quot;&gt;{t('Danh mục hàng hóa')}&lt;/h2&gt;
             &lt;/div&gt;
