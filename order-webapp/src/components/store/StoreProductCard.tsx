@@ -109,10 +109,18 @@ export function ProductImage({ product, className = '' }: { product: Product; cl
   const src = productImage(product);
   const isTinyThumb = /\bsize-(10|11|12|14)\b/.test(className);
   const isCompactThumb = /\bsize-16\b/.test(className);
+  const padClass = isTinyThumb ? 'p-0.5' : isCompactThumb ? 'p-1' : 'p-2.5 sm:p-3';
   return (
-    <div className={`relative flex items-center justify-center overflow-hidden bg-[#f3f6f2] ${className}`}>
+    <div className={`relative flex items-center justify-center overflow-hidden bg-white ${padClass} ${className}`}>
       {src && !failed ? (
-        <img src={src} alt={product.name} loading="lazy" decoding="async" onError={() => setFailed(true)} className="h-full w-full object-cover" />
+        <img
+          src={src}
+          alt={product.name}
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-contain object-center transition-transform duration-200 group-hover:scale-[1.03]"
+        />
       ) : (
         <PackageOpen size={36} strokeWidth={1.5} className="text-[#59665f]/35" />
       )}
@@ -132,9 +140,8 @@ export function ProductImage({ product, className = '' }: { product: Product; cl
 }
 
 /**
- * Nút thêm gọn đặt trên ảnh (kiểu sàn bán sỉ): "+" tròn khi chưa có trong
- * giỏ, chuyển thành "− số lượng +" khi đã chọn — thẻ sản phẩm thấp hơn,
- * mỗi hàng hiện được nhiều món hơn.
+ * Nút thêm gọn đặt ở chân thẻ: "+" tròn khi chưa có trong giỏ,
+ * chuyển thành "− số lượng +" khi đã chọn để không che ảnh sản phẩm.
  */
 export function CompactAdd({ product, className = '' }: { product: Product; className?: string }) {
   const { quantityOf, addProduct, updateQty, tab } = useCart();
@@ -150,9 +157,9 @@ export function CompactAdd({ product, className = '' }: { product: Product; clas
         type="button"
         aria-label={t('Thêm vào giỏ')}
         onClick={(e) => { stop(e); addProduct(product, firstQuantityOf(product)); }}
-        className={`flex size-8 items-center justify-center rounded-full bg-[#0f7a4f] text-white sm:size-9 shadow-md shadow-black/15 transition hover:bg-[#0b4f34] active:scale-90 ${className}`}
+        className={`flex size-7.5 sm:size-8 items-center justify-center rounded-full bg-[#0f7a4f] text-white shadow-xs transition hover:bg-[#0b4f34] active:scale-90 ${className}`}
       >
-        <Plus size={18} strokeWidth={2.6} />
+        <Plus size={16} strokeWidth={2.5} />
       </button>
     );
   }
@@ -165,10 +172,10 @@ export function CompactAdd({ product, className = '' }: { product: Product; clas
   };
 
   return (
-    <div className={`flex h-8 items-center rounded-full bg-[#0f7a4f] sm:h-9 text-white shadow-md shadow-black/15 ${className}`}>
-      <button type="button" aria-label={t('Giảm')} onClick={(e) => change(e, -step)} className="flex size-8 items-center justify-center rounded-full active:scale-90 sm:size-9"><Minus size={16} strokeWidth={2.6} /></button>
-      <span className="min-w-5 text-center text-[12.5px] font-black">{Number(quantity.toFixed(3))}</span>
-      <button type="button" aria-label={t('Tăng')} onClick={(e) => change(e, step)} className="flex size-8 items-center justify-center rounded-full active:scale-90 sm:size-9"><Plus size={16} strokeWidth={2.6} /></button>
+    <div className={`flex h-7.5 sm:h-8 items-center rounded-full bg-[#0f7a4f] text-white shadow-xs ${className}`}>
+      <button type="button" aria-label={t('Giảm')} onClick={(e) => change(e, -step)} className="flex size-7.5 sm:size-8 items-center justify-center rounded-full active:scale-90"><Minus size={14} strokeWidth={2.5} /></button>
+      <span className="min-w-4.5 px-0.5 text-center text-[11.5px] sm:text-xs font-bold">{Number(quantity.toFixed(3))}</span>
+      <button type="button" aria-label={t('Tăng')} onClick={(e) => change(e, step)} className="flex size-7.5 sm:size-8 items-center justify-center rounded-full active:scale-90"><Plus size={14} strokeWidth={2.5} /></button>
     </div>
   );
 }
@@ -180,27 +187,34 @@ export default function StoreProductCard({ product }: { product: Product }) {
   const priced = !product.priceOnRequest && product.price > 0;
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-[#17231d]/7 transition hover:shadow-[0_8px_22px_rgba(16,40,30,0.10)]">
-      <div className="relative">
+      <div className="relative border-b border-[#17231d]/6 bg-white">
         <Link to={`/san-pham/${product.id}`} className="block">
           <ProductImage product={product} className="aspect-square w-full" />
         </Link>
-        <FavoriteButton productId={product.id} className="absolute right-1 top-1 size-7 sm:right-1.5 sm:top-1.5 sm:size-8" />
-        <CompactAdd product={product} className="absolute bottom-1.5 right-1.5" />
+        <FavoriteButton productId={product.id} className="absolute right-1.5 top-1.5 size-7 sm:size-7.5 bg-white/90" />
       </div>
-      <Link to={`/san-pham/${product.id}`} className="flex flex-1 flex-col px-2 pb-2 pt-1.5 sm:px-2.5">
-        {priced ? (
-          <p className="text-[13.5px] font-black leading-tight sm:text-[14.5px] text-[#0b4f34]">
-            {money(product.price)}
-            {!session && <span className="ml-1 text-[10px] font-semibold text-[#8a9690] whitespace-nowrap">{t('Giá tham khảo')}</span>}
-          </p>
-        ) : (
-          <p className="truncate text-[12px] font-bold leading-[1.45] text-[#c4601f]">{t('Liên hệ báo giá')}</p>
-        )}
-        <h3 className="mt-0.5 line-clamp-2 min-h-[2.4em] text-[12px] font-medium leading-[1.2] sm:text-[12.5px] text-[#17231d] group-hover:text-[#0b4f34]">{name}</h3>
-        <p className="mt-0.5 line-clamp-1 text-[11px] text-[#8a9690]">
-          {product.packagingNote || productUnit(product.unit || 'Kg')}
-        </p>
-      </Link>
+      <div className="flex flex-1 flex-col justify-between px-2.5 pb-2.5 pt-2 sm:px-3">
+        <Link to={`/san-pham/${product.id}`} className="block min-w-0">
+          {priced ? (
+            <p className="text-[13.5px] font-bold leading-tight sm:text-[14.5px] text-[#0b4f34]">
+              {money(product.price)}
+              {!session && <span className="ml-1 text-[10px] font-semibold text-[#8a9690] whitespace-nowrap">{t('Giá tham khảo')}</span>}
+            </p>
+          ) : (
+            <p className="truncate text-[12px] font-bold leading-[1.4] text-[#c4601f]">{t('Liên hệ báo giá')}</p>
+          )}
+          <h3 className="mt-1 line-clamp-2 min-h-[2.4em] text-[12px] font-semibold leading-tight sm:text-[12.5px] text-[#17231d] group-hover:text-[#0b4f34]">
+            {name}
+          </h3>
+        </Link>
+
+        <div className="mt-2 flex items-center justify-between gap-1.5 pt-1 border-t border-[#17231d]/6">
+          <span className="min-w-0 flex-1 truncate text-[11px] font-medium text-[#6e7d75]" title={product.packagingNote || productUnit(product.unit || 'Kg')}>
+            {product.packagingNote || productUnit(product.unit || 'Kg')}
+          </span>
+          <CompactAdd product={product} className="shrink-0" />
+        </div>
+      </div>
     </article>
   );
 }

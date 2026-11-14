@@ -33,7 +33,7 @@ export default function ProductThumbnail({ product, size = 'md', className = '' 
 
   return (
     <div
-      className={`${sizeClasses} border border-[#17231d]/10 bg-[#f5f7f3] overflow-hidden shrink-0 flex items-center justify-center text-[#59665f]/40 relative select-none ${className}`}
+      className={`${sizeClasses} border border-[#17231d]/10 bg-white p-1 overflow-hidden shrink-0 flex items-center justify-center text-[#59665f]/40 relative select-none ${className}`}
     >
       {src && !failed ? (
         <img
@@ -42,7 +42,7 @@ export default function ProductThumbnail({ product, size = 'md', className = '' 
           loading="lazy"
           decoding="async"
           onError={() => setFailed(true)}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain object-center"
         />
       ) : (
         <PackageOpen size={iconSizes} strokeWidth={1.75} />

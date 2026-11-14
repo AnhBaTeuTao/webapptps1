@@ -226,7 +226,7 @@
       <p>Tài liệu chuyên biệt dành cho AI Engineer đọc hiểu và thực thi ngay. Chỉ chứa đúng các đoạn code đã chỉnh sửa (Before → After) và các component UI mới, đã loại bỏ 100% các phần code chưa chỉnh sửa và loại bỏ hoàn toàn mọi chỉnh sửa liên quan đến bypass đăng nhập / demo mock.</p>
       <div class="hero-badges">
         <span class="hero-badge">✓ 35 File Giao Diện & Đa Ngôn Ngữ</span>
-        <span class="hero-badge">✓ 190 Đoạn Chỉnh Sửa Chính Xác (Chỉ Diff/Patch)</span>
+        <span class="hero-badge">✓ 191 Đoạn Chỉnh Sửa Chính Xác (Chỉ Diff/Patch)</span>
         <span class="hero-badge">✓ 100% An Toàn Bảo Mật Production (Không Đụng Auth/API)</span>
         <span class="hero-badge">✓ Đa Ngôn Ngữ: Tiếng Việt · English · 中文</span>
       </div>
@@ -273,7 +273,7 @@ QUY TẮC BẢO MẬT TUYỆT ĐỐI (KHÔNG ĐƯỢC VI PHẠM):
     <a href="#file-3" class="toc-item">
       <span class="toc-num">3</span>
       <span class="toc-path">src/contexts/LanguageContext.tsx</span>
-      <span class="toc-tag tag-mod">8 sửa</span>
+      <span class="toc-tag tag-mod">9 sửa</span>
     </a>
     <a href="#file-4" class="toc-item">
       <span class="toc-num">4</span>
@@ -298,7 +298,7 @@ QUY TẮC BẢO MẬT TUYỆT ĐỐI (KHÔNG ĐƯỢC VI PHẠM):
     <a href="#file-8" class="toc-item">
       <span class="toc-num">8</span>
       <span class="toc-path">src/components/store/StoreProductCard.tsx</span>
-      <span class="toc-tag tag-mod">5 sửa</span>
+      <span class="toc-tag tag-mod">7 sửa</span>
     </a>
     <a href="#file-9" class="toc-item">
       <span class="toc-num">9</span>
@@ -368,12 +368,12 @@ QUY TẮC BẢO MẬT TUYỆT ĐỐI (KHÔNG ĐƯỢC VI PHẠM):
     <a href="#file-22" class="toc-item">
       <span class="toc-num">22</span>
       <span class="toc-path">src/components/products/ProductThumbnail.tsx</span>
-      <span class="toc-tag tag-mod">2 sửa</span>
+      <span class="toc-tag tag-mod">4 sửa</span>
     </a>
     <a href="#file-23" class="toc-item">
       <span class="toc-num">23</span>
       <span class="toc-path">src/components/products/QuickOrderSections.tsx</span>
-      <span class="toc-tag tag-mod">12 sửa</span>
+      <span class="toc-tag tag-mod">8 sửa</span>
     </a>
     <a href="#file-24" class="toc-item">
       <span class="toc-num">24</span>
@@ -639,7 +639,7 @@ html, body, * {
           <p class="section-desc">Nâng cấp hệ thống Đa ngôn ngữ 3 thứ tiếng (Việt / Anh / Trung - vi, en, zh-CN) chuẩn thuật ngữ B2B thực phẩm, kèm component LanguageSwitcher tự thu gọn thành VI/EN/ZH trên điện thoại.</p>
         </div>
         <div class="header-actions">
-          <span class="pill pill-mod">CHỈNH SỬA (8 ĐOẠN SỬA)</span>
+          <span class="pill pill-mod">CHỈNH SỬA (9 ĐOẠN SỬA)</span>
         </div>
       </div>
       
@@ -694,8 +694,33 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #3</strong> · Dòng gốc ~400 → Dòng mới ~401 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
+              <span><strong>Đoạn sửa #3</strong> · Dòng gốc ~242 → Dòng mới ~243 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
               <button class="btn-small" onclick="copyById('after-3-3', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~242)</div>
+                <pre class="code-block code-before">  'Duyệt theo nhóm hàng': ['Browse categories', '按类别浏览'],
+  'Tất cả nhóm': ['All categories', '所有类别'],
+  'Tìm hàng hóa theo tên, mã SKU, nhóm hàng (F3)...': ['Search by name, SKU, or category...', '按名称、SKU 或类别搜索…'],
+  'Đang tra cứu danh mục hàng hóa...': ['Searching products...', '正在搜索商品…'],</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~243)</div>
+                <pre id="after-3-3" class="code-block code-after">  'Duyệt theo nhóm hàng': ['Browse categories', '按类别浏览'],
+  'Tất cả nhóm': ['All categories', '所有类别'],
+  'Đang lọc:': ['Filtering:', '正在筛选：'],
+  'Tìm hàng hóa theo tên, mã SKU, nhóm hàng (F3)...': ['Search by name, SKU, or category...', '按名称、SKU 或类别搜索…'],
+  'Đang tra cứu danh mục hàng hóa...': ['Searching products...', '正在搜索商品…'],</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~400 → Dòng mới ~402 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
+              <button class="btn-small" onclick="copyById('after-3-4', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -711,8 +736,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
   'Tài khoản của quý khách đang chờ TPS1 xác minh. Quý khách vẫn đặt hàng bình thường, giá sẽ được xác nhận khi chốt đơn.': ['Your account is awaiting verification by TPS1. You can still order as usual; prices are confirmed when the order is finalised.', '您的账户正在等待 TPS1 审核。您仍可正常下单，价格将在确认订单时核定。'],</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~401)</div>
-                <pre id="after-3-3" class="code-block code-after">  'Những mặt hàng các bếp ăn khác thường chọn': ['Items other kitchens often choose', '其他厨房常选的商品'],
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~402)</div>
+                <pre id="after-3-4" class="code-block code-after">  'Những mặt hàng các bếp ăn khác thường chọn': ['Items other kitchens often choose', '其他厨房常选的商品'],
   'Tìm rau củ, thịt cá, gia vị...': ['Search vegetables, meat, spices...', '搜索蔬菜、肉类、调味品……'],
   'Tìm rau củ, thịt cá...': ['Search vegetables, meat...', '搜索蔬菜、肉类……'],
   'Tổng đài đặt hàng': ['Order hotline', '订货热线'],
@@ -729,8 +754,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~493 → Dòng mới ~495 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
-              <button class="btn-small" onclick="copyById('after-3-4', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #5</strong> · Dòng gốc ~493 → Dòng mới ~496 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
+              <button class="btn-small" onclick="copyById('after-3-5', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -742,8 +767,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
   'Bỏ khỏi yêu thích': ['Remove from favourites', '取消收藏'],</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~495)</div>
-                <pre id="after-3-4" class="code-block code-after">  'Thêm hàng từ file Excel': ['Add items from an Excel file', '从 Excel 文件添加商品'],
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~496)</div>
+                <pre id="after-3-5" class="code-block code-after">  'Thêm hàng từ file Excel': ['Add items from an Excel file', '从 Excel 文件添加商品'],
   // ── Cửa hàng online ──
   'Yêu thích': ['Saved', '收藏'],
   'Hàng yêu thích': ['Favourite items', '收藏的商品'],
@@ -755,8 +780,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #5</strong> · Dòng gốc ~509 → Dòng mới ~511 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
-              <button class="btn-small" onclick="copyById('after-3-5', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #6</strong> · Dòng gốc ~509 → Dòng mới ~512 <code class="ctx-hint">const translations: Record&lt;string, [string, string]&gt; = {</code></span>
+              <button class="btn-small" onclick="copyById('after-3-6', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -768,8 +793,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
   'Đề xuất cho bếp của quý khách': ['Picked for your kitchen', '为您的厨房推荐'],</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~511)</div>
-                <pre id="after-3-5" class="code-block code-after">  'Thông tin chứng chỉ và liên hệ': ['Certifications and contact', '资质与联系方式'],
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~512)</div>
+                <pre id="after-3-6" class="code-block code-after">  'Thông tin chứng chỉ và liên hệ': ['Certifications and contact', '资质与联系方式'],
   // ── Cửa hàng online ──
   'Ảnh minh hoạ': ['Sample photo', '示意图'],
   // ── Cửa hàng online ──
@@ -781,8 +806,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #6</strong> · Dòng gốc ~567 → Dòng mới ~569 <code class="ctx-hint">Object.assign(translations, {</code></span>
-              <button class="btn-small" onclick="copyById('after-3-6', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #7</strong> · Dòng gốc ~567 → Dòng mới ~570 <code class="ctx-hint">Object.assign(translations, {</code></span>
+              <button class="btn-small" onclick="copyById('after-3-7', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -793,8 +818,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 </pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~569)</div>
-                <pre id="after-3-6" class="code-block code-after">  'Tài khoản chưa được phép đặt hàng': ['This account cannot place orders.', '此账户无法下单。'],
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~570)</div>
+                <pre id="after-3-7" class="code-block code-after">  'Tài khoản chưa được phép đặt hàng': ['This account cannot place orders.', '此账户无法下单。'],
   'Đã quá giờ chốt đơn. Vui lòng chọn ngày giao mới.': ['The order cutoff has passed. Choose another delivery date.', '已超过截单时间，请选择其他送货日期。'],
   'Đặt nhanh &amp; Đặt lại đơn': ['Quick &amp; Re-order', '快速下单与再次订购'],
   'BẾP ĐỐI TÁC TPS1': ['TPS1 PARTNER KITCHEN', 'TPS1 合作食堂'],
@@ -854,6 +879,7 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
   'Khác': ['Other', '其他'],
   'Sẵn hàng giao bếp': ['In stock for kitchen delivery', '现货直供厨房'],
   'Thêm quy cách / ghi chú': ['Add spec / prep note', '添加规格／加工备注'],
+  'Ghi chú / quy cách': ['Spec / prep note', '规格／备注'],
   'Xóa tìm kiếm': ['Clear search', '清除搜索'],
   'bếp ăn,': ['commercial kitchens,', '团餐与餐饮厨房，'],
   'giao': ['delivered', '全程冷链'],
@@ -1220,8 +1246,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #7</strong> · Dòng gốc ~589 → Dòng mới ~1006 <code class="ctx-hint">export function LanguageProvider({ children }: { children: React.ReactNode }) {</code></span>
-              <button class="btn-small" onclick="copyById('after-3-7', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #8</strong> · Dòng gốc ~589 → Dòng mới ~1008 <code class="ctx-hint">export function LanguageProvider({ children }: { children: React.ReactNode }) {</code></span>
+              <button class="btn-small" onclick="copyById('after-3-8', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -1233,8 +1259,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
   const productUnit = useCallback((value: string) =&gt; language === 'vi' ? value : unitTranslations[value]?.[language === 'en' ? 0 : 1] || value, [language]);</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~1006)</div>
-                <pre id="after-3-7" class="code-block code-after">    return () =&gt; { active = false; };
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~1008)</div>
+                <pre id="after-3-8" class="code-block code-after">    return () =&gt; { active = false; };
   }, [language]);
   const t = useCallback((value: string) =&gt; language === 'vi' ? value : translations[value]?.[language === 'en' ? 0 : 1] || categoryTranslations[value]?.[language === 'en' ? 0 : 1] || value, [language]);
   const productName = useCallback((value: string) =&gt; language === 'vi' ? value : categoryTranslations[value]?.[language === 'en' ? 0 : 1] || catalogNames[value] || value, [language, catalogNames]);
@@ -1246,8 +1272,8 @@ export type Language = 'vi' | 'en' | 'zh-CN';</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #8</strong> · Dòng gốc ~602 → Dòng mới ~1019 <code class="ctx-hint">export function useLanguage() {</code></span>
-              <button class="btn-small" onclick="copyById('after-3-8', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #9</strong> · Dòng gốc ~602 → Dòng mới ~1021 <code class="ctx-hint">export function useLanguage() {</code></span>
+              <button class="btn-small" onclick="copyById('after-3-9', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -1266,8 +1292,8 @@ export function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
 }</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~1019)</div>
-                <pre id="after-3-8" class="code-block code-after">}
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~1021)</div>
+                <pre id="after-3-9" class="code-block code-after">}
 
 const LANGUAGE_OPTIONS: { code: Language; short: string; label: string }[] = [
   { code: 'vi', short: 'VI', label: 'Tiếng Việt' },
@@ -3280,10 +3306,10 @@ function CategoryImage({ category }: { category: StoreCategory }) {</pre>
       <div class="section-header">
         <div>
           <div class="section-title">8. <code>order-webapp/src/components/store/StoreProductCard.tsx</code></div>
-          <p class="section-desc">Thẻ sản phẩm B2B gọn đẹp; thu gọn nhãn &quot;Ảnh minh hoạ&quot; nằm gọn 1 dòng ở đáy ảnh size-16 trong giỏ hàng và ẩn trên ảnh siêu nhỏ.</p>
+          <p class="section-desc">Thẻ sản phẩm B2B gọn đẹp: căn giữa toàn bộ hình ảnh sản phẩm (object-contain object-center trên nền trắng bg-white), đưa nút cộng nhanh (+) xuống hàng chân thẻ ngang với đơn vị tính để không che khuất sản phẩm, và thu gọn nhãn &quot;Ảnh minh hoạ&quot; nằm 1 dòng.</p>
         </div>
         <div class="header-actions">
-          <span class="pill pill-mod">CHỈNH SỬA (5 ĐOẠN SỬA)</span>
+          <span class="pill pill-mod">CHỈNH SỬA (7 ĐOẠN SỬA)</span>
         </div>
       </div>
       
@@ -3366,30 +3392,11 @@ function CategoryImage({ category }: { category: StoreCategory }) {</pre>
                 <pre class="code-block code-before">  const { t } = useLanguage();
   const src = productImage(product);
   return (
-    &lt;div className={`relative flex items-center justify-center overflow-hidden bg-[#f3f6f2] ${className}`}&gt;</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~108)</div>
-                <pre id="after-8-3" class="code-block code-after">  const { t } = useLanguage();
-  const src = productImage(product);
-  const isTinyThumb = /\bsize-(10|11|12|14)\b/.test(className);
-  const isCompactThumb = /\bsize-16\b/.test(className);
-  return (
-    &lt;div className={`relative flex items-center justify-center overflow-hidden bg-[#f3f6f2] ${className}`}&gt;</pre>
-              </div>
-            </div>
-          </div>
-        
-
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~111 → Dòng mới ~117 <code class="ctx-hint">export function ProductImage({ product, className = '' }: { product: Product; cl</code></span>
-              <button class="btn-small" onclick="copyById('after-8-4', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~111)</div>
-                <pre class="code-block code-before">        &lt;PackageOpen size={36} strokeWidth={1.5} className=&quot;text-[#59665f]/35&quot; /&gt;
+    &lt;div className={`relative flex items-center justify-center overflow-hidden bg-[#f3f6f2] ${className}`}&gt;
+      {src &amp;&amp; !failed ? (
+        &lt;img src={src} alt={product.name} loading=&quot;lazy&quot; decoding=&quot;async&quot; onError={() =&gt; setFailed(true)} className=&quot;h-full w-full object-cover&quot; /&gt;
+      ) : (
+        &lt;PackageOpen size={36} strokeWidth={1.5} className=&quot;text-[#59665f]/35&quot; /&gt;
       )}
       {src &amp;&amp; !failed &amp;&amp; product.imageIsIllustration &amp;&amp; (
         &lt;span className=&quot;pointer-events-none absolute bottom-1.5 left-1.5 rounded-md bg-black/45 px-1.5 py-0.5 text-[9.5px] font-semibold text-white backdrop-blur-sm&quot;&gt;
@@ -3397,8 +3404,25 @@ function CategoryImage({ category }: { category: StoreCategory }) {</pre>
         &lt;/span&gt;</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~117)</div>
-                <pre id="after-8-4" class="code-block code-after">        &lt;PackageOpen size={36} strokeWidth={1.5} className=&quot;text-[#59665f]/35&quot; /&gt;
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~108)</div>
+                <pre id="after-8-3" class="code-block code-after">  const { t } = useLanguage();
+  const src = productImage(product);
+  const isTinyThumb = /\bsize-(10|11|12|14)\b/.test(className);
+  const isCompactThumb = /\bsize-16\b/.test(className);
+  const padClass = isTinyThumb ? 'p-0.5' : isCompactThumb ? 'p-1' : 'p-2.5 sm:p-3';
+  return (
+    &lt;div className={`relative flex items-center justify-center overflow-hidden bg-white ${padClass} ${className}`}&gt;
+      {src &amp;&amp; !failed ? (
+        &lt;img
+          src={src}
+          alt={product.name}
+          loading=&quot;lazy&quot;
+          decoding=&quot;async&quot;
+          onError={() =&gt; setFailed(true)}
+          className=&quot;h-full w-full object-contain object-center transition-transform duration-200 group-hover:scale-[1.03]&quot;
+        /&gt;
+      ) : (
+        &lt;PackageOpen size={36} strokeWidth={1.5} className=&quot;text-[#59665f]/35&quot; /&gt;
       )}
       {src &amp;&amp; !failed &amp;&amp; product.imageIsIllustration &amp;&amp; !isTinyThumb &amp;&amp; (
         &lt;span
@@ -3417,25 +3441,163 @@ function CategoryImage({ category }: { category: StoreCategory }) {</pre>
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #5</strong> · Dòng gốc ~180 → Dòng mới ~192 <code class="ctx-hint">export default function StoreProductCard({ product }: { product: Product }) {</code></span>
+              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~121 → Dòng mới ~141 <code class="ctx-hint">export function ProductImage({ product, className = '' }: { product: Product; cl</code></span>
+              <button class="btn-small" onclick="copyById('after-8-4', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~121)</div>
+                <pre class="code-block code-before">
+/**
+ * Nút thêm gọn đặt trên ảnh (kiểu sàn bán sỉ): &quot;+&quot; tròn khi chưa có trong
+ * giỏ, chuyển thành &quot;− số lượng +&quot; khi đã chọn — thẻ sản phẩm thấp hơn,
+ * mỗi hàng hiện được nhiều món hơn.
+ */
+export function CompactAdd({ product, className = '' }: { product: Product; className?: string }) {</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~141)</div>
+                <pre id="after-8-4" class="code-block code-after">
+/**
+ * Nút thêm gọn đặt ở chân thẻ: &quot;+&quot; tròn khi chưa có trong giỏ,
+ * chuyển thành &quot;− số lượng +&quot; khi đã chọn để không che ảnh sản phẩm.
+ */
+export function CompactAdd({ product, className = '' }: { product: Product; className?: string }) {</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #5</strong> · Dòng gốc ~139 → Dòng mới ~158 <code class="ctx-hint">export function CompactAdd({ product, className = '' }: { product: Product; clas</code></span>
               <button class="btn-small" onclick="copyById('after-8-5', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~180)</div>
-                <pre class="code-block code-before">          &lt;p className=&quot;text-[13.5px] font-black leading-tight sm:text-[14.5px] text-[#0b4f34]&quot;&gt;
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~139)</div>
+                <pre class="code-block code-before">        aria-label={t('Thêm vào giỏ')}
+        onClick={(e) =&gt; { stop(e); addProduct(product, firstQuantityOf(product)); }}
+        className={`flex size-8 items-center justify-center rounded-full bg-[#0f7a4f] text-white sm:size-9 shadow-md shadow-black/15 transition hover:bg-[#0b4f34] active:scale-90 ${className}`}
+      &gt;
+        &lt;Plus size={18} strokeWidth={2.6} /&gt;
+      &lt;/button&gt;
+    );</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~158)</div>
+                <pre id="after-8-5" class="code-block code-after">        aria-label={t('Thêm vào giỏ')}
+        onClick={(e) =&gt; { stop(e); addProduct(product, firstQuantityOf(product)); }}
+        className={`flex size-7.5 sm:size-8 items-center justify-center rounded-full bg-[#0f7a4f] text-white shadow-xs transition hover:bg-[#0b4f34] active:scale-90 ${className}`}
+      &gt;
+        &lt;Plus size={16} strokeWidth={2.5} /&gt;
+      &lt;/button&gt;
+    );</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #6</strong> · Dòng gốc ~154 → Dòng mới ~173 <code class="ctx-hint">export function CompactAdd({ product, className = '' }: { product: Product; clas</code></span>
+              <button class="btn-small" onclick="copyById('after-8-6', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~154)</div>
+                <pre class="code-block code-before">
+  return (
+    &lt;div className={`flex h-8 items-center rounded-full bg-[#0f7a4f] sm:h-9 text-white shadow-md shadow-black/15 ${className}`}&gt;
+      &lt;button type=&quot;button&quot; aria-label={t('Giảm')} onClick={(e) =&gt; change(e, -step)} className=&quot;flex size-8 items-center justify-center rounded-full active:scale-90 sm:size-9&quot;&gt;&lt;Minus size={16} strokeWidth={2.6} /&gt;&lt;/button&gt;
+      &lt;span className=&quot;min-w-5 text-center text-[12.5px] font-black&quot;&gt;{Number(quantity.toFixed(3))}&lt;/span&gt;
+      &lt;button type=&quot;button&quot; aria-label={t('Tăng')} onClick={(e) =&gt; change(e, step)} className=&quot;flex size-8 items-center justify-center rounded-full active:scale-90 sm:size-9&quot;&gt;&lt;Plus size={16} strokeWidth={2.6} /&gt;&lt;/button&gt;
+    &lt;/div&gt;
+  );</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~173)</div>
+                <pre id="after-8-6" class="code-block code-after">
+  return (
+    &lt;div className={`flex h-7.5 sm:h-8 items-center rounded-full bg-[#0f7a4f] text-white shadow-xs ${className}`}&gt;
+      &lt;button type=&quot;button&quot; aria-label={t('Giảm')} onClick={(e) =&gt; change(e, -step)} className=&quot;flex size-7.5 sm:size-8 items-center justify-center rounded-full active:scale-90&quot;&gt;&lt;Minus size={14} strokeWidth={2.5} /&gt;&lt;/button&gt;
+      &lt;span className=&quot;min-w-4.5 px-0.5 text-center text-[11.5px] sm:text-xs font-bold&quot;&gt;{Number(quantity.toFixed(3))}&lt;/span&gt;
+      &lt;button type=&quot;button&quot; aria-label={t('Tăng')} onClick={(e) =&gt; change(e, step)} className=&quot;flex size-7.5 sm:size-8 items-center justify-center rounded-full active:scale-90&quot;&gt;&lt;Plus size={14} strokeWidth={2.5} /&gt;&lt;/button&gt;
+    &lt;/div&gt;
+  );</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #7</strong> · Dòng gốc ~169 → Dòng mới ~188 <code class="ctx-hint">export default function StoreProductCard({ product }: { product: Product }) {</code></span>
+              <button class="btn-small" onclick="copyById('after-8-7', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~169)</div>
+                <pre class="code-block code-before">  return (
+    &lt;article className=&quot;group flex h-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-[#17231d]/7 transition hover:shadow-[0_8px_22px_rgba(16,40,30,0.10)]&quot;&gt;
+      &lt;div className=&quot;relative&quot;&gt;
+        &lt;Link to={`/san-pham/${product.id}`} className=&quot;block&quot;&gt;
+          &lt;ProductImage product={product} className=&quot;aspect-square w-full&quot; /&gt;
+        &lt;/Link&gt;
+        &lt;FavoriteButton productId={product.id} className=&quot;absolute right-1 top-1 size-7 sm:right-1.5 sm:top-1.5 sm:size-8&quot; /&gt;
+        &lt;CompactAdd product={product} className=&quot;absolute bottom-1.5 right-1.5&quot; /&gt;
+      &lt;/div&gt;
+      &lt;Link to={`/san-pham/${product.id}`} className=&quot;flex flex-1 flex-col px-2 pb-2 pt-1.5 sm:px-2.5&quot;&gt;
+        {priced ? (
+          &lt;p className=&quot;text-[13.5px] font-black leading-tight sm:text-[14.5px] text-[#0b4f34]&quot;&gt;
             {money(product.price)}
             {!session &amp;&amp; &lt;span className=&quot;ml-1 text-[10px] font-semibold text-[#8a9690]&quot;&gt;{t('Giá tham khảo')}&lt;/span&gt;}
           &lt;/p&gt;
-        ) : (</pre>
+        ) : (
+          &lt;p className=&quot;truncate text-[12px] font-bold leading-[1.45] text-[#c4601f]&quot;&gt;{t('Liên hệ báo giá')}&lt;/p&gt;
+        )}
+        &lt;h3 className=&quot;mt-0.5 line-clamp-2 min-h-[2.4em] text-[12px] font-medium leading-[1.2] sm:text-[12.5px] text-[#17231d] group-hover:text-[#0b4f34]&quot;&gt;{name}&lt;/h3&gt;
+        &lt;p className=&quot;mt-0.5 line-clamp-1 text-[11px] text-[#8a9690]&quot;&gt;
+          {product.packagingNote || productUnit(product.unit || 'Kg')}
+        &lt;/p&gt;
+      &lt;/Link&gt;
+    &lt;/article&gt;
+  );</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~192)</div>
-                <pre id="after-8-5" class="code-block code-after">          &lt;p className=&quot;text-[13.5px] font-black leading-tight sm:text-[14.5px] text-[#0b4f34]&quot;&gt;
-            {money(product.price)}
-            {!session &amp;&amp; &lt;span className=&quot;ml-1 text-[10px] font-semibold text-[#8a9690] whitespace-nowrap&quot;&gt;{t('Giá tham khảo')}&lt;/span&gt;}
-          &lt;/p&gt;
-        ) : (</pre>
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~188)</div>
+                <pre id="after-8-7" class="code-block code-after">  return (
+    &lt;article className=&quot;group flex h-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-[#17231d]/7 transition hover:shadow-[0_8px_22px_rgba(16,40,30,0.10)]&quot;&gt;
+      &lt;div className=&quot;relative border-b border-[#17231d]/6 bg-white&quot;&gt;
+        &lt;Link to={`/san-pham/${product.id}`} className=&quot;block&quot;&gt;
+          &lt;ProductImage product={product} className=&quot;aspect-square w-full&quot; /&gt;
+        &lt;/Link&gt;
+        &lt;FavoriteButton productId={product.id} className=&quot;absolute right-1.5 top-1.5 size-7 sm:size-7.5 bg-white/90&quot; /&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;flex flex-1 flex-col justify-between px-2.5 pb-2.5 pt-2 sm:px-3&quot;&gt;
+        &lt;Link to={`/san-pham/${product.id}`} className=&quot;block min-w-0&quot;&gt;
+          {priced ? (
+            &lt;p className=&quot;text-[13.5px] font-bold leading-tight sm:text-[14.5px] text-[#0b4f34]&quot;&gt;
+              {money(product.price)}
+              {!session &amp;&amp; &lt;span className=&quot;ml-1 text-[10px] font-semibold text-[#8a9690] whitespace-nowrap&quot;&gt;{t('Giá tham khảo')}&lt;/span&gt;}
+            &lt;/p&gt;
+          ) : (
+            &lt;p className=&quot;truncate text-[12px] font-bold leading-[1.4] text-[#c4601f]&quot;&gt;{t('Liên hệ báo giá')}&lt;/p&gt;
+          )}
+          &lt;h3 className=&quot;mt-1 line-clamp-2 min-h-[2.4em] text-[12px] font-semibold leading-tight sm:text-[12.5px] text-[#17231d] group-hover:text-[#0b4f34]&quot;&gt;
+            {name}
+          &lt;/h3&gt;
+        &lt;/Link&gt;
+
+        &lt;div className=&quot;mt-2 flex items-center justify-between gap-1.5 pt-1 border-t border-[#17231d]/6&quot;&gt;
+          &lt;span className=&quot;min-w-0 flex-1 truncate text-[11px] font-medium text-[#6e7d75]&quot; title={product.packagingNote || productUnit(product.unit || 'Kg')}&gt;
+            {product.packagingNote || productUnit(product.unit || 'Kg')}
+          &lt;/span&gt;
+          &lt;CompactAdd product={product} className=&quot;shrink-0&quot; /&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/article&gt;
+  );</pre>
               </div>
             </div>
           </div>
@@ -8439,7 +8601,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
       <div class="section-header">
         <div>
           <div class="section-title">20. <code>order-webapp/src/components/products/ProductCard.tsx</code></div>
-          <p class="section-desc">Thẻ sản phẩm trong bảng Đặt nhanh.</p>
+          <p class="section-desc">Thẻ sản phẩm trong bảng Đặt nhanh: chống rớt chữ 2 dòng cho nút &quot;+ Ghi chú / quy cách&quot;, dòng Nhóm hàng và dòng Chờ sale báo giá trên mọi kích thước điện thoại.</p>
         </div>
         <div class="header-actions">
           <span class="pill pill-mod">CHỈNH SỬA (4 ĐOẠN SỬA)</span>
@@ -8705,8 +8867,9 @@ interface ProductCardProps {
           {/* Hàng dưới Tầng 1: Nhóm hàng + Trạng thái chọn hàng full chiều ngang thẻ */}
           &lt;div className=&quot;mt-1.5 space-y-1 min-w-0&quot;&gt;
             {/* Dòng 3: Phân nhóm hàng */}
-            &lt;div className=&quot;h-4 flex items-center text-[9.5px] sm:text-[10.5px] tracking-tight text-[#2c3a33] font-semibold leading-none whitespace-nowrap&quot;&gt;
-              {t('Nhóm:')} &lt;span className=&quot;ml-1 font-bold text-[#17231d]&quot;&gt;{product.category ? productName(product.category) : t('Khác')}&lt;/span&gt;
+            &lt;div className=&quot;h-4 flex items-center text-[9.5px] sm:text-[10.5px] tracking-tight text-[#2c3a33] font-semibold leading-none whitespace-nowrap overflow-hidden&quot;&gt;
+              &lt;span className=&quot;shrink-0&quot;&gt;{t('Nhóm:')}&lt;/span&gt;
+              &lt;span className=&quot;ml-1 font-bold text-[#17231d] truncate&quot;&gt;{product.category ? productName(product.category) : t('Khác')}&lt;/span&gt;
             &lt;/div&gt;
 
             {/* Dòng 4: Trạng thái chọn hàng */}
@@ -8736,9 +8899,9 @@ interface ProductCardProps {
 
         {/* TẦNG 3: Giá / Chờ sale báo giá khóa chuẩn h-7.5 sm:h-8.5 */}
         &lt;div className=&quot;mt-1.5 pt-1.5 border-t border-dashed border-[#17231d]/10 h-7.5 sm:h-8.5 flex items-center justify-between&quot;&gt;
-          &lt;div className=&quot;flex items-baseline min-w-0&quot;&gt;
+          &lt;div className=&quot;flex items-baseline min-w-0 overflow-hidden&quot;&gt;
             {product.priceOnRequest ? (
-              &lt;span className=&quot;text-[#e0742f] text-[11.5px] sm:text-[13px] font-extrabold whitespace-nowrap&quot;&gt;
+              &lt;span className=&quot;text-[#e0742f] text-[11px] sm:text-[13px] font-bold whitespace-nowrap truncate&quot;&gt;
                 {t('Chờ sale báo giá')}
               &lt;/span&gt;
             ) : (
@@ -8746,7 +8909,7 @@ interface ProductCardProps {
                 {money(product.price)}
               &lt;/span&gt;
             )}
-            &lt;span className=&quot;text-[10px] sm:text-[11px] font-semibold text-[#17231d]/80 ml-0.5 sm:ml-1 whitespace-nowrap&quot;&gt;/{unitLabel}&lt;/span&gt;
+            &lt;span className=&quot;shrink-0 text-[10px] sm:text-[11px] font-semibold text-[#17231d]/80 ml-0.5 sm:ml-1 whitespace-nowrap&quot;&gt;/{unitLabel}&lt;/span&gt;
           &lt;/div&gt;
         &lt;/div&gt;
 
@@ -8798,10 +8961,10 @@ interface ProductCardProps {
               &lt;button
                 type=&quot;button&quot;
                 onClick={() =&gt; setIsEditingNote(true)}
-                className=&quot;text-[11px] text-[#17231d]/85 hover:text-[#0f7a4f] flex items-center gap-1 cursor-pointer font-semibold&quot;
+                className=&quot;inline-flex w-full items-center justify-start gap-1 rounded-lg bg-[#f4f8f5] px-2 py-1 text-left text-[10.5px] sm:text-[11px] font-semibold text-[#2c3a33] hover:bg-[#eaf6ef] hover:text-[#0f7a4f] transition-colors cursor-pointer whitespace-nowrap overflow-hidden&quot;
               &gt;
-                &lt;MessageSquarePlus size={13} className=&quot;shrink-0&quot; /&gt;
-                &lt;span&gt;+ {t('Thêm quy cách / ghi chú')}&lt;/span&gt;
+                &lt;MessageSquarePlus size={12} className=&quot;shrink-0 text-[#0f7a4f]&quot; /&gt;
+                &lt;span className=&quot;truncate&quot;&gt;+ {t('Ghi chú / quy cách')}&lt;/span&gt;
               &lt;/button&gt;
             )}
           &lt;/div&gt;</pre>
@@ -8812,7 +8975,7 @@ interface ProductCardProps {
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~164 → Dòng mới ~210 <code class="ctx-hint">export default function ProductCard({</code></span>
+              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~164 → Dòng mới ~211 <code class="ctx-hint">export default function ProductCard({</code></span>
               <button class="btn-small" onclick="copyById('after-20-4', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
@@ -8875,7 +9038,7 @@ interface ProductCardProps {
           &lt;/div&gt;</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~210)</div>
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~211)</div>
                 <pre id="after-20-4" class="code-block code-after">      &lt;/div&gt;
 
       {/* PHẦN DƯỚI: Nút Thêm hoặc Stepper */}
@@ -9051,10 +9214,10 @@ interface ProductCardProps {
       <div class="section-header">
         <div>
           <div class="section-title">22. <code>order-webapp/src/components/products/ProductThumbnail.tsx</code></div>
-          <p class="section-desc">Ảnh thu nhỏ sản phẩm.</p>
+          <p class="section-desc">Ảnh thu nhỏ sản phẩm: dùng bg-white p-1 và object-contain object-center giúp hiển thị trọn vẹn sản phẩm chính giữa khung.</p>
         </div>
         <div class="header-actions">
-          <span class="pill pill-mod">CHỈNH SỬA (2 ĐOẠN SỬA)</span>
+          <span class="pill pill-mod">CHỈNH SỬA (4 ĐOẠN SỬA)</span>
         </div>
       </div>
       
@@ -9110,16 +9273,68 @@ export function productImage(product: Product): string {
             </div>
           </div>
         
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #3</strong> · Dòng gốc ~31 → Dòng mới ~34 <code class="ctx-hint">export default function ProductThumbnail({ product, size = 'md', className = ''</code></span>
+              <button class="btn-small" onclick="copyById('after-22-3', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~31)</div>
+                <pre class="code-block code-before">  return (
+    &lt;div
+      className={`${sizeClasses} border border-[#17231d]/10 bg-[#f5f7f3] overflow-hidden shrink-0 flex items-center justify-center text-[#59665f]/40 relative select-none ${className}`}
+    &gt;
+      {src &amp;&amp; !failed ? (</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~34)</div>
+                <pre id="after-22-3" class="code-block code-after">  return (
+    &lt;div
+      className={`${sizeClasses} border border-[#17231d]/10 bg-white p-1 overflow-hidden shrink-0 flex items-center justify-center text-[#59665f]/40 relative select-none ${className}`}
+    &gt;
+      {src &amp;&amp; !failed ? (</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~40 → Dòng mới ~43 <code class="ctx-hint">export default function ProductThumbnail({ product, size = 'md', className = ''</code></span>
+              <button class="btn-small" onclick="copyById('after-22-4', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~40)</div>
+                <pre class="code-block code-before">          decoding=&quot;async&quot;
+          onError={() =&gt; setFailed(true)}
+          className=&quot;w-full h-full object-cover&quot;
+        /&gt;
+      ) : (</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~43)</div>
+                <pre id="after-22-4" class="code-block code-after">          decoding=&quot;async&quot;
+          onError={() =&gt; setFailed(true)}
+          className=&quot;w-full h-full object-contain object-center&quot;
+        /&gt;
+      ) : (</pre>
+              </div>
+            </div>
+          </div>
+        
     </section>
   
     <section class="section" id="file-23">
       <div class="section-header">
         <div>
           <div class="section-title">23. <code>order-webapp/src/components/products/QuickOrderSections.tsx</code></div>
-          <p class="section-desc">Khối Đặt lại đơn cũ &amp; Mặt hàng hay đặt trong trang Đặt nhanh.</p>
+          <p class="section-desc">Khối Đặt nhanh (Món yêu thích, Đặt thường xuyên &amp; Duyệt theo nhóm hàng): gộp nút &quot;Đặt lại đơn gần nhất&quot; lên cùng hàng tiêu đề tránh khoảng trắng thừa, thêm nút cộng (+) trực tiếp trên thẻ món yêu thích/hay đặt, và hiển thị đầy đủ chip nhóm hàng (sm:flex-wrap) trên PC.</p>
         </div>
         <div class="header-actions">
-          <span class="pill pill-mod">CHỈNH SỬA (12 ĐOẠN SỬA)</span>
+          <span class="pill pill-mod">CHỈNH SỬA (8 ĐOẠN SỬA)</span>
         </div>
       </div>
       
@@ -9140,8 +9355,8 @@ function money(v: number) {</pre>
               </div>
               <div class="diff-col">
                 <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~1)</div>
-                <pre id="after-23-1" class="code-block code-after">import type { RefObject } from 'react';
-import { Repeat2, Heart, FolderOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+                <pre id="after-23-1" class="code-block code-after">import { useState, type RefObject } from 'react';
+import { Repeat2, Heart, FolderOpen, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import type { Product, Order } from '../../lib/api';
 import ProductThumbnail from './ProductThumbnail';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -9210,128 +9425,165 @@ interface QuickOrderSectionsProps {
                 <pre class="code-block code-before">}: QuickOrderSectionsProps) {
   const { t, productName, productUnit } = useLanguage();
   const hasAnyQuickSection =
-    Boolean(latestOrder) ||</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~60)</div>
-                <pre id="after-23-3" class="code-block code-after">}: QuickOrderSectionsProps) {
-  const { t, productName, productUnit } = useLanguage();
-  const frequentRail = useHorizontalScroll&lt;HTMLDivElement&gt;();
-  const favoriteRail = useHorizontalScroll&lt;HTMLDivElement&gt;();
-  const categoryRail = useHorizontalScroll&lt;HTMLDivElement&gt;();
-  const hasAnyQuickSection =
-    Boolean(latestOrder) ||</pre>
-              </div>
-            </div>
-          </div>
-        
+    Boolean(latestOrder) ||
+    frequentProducts.length &gt; 0 ||
+    favoriteProducts.length &gt; 0 ||
+    categories.length &gt; 0;
 
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~45 → Dòng mới ~72 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-4', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~45)</div>
-                <pre class="code-block code-before">
+  if (!hasAnyQuickSection) return null;
+
   return (
     &lt;section className=&quot;space-y-4 rounded-2xl border border-[#17231d]/10 bg-white p-3 shadow-sm sm:p-4&quot;&gt;
       {latestOrder &amp;&amp; &lt;button
-          type=&quot;button&quot;</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~72)</div>
-                <pre id="after-23-4" class="code-block code-after">
-  return (
-    &lt;section className=&quot;space-y-4 min-w-0 w-full max-w-full overflow-hidden rounded-2xl border border-[#17231d]/10 bg-white p-3 shadow-sm sm:p-4&quot;&gt;
-      {latestOrder &amp;&amp; &lt;button
-          type=&quot;button&quot;</pre>
-              </div>
-            </div>
-          </div>
-        
+          type=&quot;button&quot;
+          onClick={onReorderLatest}
+          disabled={loadingLatestOrder}
+          className=&quot;ml-auto flex min-h-9 items-center gap-1.5 rounded-lg px-2 text-xs font-bold text-[#0f7a4f] hover:bg-[#f1f7f3] disabled:opacity-60&quot;
+        &gt;
+          &lt;Repeat2 size={15} className={loadingLatestOrder ? 'animate-spin' : ''} /&gt;
+          &lt;span&gt;{t(loadingLatestOrder ? 'Đang nạp' : 'Đặt lại đơn gần nhất')}&lt;/span&gt;
+        &lt;/button&gt;}
 
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #5</strong> · Dòng gốc ~58 → Dòng mới ~85 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-5', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~58)</div>
-                <pre class="code-block code-before">      {/* 1. Mặt hàng thường mua */}
+      {/* 1. Mặt hàng thường mua */}
       {frequentProducts.length &gt; 0 &amp;&amp; (
         &lt;div&gt;
           &lt;div className=&quot;flex items-center justify-between mb-1.5&quot;&gt;
             &lt;p className=&quot;text-[11px] font-bold uppercase tracking-wider text-[#59665f] flex items-center gap-1&quot;&gt;
               &lt;span&gt;{t('Hàng thường mua')}&lt;/span&gt;
-              &lt;span className=&quot;px-1.5 py-0.2 rounded-full bg-[#0f7a4f]/10 text-[#0f7a4f] text-[10px] font-mono&quot;&gt;</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~85)</div>
-                <pre id="after-23-5" class="code-block code-after">      {/* 1. Mặt hàng thường mua */}
-      {frequentProducts.length &gt; 0 &amp;&amp; (
-        &lt;div className=&quot;min-w-0&quot;&gt;
-          &lt;div className=&quot;flex items-center justify-between mb-1.5&quot;&gt;
-            &lt;p className=&quot;text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1&quot;&gt;
-              &lt;span&gt;{t('Hàng thường mua')}&lt;/span&gt;
-              &lt;span className=&quot;px-1.5 py-0.2 rounded-full bg-[#0f7a4f]/10 text-[#0f7a4f] text-[10px] font-mono&quot;&gt;</pre>
-              </div>
-            </div>
-          </div>
-        
-
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #6</strong> · Dòng gốc ~66 → Dòng mới ~93 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-6', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~66)</div>
-                <pre class="code-block code-before">              &lt;/span&gt;
+              &lt;span className=&quot;px-1.5 py-0.2 rounded-full bg-[#0f7a4f]/10 text-[#0f7a4f] text-[10px] font-mono&quot;&gt;
+                {frequentProducts.length}
+              &lt;/span&gt;
             &lt;/p&gt;
           &lt;/div&gt;
           &lt;div className=&quot;flex gap-2.5 overflow-x-auto no-scrollbar pb-1&quot;&gt;
             {frequentProducts.map((product) =&gt; {
-              const isFavorite = favoriteIds.includes(product.id);</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~93)</div>
-                <pre id="after-23-6" class="code-block code-after">              &lt;/span&gt;
-            &lt;/p&gt;
-            &lt;RailArrows targetRef={frequentRail} /&gt;
-          &lt;/div&gt;
-          &lt;div ref={frequentRail} className=&quot;flex gap-2.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing&quot;&gt;
-            {frequentProducts.map((product) =&gt; {
-              const isFavorite = favoriteIds.includes(product.id);</pre>
-              </div>
-            </div>
-          </div>
-        
-
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #7</strong> · Dòng gốc ~73 → Dòng mới ~101 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-7', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~73)</div>
-                <pre class="code-block code-before">                &lt;div
+              const isFavorite = favoriteIds.includes(product.id);
+              return (
+                &lt;div
                   key={product.id}
                   className=&quot;min-w-[210px] max-w-[240px] flex items-center gap-2 p-2 rounded-xl border border-[#17231d]/10 bg-[#f8faf7] hover:border-[#0f7a4f]/30 hover:bg-[#f3f7f4] transition-colors&quot;
                 &gt;
-                  &lt;button</pre>
+                  &lt;button
+                    type=&quot;button&quot;
+                    onClick={() =&gt; onAddProduct(product, 1)}
+                    className=&quot;min-w-0 flex-1 flex items-center gap-2 text-left cursor-pointer group&quot;
+                    title={`Thêm ${product.name} vào đơn`}
+                  &gt;
+                    &lt;ProductThumbnail product={product} size=&quot;sm&quot; /&gt;</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~101)</div>
-                <pre id="after-23-7" class="code-block code-after">                &lt;div
-                  key={product.id}
-                  className=&quot;min-w-57.5 max-w-65 flex items-center gap-2 p-2 rounded-xl border border-[#17231d]/10 bg-[#f8faf7] hover:border-[#0f7a4f]/30 hover:bg-[#f3f7f4] transition-colors&quot;
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~60)</div>
+                <pre id="after-23-3" class="code-block code-after">}: QuickOrderSectionsProps) {
+  const { t, productName, productUnit } = useLanguage();
+  const quickRail = useHorizontalScroll&lt;HTMLDivElement&gt;();
+  const categoryRail = useHorizontalScroll&lt;HTMLDivElement&gt;();
+  const [selectedQuickTab, setSelectedQuickTab] = useState&lt;'favorites' | 'frequent'&gt;('favorites');
+
+  const hasFavorites = favoriteProducts.length &gt; 0;
+  const hasFrequent = frequentProducts.length &gt; 0;
+  const hasQuickProducts = hasFavorites || hasFrequent;
+  const activeTab: 'favorites' | 'frequent' =
+    selectedQuickTab === 'favorites'
+      ? (hasFavorites ? 'favorites' : 'frequent')
+      : (hasFrequent ? 'frequent' : 'favorites');
+  const activeProducts = activeTab === 'favorites' ? favoriteProducts : frequentProducts;
+
+  const hasAnyQuickSection = Boolean(latestOrder) || hasQuickProducts || categories.length &gt; 0;
+  if (!hasAnyQuickSection) return null;
+
+  const reorderButton = latestOrder ? (
+    &lt;button
+      type=&quot;button&quot;
+      onClick={onReorderLatest}
+      disabled={loadingLatestOrder}
+      className=&quot;inline-flex h-8.5 items-center gap-1.5 rounded-xl border border-[#0f7a4f]/25 bg-[#eaf6ef] px-3 text-xs font-semibold text-[#0b4f34] shadow-2xs transition hover:bg-[#0f7a4f] hover:text-white disabled:opacity-60 cursor-pointer shrink-0 whitespace-nowrap&quot;
+    &gt;
+      &lt;Repeat2 size={14} className={loadingLatestOrder ? 'animate-spin' : ''} /&gt;
+      &lt;span&gt;{t(loadingLatestOrder ? 'Đang nạp' : 'Đặt lại đơn gần nhất')}&lt;/span&gt;
+    &lt;/button&gt;
+  ) : null;
+
+  return (
+    &lt;section className=&quot;space-y-3.5 min-w-0 w-full max-w-full overflow-hidden rounded-2xl border border-[#17231d]/10 bg-white p-3 shadow-sm sm:p-4&quot;&gt;
+      {/* 1. Truy cập nhanh cho bếp (Món yêu thích / Hàng thường mua + Đặt lại đơn gần nhất cùng 1 hàng) */}
+      {hasQuickProducts ? (
+        &lt;div className=&quot;min-w-0&quot;&gt;
+          &lt;div className=&quot;mb-2 flex flex-wrap items-center justify-between gap-2&quot;&gt;
+            {hasFavorites &amp;&amp; hasFrequent ? (
+              &lt;div className=&quot;flex flex-wrap items-center gap-1.5 min-w-0&quot;&gt;
+                &lt;button
+                  type=&quot;button&quot;
+                  onClick={() =&gt; setSelectedQuickTab('favorites')}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer whitespace-nowrap ${
+                    activeTab === 'favorites'
+                      ? 'bg-[#0f7a4f] text-white shadow-2xs'
+                      : 'bg-[#f6f9f7] text-[#17231d] border border-[#17231d]/10 hover:bg-[#eaf6ef]'
+                  }`}
                 &gt;
-                  &lt;button</pre>
+                  &lt;Heart size={13} className={activeTab === 'favorites' ? 'fill-white text-white' : 'fill-rose-500 text-rose-500'} /&gt;
+                  &lt;span&gt;{t('Món yêu thích của bếp')}&lt;/span&gt;
+                  &lt;span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${activeTab === 'favorites' ? 'bg-white/20 text-white' : 'bg-rose-50 text-rose-700'}`}&gt;
+                    {favoriteProducts.length}
+                  &lt;/span&gt;
+                &lt;/button&gt;
+                &lt;button
+                  type=&quot;button&quot;
+                  onClick={() =&gt; setSelectedQuickTab('frequent')}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold transition cursor-pointer whitespace-nowrap ${
+                    activeTab === 'frequent'
+                      ? 'bg-[#0f7a4f] text-white shadow-2xs'
+                      : 'bg-[#f6f9f7] text-[#17231d] border border-[#17231d]/10 hover:bg-[#eaf6ef]'
+                  }`}
+                &gt;
+                  &lt;span&gt;{t('Hàng thường mua')}&lt;/span&gt;
+                  &lt;span className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${activeTab === 'frequent' ? 'bg-white/20 text-white' : 'bg-[#0f7a4f]/10 text-[#0f7a4f]'}`}&gt;
+                    {frequentProducts.length}
+                  &lt;/span&gt;
+                &lt;/button&gt;
+              &lt;/div&gt;
+            ) : (
+              &lt;p className=&quot;text-xs font-bold uppercase tracking-wider text-[#17231d] flex items-center gap-1.5 min-w-0&quot;&gt;
+                {activeTab === 'favorites' ? (
+                  &lt;&gt;
+                    &lt;Heart size={13} className=&quot;fill-rose-500 text-rose-500 shrink-0&quot; /&gt;
+                    &lt;span className=&quot;truncate&quot;&gt;{t('Món yêu thích của bếp')}&lt;/span&gt;
+                    &lt;span className=&quot;px-1.5 py-0.2 rounded-full bg-rose-50 text-rose-700 text-[10px] font-mono border border-rose-200 shrink-0&quot;&gt;
+                      {favoriteProducts.length}
+                    &lt;/span&gt;
+                  &lt;/&gt;
+                ) : (
+                  &lt;&gt;
+                    &lt;span className=&quot;truncate&quot;&gt;{t('Hàng thường mua')}&lt;/span&gt;
+                    &lt;span className=&quot;px-1.5 py-0.2 rounded-full bg-[#0f7a4f]/10 text-[#0f7a4f] text-[10px] font-mono shrink-0&quot;&gt;
+                      {frequentProducts.length}
+                    &lt;/span&gt;
+                  &lt;/&gt;
+                )}
+              &lt;/p&gt;
+            )}
+
+            &lt;div className=&quot;flex items-center gap-2 ml-auto shrink-0&quot;&gt;
+              {activeProducts.length &gt; 3 &amp;&amp; &lt;RailArrows targetRef={quickRail} /&gt;}
+              {reorderButton}
+            &lt;/div&gt;
+          &lt;/div&gt;
+
+          &lt;div ref={quickRail} className=&quot;flex gap-2.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing&quot;&gt;
+            {activeProducts.map((product) =&gt; {
+              const isFavorite = favoriteIds.includes(product.id);
+              const unitText = productUnit(product.unit || 'Kg');
+              return (
+                &lt;div
+                  key={product.id}
+                  className=&quot;min-w-[230px] max-w-[265px] sm:min-w-[248px] sm:max-w-[280px] flex items-center gap-2.5 p-2 rounded-xl border border-[#17231d]/10 bg-[#f8faf7] hover:border-[#0f7a4f]/35 hover:bg-[#eff7f2] transition-all shrink-0&quot;
+                &gt;
+                  &lt;button
+                    type=&quot;button&quot;
+                    onClick={() =&gt; onAddProduct(product, 1)}
+                    className=&quot;min-w-0 flex-1 flex items-center gap-2.5 text-left cursor-pointer group&quot;
+                    title={`${t('Thêm vào đơn')} ${productName(product.name)}`}
+                  &gt;
+                    &lt;ProductThumbnail product={product} size=&quot;sm&quot; /&gt;</pre>
               </div>
             </div>
           </div>
@@ -9339,8 +9591,8 @@ interface QuickOrderSectionsProps {
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #8</strong> · Dòng gốc ~86 → Dòng mới ~114 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-8', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #4</strong> · Dòng gốc ~86 → Dòng mới ~173 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
+              <button class="btn-small" onclick="copyById('after-23-4', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -9350,16 +9602,22 @@ interface QuickOrderSectionsProps {
                       {product.sku &amp;&amp; &lt;span className=&quot;block text-[10px] text-[#59665f] truncate&quot;&gt;{product.sku}&lt;/span&gt;}
                       &lt;span className=&quot;block text-[11px] text-[#59665f] mt-0.5&quot;&gt;
                         {productUnit(product.unit || 'Kg')} •{' '}
-                        &lt;strong className=&quot;text-[#0f7a4f]&quot;&gt;</pre>
+                        &lt;strong className=&quot;text-[#0f7a4f]&quot;&gt;
+                          {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
+                        &lt;/strong&gt;</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~114)</div>
-                <pre id="after-23-8" class="code-block code-after">                        {productName(product.name)}
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~173)</div>
+                <pre id="after-23-4" class="code-block code-after">                        {productName(product.name)}
                       &lt;/span&gt;
-                      {product.sku &amp;&amp; &lt;span className=&quot;block text-[10px] text-[#2c3a33] font-semibold&quot;&gt;{product.sku}&lt;/span&gt;}
-                      &lt;span className=&quot;block text-[11px] text-[#2c3a33] font-semibold mt-0.5&quot;&gt;
-                        {productUnit(product.unit || 'Kg')} •{' '}
-                        &lt;strong className=&quot;text-[#0f7a4f]&quot;&gt;</pre>
+                      &lt;span className=&quot;flex items-center gap-1 text-[10.5px] text-[#4a5a52] font-medium mt-0.5 min-w-0&quot;&gt;
+                        &lt;span className=&quot;truncate&quot;&gt;
+                          {product.sku ? `${product.sku} · ${unitText}` : unitText}
+                        &lt;/span&gt;
+                        &lt;span className=&quot;shrink-0&quot;&gt;·&lt;/span&gt;
+                        &lt;strong className=&quot;shrink-0 text-[#0f7a4f] font-bold whitespace-nowrap&quot;&gt;
+                          {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
+                        &lt;/strong&gt;</pre>
               </div>
             </div>
           </div>
@@ -9367,13 +9625,79 @@ interface QuickOrderSectionsProps {
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #9</strong> · Dòng gốc ~115 → Dòng mới ~143 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-9', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #5</strong> · Dòng gốc ~95 → Dòng mới ~184 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
+              <button class="btn-small" onclick="copyById('after-23-5', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~115)</div>
-                <pre class="code-block code-before">      {/* 2. Sản phẩm yêu thích */}
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~95)</div>
+                <pre class="code-block code-before">                    &lt;/div&gt;
+                  &lt;/button&gt;
+                  &lt;button
+                    type=&quot;button&quot;
+                    onClick={() =&gt; onToggleFavorite(product.id)}
+                    className=&quot;p-2 rounded-lg text-[#59665f]/60 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer&quot;
+                    aria-label={isFavorite ? `Bỏ yêu thích ${product.name}` : `Yêu thích ${product.name}`}
+                  &gt;
+                    &lt;Heart
+                      size={15}
+                      className={isFavorite ? 'fill-rose-500 text-rose-500' : ''}
+                    /&gt;
+                  &lt;/button&gt;
+                &lt;/div&gt;
+              );</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~184)</div>
+                <pre id="after-23-5" class="code-block code-after">                    &lt;/div&gt;
+                  &lt;/button&gt;
+                  &lt;div className=&quot;flex items-center gap-1 shrink-0&quot;&gt;
+                    &lt;button
+                      type=&quot;button&quot;
+                      onClick={() =&gt; onToggleFavorite(product.id)}
+                      className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+                        isFavorite
+                          ? 'text-rose-500 hover:bg-rose-50'
+                          : 'text-[#59665f]/60 hover:text-rose-600 hover:bg-rose-50'
+                      }`}
+                      title={t(isFavorite ? 'Bỏ yêu thích' : 'Thêm vào món yêu thích của bếp')}
+                      aria-label={`${t(isFavorite ? 'Bỏ yêu thích' : 'Thêm vào món yêu thích của bếp')} ${productName(product.name)}`}
+                    &gt;
+                      &lt;Heart
+                        size={14}
+                        className={isFavorite ? 'fill-rose-500 text-rose-500' : ''}
+                      /&gt;
+                    &lt;/button&gt;
+                    &lt;button
+                      type=&quot;button&quot;
+                      onClick={() =&gt; onAddProduct(product, 1)}
+                      className=&quot;size-7.5 rounded-lg bg-[#0f7a4f] text-white hover:bg-[#0b4f34] flex items-center justify-center shrink-0 shadow-2xs transition-colors cursor-pointer&quot;
+                      title={t('Thêm vào đơn')}
+                      aria-label={`${t('Thêm vào đơn')} ${productName(product.name)}`}
+                    &gt;
+                      &lt;Plus size={15} strokeWidth={2.5} /&gt;
+                    &lt;/button&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              );</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #6</strong> · Dòng gốc ~111 → Dòng mới ~216 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
+              <button class="btn-small" onclick="copyById('after-23-6', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~111)</div>
+                <pre class="code-block code-before">          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
+
+      {/* 2. Sản phẩm yêu thích */}
       {favoriteProducts.length &gt; 0 &amp;&amp; (
         &lt;div&gt;
           &lt;p className=&quot;text-[11px] font-bold uppercase tracking-wider text-[#59665f] mb-1.5 flex items-center gap-1.5&quot;&gt;
@@ -9389,70 +9713,38 @@ interface QuickOrderSectionsProps {
                 key={product.id}
                 className=&quot;min-w-[190px] max-w-[230px] flex items-center gap-2 p-2 rounded-xl border border-rose-100 bg-rose-50/40 hover:bg-rose-50/80 transition-colors&quot;
               &gt;
-                &lt;button</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~143)</div>
-                <pre id="after-23-9" class="code-block code-after">      {/* 2. Sản phẩm yêu thích */}
-      {favoriteProducts.length &gt; 0 &amp;&amp; (
-        &lt;div className=&quot;min-w-0&quot;&gt;
-          &lt;div className=&quot;mb-1.5 flex items-center justify-between gap-2&quot;&gt;
-            &lt;p className=&quot;text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1.5&quot;&gt;
-              &lt;Heart size={13} className=&quot;fill-rose-500 text-rose-500&quot; /&gt;
-              &lt;span&gt;{t('Món yêu thích của bếp')}&lt;/span&gt;
-              &lt;span className=&quot;px-1.5 py-0.2 rounded-full bg-rose-50 text-rose-700 text-[10px] font-mono border border-rose-200&quot;&gt;
-                {favoriteProducts.length}
-              &lt;/span&gt;
-            &lt;/p&gt;
-            &lt;RailArrows targetRef={favoriteRail} /&gt;
-          &lt;/div&gt;
-          &lt;div ref={favoriteRail} className=&quot;flex gap-2.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing&quot;&gt;
-            {favoriteProducts.map((product) =&gt; (
-              &lt;div
-                key={product.id}
-                className=&quot;min-w-57.5 max-w-65 flex items-center gap-2 p-2 rounded-xl border border-rose-100 bg-rose-50/40 hover:bg-rose-50/80 transition-colors&quot;
-              &gt;
-                &lt;button</pre>
-              </div>
-            </div>
-          </div>
-        
-
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #10</strong> · Dòng gốc ~139 → Dòng mới ~170 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-10', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~139)</div>
-                <pre class="code-block code-before">                      {productName(product.name)}
+                &lt;button
+                  type=&quot;button&quot;
+                  onClick={() =&gt; onAddProduct(product, 1)}
+                  className=&quot;min-w-0 flex-1 flex items-center gap-2 text-left cursor-pointer group&quot;
+                &gt;
+                  &lt;ProductThumbnail product={product} size=&quot;sm&quot; /&gt;
+                  &lt;div className=&quot;min-w-0 flex-1&quot;&gt;
+                    &lt;span className=&quot;block text-xs font-semibold truncate text-[#17231d] group-hover:text-rose-700&quot;&gt;
+                      {productName(product.name)}
                     &lt;/span&gt;
                     {product.sku &amp;&amp; &lt;span className=&quot;block text-[10px] text-[#59665f] truncate&quot;&gt;{product.sku}&lt;/span&gt;}
                     &lt;span className=&quot;block text-[11px] text-[#0f7a4f] font-bold mt-0.5&quot;&gt;
-                      {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}</pre>
-              </div>
-              <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~170)</div>
-                <pre id="after-23-10" class="code-block code-after">                      {productName(product.name)}
+                      {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}
                     &lt;/span&gt;
-                    {product.sku &amp;&amp; &lt;span className=&quot;block text-[10px] text-[#2c3a33] font-semibold&quot;&gt;{product.sku}&lt;/span&gt;}
-                    &lt;span className=&quot;block text-[11px] text-[#0f7a4f] font-bold mt-0.5&quot;&gt;
-                      {product.priceOnRequest ? t('Chờ sale báo giá') : money(product.price)}</pre>
-              </div>
-            </div>
-          </div>
-        
+                  &lt;/div&gt;
+                &lt;/button&gt;
+                &lt;button
+                  type=&quot;button&quot;
+                  onClick={() =&gt; onToggleFavorite(product.id)}
+                  className=&quot;p-2 rounded-lg text-rose-500 hover:bg-rose-100 transition-colors cursor-pointer&quot;
+                  title=&quot;Bỏ yêu thích&quot;
+                  aria-label={`Bỏ yêu thích ${product.name}`}
+                &gt;
+                  &lt;Heart size={15} className=&quot;fill-rose-500 text-rose-500&quot; /&gt;
+                &lt;/button&gt;
+              &lt;/div&gt;
+            ))}
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}
 
-          <div class="hunk-box">
-            <div class="hunk-header">
-              <span><strong>Đoạn sửa #11</strong> · Dòng gốc ~162 → Dòng mới ~193 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-11', this)">Copy đoạn đã sửa (After)</button>
-            </div>
-            <div class="diff-grid">
-              <div class="diff-col">
-                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~162)</div>
-                <pre class="code-block code-before">      {/* 3. Danh mục sản phẩm (Category chips) */}
+      {/* 3. Danh mục sản phẩm (Category chips) */}
       {categories.length &gt; 0 &amp;&amp; (
         &lt;div&gt;
           &lt;p className=&quot;text-[11px] font-bold uppercase tracking-wider text-[#59665f] mb-1.5 flex items-center gap-1&quot;&gt;
@@ -9471,25 +9763,47 @@ interface QuickOrderSectionsProps {
             &gt;</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~193)</div>
-                <pre id="after-23-11" class="code-block code-after">      {/* 3. Danh mục sản phẩm (Category chips) */}
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~216)</div>
+                <pre id="after-23-6" class="code-block code-after">          &lt;/div&gt;
+        &lt;/div&gt;
+      ) : (
+        reorderButton &amp;&amp; categories.length === 0 &amp;&amp; (
+          &lt;div className=&quot;flex justify-end&quot;&gt;{reorderButton}&lt;/div&gt;
+        )
+      )}
+
+      {/* 2. Duyệt theo nhóm hàng (Category Filter) */}
       {categories.length &gt; 0 &amp;&amp; (
         &lt;div className=&quot;min-w-0&quot;&gt;
-          &lt;div className=&quot;mb-1.5 flex items-center justify-between gap-2&quot;&gt;
-            &lt;p className=&quot;text-[11px] font-extrabold uppercase tracking-wider text-[#17231d] flex items-center gap-1&quot;&gt;
-              &lt;FolderOpen size={13} className=&quot;text-[#0f7a4f]&quot; /&gt;
+          &lt;div className=&quot;mb-2 flex flex-wrap items-center justify-between gap-2&quot;&gt;
+            &lt;p className=&quot;text-xs font-bold uppercase tracking-wider text-[#17231d] flex items-center gap-1.5&quot;&gt;
+              &lt;FolderOpen size={14} className=&quot;text-[#0f7a4f] shrink-0&quot; /&gt;
               &lt;span&gt;{t('Duyệt theo nhóm hàng')}&lt;/span&gt;
             &lt;/p&gt;
-            &lt;RailArrows targetRef={categoryRail} /&gt;
+            &lt;div className=&quot;flex items-center gap-2.5 ml-auto shrink-0&quot;&gt;
+              {selectedCategory !== '' &amp;&amp; (
+                &lt;button
+                  type=&quot;button&quot;
+                  onClick={() =&gt; onSelectCategory('')}
+                  className=&quot;text-xs font-semibold text-[#0f7a4f] hover:underline cursor-pointer whitespace-nowrap&quot;
+                &gt;
+                  {t('Đang lọc:')} {productName(selectedCategory)} ✕
+                &lt;/button&gt;
+              )}
+              {!hasQuickProducts &amp;&amp; reorderButton}
+            &lt;/div&gt;
           &lt;/div&gt;
-          &lt;div ref={categoryRail} className=&quot;flex gap-1.5 overflow-x-auto no-scrollbar pb-1 overscroll-x-contain select-none cursor-grab active:cursor-grabbing&quot;&gt;
+          &lt;div
+            ref={categoryRail}
+            className=&quot;flex gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-visible sm:flex-wrap no-scrollbar pb-1 sm:pb-0 overscroll-x-contain select-none sm:select-auto&quot;
+          &gt;
             &lt;button
               type=&quot;button&quot;
               onClick={() =&gt; onSelectCategory('')}
-              className={`shrink-0 px-3.5 py-2 rounded-xl text-xs transition-all cursor-pointer touch-target ${
+              className={`shrink-0 h-8.5 sm:h-9 px-3 sm:px-3.5 rounded-xl text-xs font-semibold transition-all cursor-pointer inline-flex items-center justify-center whitespace-nowrap ${
                 !selectedCategory
-                  ? 'bg-[#0f7a4f] text-white border-[#0f7a4f] shadow-sm shadow-[#0f7a4f]/20 font-bold'
-                  : 'bg-white text-[#17231d] font-bold border border-[#17231d]/20 shadow-2xs hover:border-[#0f7a4f] hover:text-[#0f7a4f] hover:bg-[#eaf6ef]/40'
+                  ? 'bg-[#0f7a4f] text-white shadow-xs ring-1 ring-[#0f7a4f]'
+                  : 'bg-[#f6f9f7] text-[#17231d] border border-[#17231d]/12 hover:border-[#0f7a4f]/50 hover:bg-[#eaf6ef]/60 hover:text-[#0b4f34]'
               }`}
             &gt;</pre>
               </div>
@@ -9499,8 +9813,8 @@ interface QuickOrderSectionsProps {
 
           <div class="hunk-box">
             <div class="hunk-header">
-              <span><strong>Đoạn sửa #12</strong> · Dòng gốc ~186 → Dòng mới ~220 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
-              <button class="btn-small" onclick="copyById('after-23-12', this)">Copy đoạn đã sửa (After)</button>
+              <span><strong>Đoạn sửa #7</strong> · Dòng gốc ~186 → Dòng mới ~265 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
+              <button class="btn-small" onclick="copyById('after-23-7', this)">Copy đoạn đã sửa (After)</button>
             </div>
             <div class="diff-grid">
               <div class="diff-col">
@@ -9515,15 +9829,40 @@ interface QuickOrderSectionsProps {
                 &gt;</pre>
               </div>
               <div class="diff-col">
-                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~220)</div>
-                <pre id="after-23-12" class="code-block code-after">                  type=&quot;button&quot;
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~265)</div>
+                <pre id="after-23-7" class="code-block code-after">                  type=&quot;button&quot;
                   onClick={() =&gt; onSelectCategory(cat)}
-                  className={`shrink-0 px-3.5 py-2 rounded-xl text-xs transition-all cursor-pointer touch-target ${
+                  className={`shrink-0 h-8.5 sm:h-9 px-3 sm:px-3.5 rounded-xl text-xs font-semibold transition-all cursor-pointer inline-flex items-center justify-center whitespace-nowrap ${
                     isSelected
-                      ? 'bg-[#0f7a4f] text-white border-[#0f7a4f] shadow-sm shadow-[#0f7a4f]/20 font-bold'
-                      : 'bg-white text-[#17231d] font-bold border border-[#17231d]/20 shadow-2xs hover:border-[#0f7a4f] hover:text-[#0f7a4f] hover:bg-[#eaf6ef]/40'
+                      ? 'bg-[#0f7a4f] text-white shadow-xs ring-1 ring-[#0f7a4f]'
+                      : 'bg-[#f6f9f7] text-[#17231d] border border-[#17231d]/12 hover:border-[#0f7a4f]/50 hover:bg-[#eaf6ef]/60 hover:text-[#0b4f34]'
                   }`}
                 &gt;</pre>
+              </div>
+            </div>
+          </div>
+        
+
+          <div class="hunk-box">
+            <div class="hunk-header">
+              <span><strong>Đoạn sửa #8</strong> · Dòng gốc ~197 → Dòng mới ~276 <code class="ctx-hint">export default function QuickOrderSections({</code></span>
+              <button class="btn-small" onclick="copyById('after-23-8', this)">Copy đoạn đã sửa (After)</button>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-col">
+                <div class="diff-label diff-label-before">1. TÌM ĐOẠN CODE GỐC (BEFORE — Dòng ~197)</div>
+                <pre class="code-block code-before">            })}
+          &lt;/div&gt;
+
+        &lt;/div&gt;
+      )}</pre>
+              </div>
+              <div class="diff-col">
+                <div class="diff-label diff-label-after">2. THAY BẰNG ĐOẠN ĐÃ SỬA (AFTER — Dòng ~276)</div>
+                <pre id="after-23-8" class="code-block code-after">            })}
+          &lt;/div&gt;
+        &lt;/div&gt;
+      )}</pre>
               </div>
             </div>
           </div>

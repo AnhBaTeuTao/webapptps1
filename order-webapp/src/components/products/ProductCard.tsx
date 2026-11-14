@@ -106,8 +106,9 @@ export default function ProductCard({
           {/* Hàng dưới Tầng 1: Nhóm hàng + Trạng thái chọn hàng full chiều ngang thẻ */}
           <div className="mt-1.5 space-y-1 min-w-0">
             {/* Dòng 3: Phân nhóm hàng */}
-            <div className="h-4 flex items-center text-[9.5px] sm:text-[10.5px] tracking-tight text-[#2c3a33] font-semibold leading-none whitespace-nowrap">
-              {t('Nhóm:')} <span className="ml-1 font-bold text-[#17231d]">{product.category ? productName(product.category) : t('Khác')}</span>
+            <div className="h-4 flex items-center text-[9.5px] sm:text-[10.5px] tracking-tight text-[#2c3a33] font-semibold leading-none whitespace-nowrap overflow-hidden">
+              <span className="shrink-0">{t('Nhóm:')}</span>
+              <span className="ml-1 font-bold text-[#17231d] truncate">{product.category ? productName(product.category) : t('Khác')}</span>
             </div>
 
             {/* Dòng 4: Trạng thái chọn hàng */}
@@ -137,9 +138,9 @@ export default function ProductCard({
 
         {/* TẦNG 3: Giá / Chờ sale báo giá khóa chuẩn h-7.5 sm:h-8.5 */}
         <div className="mt-1.5 pt-1.5 border-t border-dashed border-[#17231d]/10 h-7.5 sm:h-8.5 flex items-center justify-between">
-          <div className="flex items-baseline min-w-0">
+          <div className="flex items-baseline min-w-0 overflow-hidden">
             {product.priceOnRequest ? (
-              <span className="text-[#e0742f] text-[11.5px] sm:text-[13px] font-extrabold whitespace-nowrap">
+              <span className="text-[#e0742f] text-[11px] sm:text-[13px] font-bold whitespace-nowrap truncate">
                 {t('Chờ sale báo giá')}
               </span>
             ) : (
@@ -147,7 +148,7 @@ export default function ProductCard({
                 {money(product.price)}
               </span>
             )}
-            <span className="text-[10px] sm:text-[11px] font-semibold text-[#17231d]/80 ml-0.5 sm:ml-1 whitespace-nowrap">/{unitLabel}</span>
+            <span className="shrink-0 text-[10px] sm:text-[11px] font-semibold text-[#17231d]/80 ml-0.5 sm:ml-1 whitespace-nowrap">/{unitLabel}</span>
           </div>
         </div>
 
@@ -199,10 +200,10 @@ export default function ProductCard({
               <button
                 type="button"
                 onClick={() => setIsEditingNote(true)}
-                className="text-[11px] text-[#17231d]/85 hover:text-[#0f7a4f] flex items-center gap-1 cursor-pointer font-semibold"
+                className="inline-flex w-full items-center justify-start gap-1 rounded-lg bg-[#f4f8f5] px-2 py-1 text-left text-[10.5px] sm:text-[11px] font-semibold text-[#2c3a33] hover:bg-[#eaf6ef] hover:text-[#0f7a4f] transition-colors cursor-pointer whitespace-nowrap overflow-hidden"
               >
-                <MessageSquarePlus size={13} className="shrink-0" />
-                <span>+ {t('Thêm quy cách / ghi chú')}</span>
+                <MessageSquarePlus size={12} className="shrink-0 text-[#0f7a4f]" />
+                <span className="truncate">+ {t('Ghi chú / quy cách')}</span>
               </button>
             )}
           </div>
