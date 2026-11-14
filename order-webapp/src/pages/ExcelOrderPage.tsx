@@ -272,7 +272,7 @@ export default function ExcelOrderPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div><p className="text-xs font-semibold text-[#59665f]">{row.sourceSheet} · {t('Dòng')} {row.row}</p>
-                    <p className="font-semibold text-[#14231c] break-words">{row.name || row.sku}</p>
+                    <p className="font-semibold text-[#14231c] wrap-break-word">{row.name || row.sku}</p>
                     {row.sku && row.name !== row.sku && <p className="text-xs text-[#59665f]">{row.sku}</p>}
                   </div><StatusBadge status={row.status} selected={Boolean(chosen[key])} unlisted={unlisted.has(key)} t={t}/>
                 </div>

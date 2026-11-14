@@ -82,9 +82,10 @@ export default function LineNoteEditor({ note = '', onSave, size = 'compact' }: 
     <button
       type="button"
       onClick={() => startEdit('')}
-      className={`font-medium text-[#59665f] hover:text-[#0f7a4f] cursor-pointer ${compact ? 'text-[10.5px]' : 'text-xs'}`}
+      className={`inline-flex items-center gap-1 text-left font-medium text-[#59665f] transition hover:text-[#0f7a4f] hover:underline cursor-pointer ${compact ? 'text-[10.5px]' : 'text-xs'}`}
     >
-      + {t('Thêm ghi chú sơ chế')}
+      <span className="font-bold text-[#0f7a4f]">+</span>
+      <span>{t('Ghi chú sơ chế / quy cách...')}</span>
     </button>
   );
 }

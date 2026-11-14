@@ -20,6 +20,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 import { useStoreHome } from '../../hooks/useStoreHome';
 import { searchProducts } from '../../lib/productSearch';
 import ProductThumbnail from '../products/ProductThumbnail';
+import { scrollToExcelOrderSection } from '../cart/ExcelOrderSection';
 
 const RECENT_SEARCHES_KEY = 'tps1_recent_searches_v1';
 const MAX_RECENT_SEARCHES = 8;
@@ -73,12 +74,34 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
     isSearchPage || isQuickOrderPage ? params.get('q') || '' : ''
   );
   const [isOpen, setIsOpen] = useState(false);
+  const [mobilePopoverTop, setMobilePopoverTop] = useState<number>(144);
+  const [isMobileViewport, setIsMobileViewport] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 640 : true
+  );
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [liveProducts, setLiveProducts] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const updatePosition = () => {
+      setIsMobileViewport(window.innerWidth < 640);
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setMobilePopoverTop(Math.max(88, Math.round(rect.bottom + 6)));
+      }
+    };
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [isOpen, value]);
 
   // Đồng bộ giá trị input khi url thay đổi
   useEffect(() => {
@@ -254,7 +277,7 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
             type="button"
             onClick={handleClear}
             aria-label={t('Xóa tìm kiếm')}
-            className="absolute right-13 sm:right-[3.75rem] top-1/2 -translate-y-1/2 flex size-6 items-center justify-center rounded-full text-[#59665f] hover:bg-[#17231d]/8 hover:text-[#17231d] cursor-pointer"
+            className="absolute right-13 sm:right-15 top-1/2 -translate-y-1/2 flex size-6 items-center justify-center rounded-full text-[#59665f] hover:bg-[#17231d]/8 hover:text-[#17231d] cursor-pointer"
           >
             <X size={15} />
           </button>
@@ -270,12 +293,31 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
 
       {/* POPOVER GỢI Ý THÔNG MINH B2B KIỂU KAMEREO */}
       {isOpen && (
-        <div className="fixed inset-x-2.5 top-[106px] sm:absolute sm:inset-x-0 sm:top-[calc(100%+6px)] z-50 rounded-2xl border border-[#17231d]/12 bg-white shadow-2xl overflow-hidden max-h-[75vh] sm:max-h-[82vh] overflow-y-auto divide-y divide-[#17231d]/6">
-          {/* TRẠNG THÁI A: KHI Ô TÌM KIẾM ĐANG RỖNG */}
-          {!value.trim() ? (
-            <div>
-              {/* Phân khu 1: Thanh Tiện ích Đặt Bếp B2B */}
-              <div className="bg-linear-to-r from-[#f8faf7] via-white to-[#f5fbf7] p-3 border-b border-[#17231d]/6">
+        <>
+          <div
+            style={{ top: `${mobilePopoverTop - 4}px` }}
+            className="fixed inset-x-0 bottom-0 z-40 bg-black/30 backdrop-blur-[1px] sm:hidden"
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setIsOpen(false);
+            }}
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            style={
+              isMobileViewport
+                ? { top: `${mobilePopoverTop}px`, maxHeight: `calc(100dvh - ${mobilePopoverTop + 82}px)` }
+                : undefined
+            }
+            className="fixed inset-x-3 z-50 flex flex-col overflow-hidden rounded-2xl border border-[#d7e5dc] bg-white shadow-[0_20px_50px_rgba(12,48,31,0.22)] sm:absolute sm:inset-x-0 sm:top-[calc(100%+8px)] sm:max-h-[74vh]"
+          >
+            <div className="flex-1 overflow-y-auto overscroll-contain divide-y divide-[#17231d]/6">
+              {/* TRẠNG THÁI A: KHI Ô TÌM KIẾM ĐANG RỖNG */}
+              {!value.trim() ? (
+                <div>
+                  {/* Phân khu 1: Thanh Tiện ích Đặt Bếp B2B */}
+                  <div className="bg-linear-to-r from-[#f8faf7] via-white to-[#f5fbf7] p-2.5 sm:p-3 border-b border-[#17231d]/6">
                 <div className="flex flex-wrap items-center justify-between gap-1 mb-2">
                   <div className="flex items-center gap-1.5">
                     <Zap size={15} className="text-[#e0742f] fill-[#e0742f]" />
@@ -289,17 +331,22 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
                   <Link
                     to="/dat-hang"
                     onClick={() => setIsOpen(false)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white border border-[#17231d]/10 hover:border-[#0f7a4f] hover:text-[#0f7a4f] text-xs font-bold text-[#17231d] shadow-2xs transition group"
+                    className="flex flex-1 items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-white border border-[#17231d]/10 hover:border-[#0f7a4f] hover:text-[#0f7a4f] text-[11.5px] sm:text-xs font-semibold text-[#17231d] whitespace-nowrap shadow-2xs transition group"
                   >
-                    <Zap size={14} className="text-[#e0742f] group-hover:scale-110 transition-transform" />
+                    <Zap size={14} className="shrink-0 text-[#e0742f] group-hover:scale-110 transition-transform" />
                     <span>{t('Bảng đặt nhanh')}</span>
                   </Link>
                   <Link
                     to="/gio-hang?excel=1"
-                    onClick={() => setIsOpen(false)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-white border border-[#17231d]/10 hover:border-[#0f7a4f] hover:text-[#0f7a4f] text-xs font-bold text-[#17231d] shadow-2xs transition group"
+                    onClick={() => {
+                      setIsOpen(false);
+                      if (location.pathname === '/gio-hang') {
+                        window.requestAnimationFrame(() => scrollToExcelOrderSection());
+                      }
+                    }}
+                    className="flex flex-1 items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-white border border-[#17231d]/10 hover:border-[#0f7a4f] hover:text-[#0f7a4f] text-[11.5px] sm:text-xs font-semibold text-[#17231d] whitespace-nowrap shadow-2xs transition group"
                   >
-                    <FileSpreadsheet size={14} className="text-[#0f7a4f] group-hover:scale-110 transition-transform" />
+                    <FileSpreadsheet size={14} className="shrink-0 text-[#0f7a4f] group-hover:scale-110 transition-transform" />
                     <span>{t('Đặt từ file Excel')}</span>
                   </Link>
                 </div>
@@ -307,7 +354,7 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
 
               {/* Phân khu 2: Lịch sử tìm kiếm gần đây */}
               {recentSearches.length > 0 && (
-                <div className="p-3 sm:p-3.5 border-b border-[#17231d]/6">
+                <div className="p-2.5 sm:p-3.5 border-b border-[#17231d]/6">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-1.5 text-[#59665f]">
                       <Clock size={13} />
@@ -333,7 +380,7 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
                         }}
                         className="cursor-pointer bg-[#f5f7f3] hover:bg-[#eaf6ef] hover:text-[#0f7a4f] text-[#17231d] text-xs px-2.5 py-1.5 rounded-lg border border-[#17231d]/8 flex items-center gap-1.5 transition-colors group"
                       >
-                        <span>{term}</span>
+                        <span>{t(term)}</span>
                         <button
                           type="button"
                           onClick={(e) => {
@@ -352,13 +399,13 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
               )}
 
               {/* Phân khu 3: Tìm kiếm thịnh hành */}
-              <div className="p-3 sm:p-3.5 border-b border-[#17231d]/6">
-                <div className="flex items-center gap-1.5 mb-2.5">
+              <div className="p-2.5 sm:p-3.5 border-b border-[#17231d]/6">
+                <div className="flex items-center gap-1.5 mb-2">
                   <Flame size={15} className="text-[#e0742f] fill-[#e0742f]" />
                   <span className="text-xs font-bold text-[#17231d]">{t('Tìm kiếm thịnh hành')}</span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
-                  {TRENDING_KEYWORDS.map((kw) => (
+                  {TRENDING_KEYWORDS.map((kw, idx) => (
                     <button
                       type="button"
                       key={kw}
@@ -366,9 +413,9 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
                         setValue(kw);
                         handleSearchSubmit(kw);
                       }}
-                      className="cursor-pointer bg-[#f8faf7] hover:bg-[#fef5ee] hover:border-[#e0742f]/30 hover:text-[#c4601f] text-[#2c3a33] text-xs font-medium px-3 py-1.5 rounded-xl border border-[#17231d]/8 transition-all"
+                      className={`cursor-pointer bg-[#f8faf7] hover:bg-[#fef5ee] hover:border-[#e0742f]/30 hover:text-[#c4601f] text-[#2c3a33] text-xs font-medium px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border border-[#17231d]/8 transition-all ${idx >= 8 ? 'hidden sm:inline-flex' : ''}`}
                     >
-                      {kw}
+                      {t(kw)}
                     </button>
                   ))}
                 </div>
@@ -376,7 +423,7 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
 
               {/* Phân khu 4: Nhóm hàng xu hướng cho bếp */}
               {trendingCategories.length > 0 && (
-                <div className="p-3 sm:p-3.5 bg-[#fcfdfa]">
+                <div className="p-2.5 sm:p-3.5 bg-[#fcfdfa]">
                   <div className="flex items-center gap-1.5 mb-2.5">
                     <LayoutGrid size={15} className="text-[#0f7a4f]" />
                     <span className="text-xs font-bold text-[#17231d]">{t('Nhóm hàng xu hướng cho bếp')}</span>
@@ -401,7 +448,7 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
                           </div>
                         )}
                         <span className="text-xs font-semibold text-[#17231d] group-hover:text-[#0f7a4f] truncate">
-                          {cat.name}
+                          {t(cat.name)}
                         </span>
                       </Link>
                     ))}
@@ -526,7 +573,24 @@ export default function SmartSearchBox({ className = '' }: SmartSearchBoxProps) 
               </button>
             </div>
           )}
-        </div>
+            </div>
+
+            {/* Thanh đóng Popover dính đáy riêng cho Mobile */}
+            <div className="flex shrink-0 items-center justify-between border-t border-[#17231d]/8 bg-[#f8faf7] px-3 py-2 sm:hidden">
+              <span className="text-[11px] font-medium text-[#59665f]">
+                {t('Chọn sản phẩm hoặc từ khóa gợi ý')}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1 text-xs font-bold text-[#17231d] ring-1 ring-[#17231d]/12 active:scale-95 cursor-pointer"
+              >
+                <X size={13} />
+                {t('Đóng')}
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

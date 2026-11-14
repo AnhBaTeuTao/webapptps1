@@ -145,7 +145,7 @@ export default function CartSummarySidebar({
             </span>
             <div>
               <h3 className="font-bold text-sm text-[#17231d] leading-tight">
-                {activeTab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${activeTab.title.slice('Đặt hàng '.length)}` : activeTab.title}
+                {activeTab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${activeTab.title.slice('Đặt hàng '.length)}` : t(activeTab.title)}
               </h3>
               <p className="text-[11px] text-[#2c3a33] font-semibold">
                 {totalItemsCount} {t('mặt hàng')} ({totalQuantity.toFixed(1)} {t('ĐVT')})
@@ -164,9 +164,7 @@ export default function CartSummarySidebar({
           {showItems && (
             <div
               ref={itemsListRef}
-              className={`divide-y divide-[#17231d]/8 max-h-[165px] overflow-y-auto px-2.5 py-1.5 space-y-1.5 scroll-smooth ${
-                isFillingInfo ? 'overscroll-contain' : ''
-              }`}
+              className="divide-y divide-[#17231d]/8 max-h-41.25 overflow-y-auto overscroll-contain px-2.5 py-1.5 space-y-1.5 scroll-smooth"
             >
               {activeTab.items.length === 0 ? (
                 <div className="py-6 text-center text-[#2c3a33] font-semibold space-y-1">
@@ -206,7 +204,7 @@ export default function CartSummarySidebar({
                                 Math.max(0, Number((item.quantity - 1).toFixed(2)))
                               )
                             }
-                            aria-label="Giảm"
+                            aria-label={t('Giảm')}
                             className="w-6 h-6 rounded-md bg-[#f5f7f3] font-bold text-xs text-[#17231d] hover:bg-rose-50 hover:text-rose-600 flex items-center justify-center cursor-pointer select-none"
                           >
                             -
@@ -231,7 +229,7 @@ export default function CartSummarySidebar({
                                 Number((item.quantity + 1).toFixed(2))
                               )
                             }
-                            aria-label="Tăng"
+                            aria-label={t('Tăng')}
                             className="w-6 h-6 rounded-md bg-[#0f7a4f] font-bold text-xs text-white hover:bg-[#0b4f34] flex items-center justify-center cursor-pointer select-none"
                           >
                             +
@@ -346,7 +344,7 @@ export default function CartSummarySidebar({
                   {/* Tên & SĐT người nhận */}
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[11px] font-bold text-[#2c3a33] uppercase tracking-wider mb-1">
+                      <label className="block truncate text-[11px] font-bold text-[#2c3a33] uppercase tracking-wider mb-1">
                         {t('Người nhận')}
                       </label>
                       <div className="relative">
@@ -361,7 +359,7 @@ export default function CartSummarySidebar({
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[11px] font-bold text-[#2c3a33] uppercase tracking-wider mb-1">
+                      <label className="block truncate text-[11px] font-bold text-[#2c3a33] uppercase tracking-wider mb-1">
                         {t('SĐT nhận')}
                       </label>
                       <div className="relative">

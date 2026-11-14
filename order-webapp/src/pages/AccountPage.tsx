@@ -64,7 +64,7 @@ export default function AccountPage() {
       <p className="mt-1 text-sm font-semibold text-[#263e31]">{profile?.username || '—'}</p>
     </section>
     <section className="overflow-hidden rounded-2xl border border-[#17231d]/10 bg-white shadow-sm"><h3 className="border-b border-[#17231d]/8 px-4 py-3 text-sm font-bold text-[#17382a]">{t('Thông tin khách hàng')}</h3>
-      {rows.map(({icon: Icon,label,value}) => <div key={label} className="flex gap-3 border-b border-[#17231d]/5 px-4 py-3.5 last:border-0"><span className="mt-0.5 text-[#0f7a4f]"><Icon size={18}/></span><div className="min-w-0"><p className="text-xs text-[#75857b]">{label}</p><p className="mt-0.5 break-words text-sm font-semibold text-[#263e31]">{value}</p></div></div>)}
+      {rows.map(({icon: Icon,label,value}) => <div key={label} className="flex gap-3 border-b border-[#17231d]/5 px-4 py-3.5 last:border-0"><span className="mt-0.5 text-[#0f7a4f]"><Icon size={18}/></span><div className="min-w-0"><p className="text-xs text-[#75857b]">{label}</p><p className="mt-0.5 wrap-break-word text-sm font-semibold text-[#263e31]">{value}</p></div></div>)}
     </section>
     <section className="space-y-3 rounded-2xl border border-[#17231d]/10 bg-white p-4 shadow-sm">
       <div className="flex items-center justify-between"><h3 className="font-bold text-[#17382a]">{t('Sổ địa chỉ')}</h3><button onClick={()=>{setEditingAddressId(null);setAddressForm({label:'',address:'',contactName:profile?.name||session?.name||'',contactPhone:session?.phone||'',isDefault:false});setShowAddressForm(true);}} className="flex min-h-10 items-center gap-1 rounded-lg bg-[#eaf6ef] px-3 text-sm font-bold text-[#0f7a4f]"><Plus size={16}/>{t('Thêm địa chỉ')}</button></div>

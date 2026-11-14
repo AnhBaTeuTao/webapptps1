@@ -21,7 +21,7 @@ export default function CategoryRail({ categories, layout = 'rail' }: { categori
   if (categories.length === 0) return null;
   const wrapper = layout === 'grid'
     ? 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5'
-    : 'no-scrollbar -mx-1 flex gap-2.5 sm:gap-3 overflow-x-auto px-1 pb-1 lg:grid lg:grid-cols-10 lg:overflow-visible overscroll-contain select-none cursor-grab';
+    : 'no-scrollbar flex gap-1.5 sm:gap-3 overflow-x-auto pb-0.5 lg:grid lg:grid-cols-10 lg:overflow-visible overscroll-contain select-none cursor-grab snap-x snap-mandatory';
 
   return (
     <div ref={layout === 'rail' ? railRef : undefined} className={wrapper}>
@@ -29,12 +29,12 @@ export default function CategoryRail({ categories, layout = 'rail' }: { categori
         <Link
           key={category.slug}
           to={`/danh-muc/${category.slug}`}
-          className={`group flex flex-col items-center gap-2 text-center ${layout === 'rail' ? 'w-21 shrink-0 sm:w-23 lg:w-auto' : ''}`}
+          className={`group flex flex-col items-center gap-1.5 text-center ${layout === 'rail' ? 'w-[calc((100%-24px)/5)] min-w-[54px] shrink-0 snap-start sm:w-20 lg:w-auto' : ''}`}
         >
-          <span className={`flex items-center justify-center overflow-hidden rounded-2xl bg-[#eaf6ef] ring-1 ring-[#0f7a4f]/12 shadow-xs transition group-hover:-translate-y-0.5 group-hover:ring-[#0f7a4f]/35 ${layout === 'grid' ? 'aspect-square w-full' : 'size-17 sm:size-19 lg:size-20'}`}>
+          <span className={`flex items-center justify-center overflow-hidden bg-[#eaf6ef] ring-1 ring-[#0f7a4f]/12 shadow-xs transition group-hover:-translate-y-0.5 group-hover:ring-[#0f7a4f]/35 ${layout === 'grid' ? 'aspect-square w-full rounded-2xl' : 'size-11.5 sm:size-15 lg:size-18 rounded-xl sm:rounded-2xl'}`}>
             <CategoryImage category={category} />
           </span>
-          <span className="line-clamp-2 text-[12px] font-semibold leading-tight text-[#17231d] group-hover:text-[#0b4f34] sm:text-[13px]">
+          <span className="line-clamp-2 text-[12px] font-semibold leading-snug tracking-normal text-[#17231d] antialiased group-hover:text-[#0f7a4f] sm:text-[12.5px]">
             {t(category.name)}
           </span>
         </Link>

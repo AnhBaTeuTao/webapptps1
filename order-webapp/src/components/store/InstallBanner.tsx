@@ -26,7 +26,7 @@ export default function InstallBanner() {
         <div
           role="dialog"
           aria-label={t('Cài ứng dụng Thực Phẩm Số Một')}
-          className="fixed inset-x-2 z-40 md:inset-x-auto md:bottom-5 md:right-5 md:w-[360px]"
+          className="fixed inset-x-2 z-40 md:inset-x-auto md:bottom-5 md:right-5 md:w-90"
           style={{ bottom: 'calc(68px + env(safe-area-inset-bottom))' }}
         >
           <div className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-[0_10px_30px_rgba(16,40,30,0.18)] ring-1 ring-[#17231d]/10 md:bottom-5">

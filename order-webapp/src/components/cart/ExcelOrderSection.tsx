@@ -369,7 +369,7 @@ export const ExcelOrderSection = forwardRef<HTMLDivElement, ExcelOrderSectionPro
           );
         }
         if (duplicateKey) localStorage.setItem(duplicateKey, '1');
-        setSuccessMessage(`Đã thêm thành công ${grouped.size} mặt hàng từ file Excel vào giỏ hàng!`);
+        setSuccessMessage(`${t('Đã thêm thành công')} ${grouped.size} ${t('mặt hàng từ file Excel vào giỏ hàng!')}`);
         setPreview(null);
         fileRef.current = null;
       } catch (cause) {
@@ -396,7 +396,7 @@ export const ExcelOrderSection = forwardRef<HTMLDivElement, ExcelOrderSectionPro
       <div
         ref={ref}
         id="excel-order-section"
-        className={`rounded-3xl border-2 border-dashed transition-all duration-300 p-4 sm:p-5 ${
+        className={`scroll-mt-36 sm:scroll-mt-40 rounded-3xl border-2 border-dashed transition-all duration-300 p-4 sm:p-5 ${
           autoFocusHighlight
             ? 'border-[#0f7a4f] bg-emerald-50/60 ring-4 ring-[#0f7a4f]/20 shadow-md'
             : 'border-[#0f7a4f]/40 bg-linear-to-r from-emerald-50/40 via-white to-emerald-50/20'
@@ -408,13 +408,15 @@ export const ExcelOrderSection = forwardRef<HTMLDivElement, ExcelOrderSectionPro
             <span className="flex size-11 sm:size-12 shrink-0 items-center justify-center rounded-2xl bg-[#0f7a4f] text-white shadow-xs">
               <FileSpreadsheet size={24} />
             </span>
-            <div>
-              <h2 className="text-base sm:text-lg font-black text-[#17231d]">
-                {t('Đặt hàng nhanh bằng file Excel')}
-                <span className="ml-2 inline-block rounded-md bg-[#0f7a4f]/10 px-2 py-0.5 text-xs font-bold text-[#0f7a4f]">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <h2 className="text-base sm:text-lg font-black text-[#17231d]">
+                  {t('Đặt hàng nhanh bằng file Excel')}
+                </h2>
+                <span className="inline-flex items-center rounded-md bg-[#0f7a4f]/10 px-2 py-0.5 text-[11px] sm:text-xs font-bold text-[#0f7a4f]">
                   {t('Bếp ăn & Trường học')}
                 </span>
-              </h2>
+              </div>
               <p className="mt-0.5 text-xs sm:text-[13px] text-[#59665f]">
                 {t('Tải file mẫu Excel, điền số lượng và tải lên để hệ thống tự động thêm nguyên liệu vào giỏ hàng.')}
               </p>
@@ -422,23 +424,23 @@ export const ExcelOrderSection = forwardRef<HTMLDivElement, ExcelOrderSectionPro
           </div>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap sm:shrink-0 sm:self-center">
             <button
               type="button"
               onClick={downloadTemplate}
               disabled={downloading}
-              className="inline-flex h-9 sm:h-10 items-center gap-1.5 rounded-xl border border-[#0f7a4f]/30 bg-white px-3.5 text-xs font-bold text-[#0f7a4f] hover:bg-[#eaf6ef] transition disabled:opacity-60 shadow-xs"
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#bfd8c9] bg-white px-3 py-2 text-[11.5px] sm:text-xs font-semibold text-[#0f7a4f] transition hover:bg-[#f0f8f3] disabled:opacity-60 shadow-xs whitespace-nowrap"
             >
-              <Download size={15} />
+              <Download size={15} className="shrink-0" />
               <span>{t(downloading ? 'Đang tải...' : 'Tải file mẫu')}</span>
             </button>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={loading}
-              className="inline-flex h-9 sm:h-10 items-center gap-1.5 rounded-xl bg-[#0f7a4f] px-4 text-xs font-bold text-white hover:bg-[#0b4f34] transition disabled:opacity-50 shadow-xs"
+              className="inline-flex flex-1 sm:flex-initial items-center justify-center gap-1.5 rounded-xl bg-[#0f7a4f] px-3 py-2 text-[11.5px] sm:text-xs font-semibold text-white shadow-xs transition hover:bg-[#0c613e] disabled:opacity-60 whitespace-nowrap"
             >
-              <Upload size={15} />
+              <Upload size={15} className="shrink-0" />
               <span>{t(loading ? 'Đang đọc...' : 'Chọn file Excel tải lên')}</span>
             </button>
             <input
@@ -647,7 +649,7 @@ export const ExcelOrderSection = forwardRef<HTMLDivElement, ExcelOrderSectionPro
                             <p className="text-[11px] font-semibold text-[#59665f]">
                               {row.sourceSheet} · {t('Dòng')} {row.row}
                             </p>
-                            <p className="font-bold text-[#14231c] break-words text-sm">{row.name || row.sku}</p>
+                            <p className="font-bold text-[#14231c] wrap-break-word text-sm">{row.name || row.sku}</p>
                             {row.sku && row.name !== row.sku && <p className="text-[11px] text-[#59665f]">{row.sku}</p>}
                           </div>
                           <StatusBadge status={row.status} selected={Boolean(chosen[key])} unlisted={unlisted.has(key)} t={t} />
@@ -833,5 +835,28 @@ export const ExcelOrderSection = forwardRef<HTMLDivElement, ExcelOrderSectionPro
     );
   }
 );
+
+/**
+ * Cuộn chính xác tới khung Đặt hàng nhanh bằng file Excel (#excel-order-section)
+ * bất kể khung đang nằm ở đâu (giỏ hàng trống, giỏ hàng có nhiều món, hay bất kỳ trang nào),
+ * tự động trừ đi chiều cao thanh Header bám dính (sticky header).
+ */
+export function scrollToExcelOrderSection() {
+  const run = () => {
+    const el = document.getElementById('excel-order-section');
+    if (!el) return;
+    const header = document.querySelector('header');
+    const headerBottom = header ? Math.max(0, header.getBoundingClientRect().bottom) : 120;
+    const rect = el.getBoundingClientRect();
+    const targetY = Math.max(0, window.scrollY + rect.top - headerBottom - 16);
+    window.scrollTo({ top: targetY, behavior: 'smooth' });
+    el.classList.add('ring-4', 'ring-[#0f7a4f]/25', 'border-[#0f7a4f]');
+    window.setTimeout(() => {
+      el.classList.remove('ring-4', 'ring-[#0f7a4f]/25');
+    }, 2200);
+  };
+  requestAnimationFrame(run);
+  window.setTimeout(run, 120);
+}
 
 export default ExcelOrderSection;

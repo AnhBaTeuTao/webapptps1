@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Check, ChevronDown, Globe } from 'lucide-react';
 
 export type Language = 'vi' | 'en' | 'zh-CN';
 const STORAGE_KEY = 'tps1_order_language';
@@ -204,7 +205,7 @@ const translations: Record<string, [string, string]> = {
   'Thêm đơn': ['New order', '新增订单'],
   'Đặt hàng bằng file Excel': ['Order with Excel', '使用 Excel 下单'],
   'Tải file mẫu, điền tên/mã hàng và số lượng cần mua, sau đó tải lên lại để hệ thống tự dựng giỏ hàng.': ['Download the template, fill in products and quantities, then upload it to build your cart.', '下载模板，填写商品和数量，再上传生成购物车。'],
-  'Tải file mẫu': ['Download template', '下载模板'],
+  'Tải file mẫu': ['Download Template', '下载模板'],
   'Tải lên file đã điền': ['Upload completed file', '上传已填写文件'],
   'Không tải được file mẫu, vui lòng thử lại': ['Could not download the template. Please try again.', '无法下载模板，请重试。'],
   'Không đọc được file, kiểm tra đúng định dạng mẫu chưa': ['Could not read the file. Check the template format.', '无法读取文件，请检查模板格式。'],
@@ -404,7 +405,7 @@ const translations: Record<string, [string, string]> = {
   'Đăng ký': ['Sign up', '注册'],
   'Tất cả danh mục': ['All categories', '全部分类'],
   'Đặt nhanh': ['Quick order', '快速下单'],
-  'Đặt từ Excel': ['Order from Excel', 'Excel 下单'],
+  'Đặt từ Excel': ['Excel Order', 'Excel 下单'],
   'Đơn hàng': ['Orders', '订单'],
   'Tài khoản của quý khách đang chờ TPS1 xác minh. Quý khách vẫn đặt hàng bình thường, giá sẽ được xác nhận khi chốt đơn.': ['Your account is awaiting verification by TPS1. You can still order as usual; prices are confirmed when the order is finalised.', '您的账户正在等待 TPS1 审核。您仍可正常下单，价格将在确认订单时核定。'],
   'Đồng hành cùng nhà hàng, bếp ăn công ty và trường học tại Đồng Nai, TP.HCM và các tỉnh lân cận, đưa thực phẩm tươi đến tận bếp.': ['Working alongside restaurants, company canteens and schools in Dong Nai, HCMC and nearby provinces, bringing fresh food right to the kitchen.', '与同奈、胡志明市及周边省份的餐厅、企业食堂和学校同行，将新鲜食材送到厨房。'],
@@ -493,7 +494,7 @@ const translations: Record<string, [string, string]> = {
   'Tải file lên, hệ thống tự khớp mặt hàng và đưa vào giỏ cho quý khách.': ['Upload the file and we will match the items and add them to your cart.', '上传文件，系统会自动匹配商品并加入购物车。'],
   'Thêm hàng từ file Excel': ['Add items from an Excel file', '从 Excel 文件添加商品'],
   // ── Cửa hàng online ──
-  'Yêu thích': ['Favourites', '收藏'],
+  'Yêu thích': ['Saved', '收藏'],
   'Hàng yêu thích': ['Favourite items', '收藏的商品'],
   'Bỏ khỏi yêu thích': ['Remove from favourites', '取消收藏'],
   'Thêm vào yêu thích': ['Add to favourites', '加入收藏'],
@@ -509,7 +510,7 @@ const translations: Record<string, [string, string]> = {
   '109+ khách hàng doanh nghiệp tin dùng': ['Trusted by 109+ business customers', '109+ 家企业客户信赖'],
   'Thông tin chứng chỉ và liên hệ': ['Certifications and contact', '资质与联系方式'],
   // ── Cửa hàng online ──
-  'Ảnh minh hoạ': ['Illustrative photo', '示意图'],
+  'Ảnh minh hoạ': ['Sample photo', '示意图'],
   // ── Cửa hàng online ──
   'Đề xuất cho bếp của quý khách': ['Picked for your kitchen', '为您的厨房推荐'],
   'Đề xuất cho quý khách': ['Recommended for you', '为您推荐'],
@@ -574,6 +575,414 @@ Object.assign(translations, {
   'Giao đúng hẹn 99,8% ca sáng': ['99.8% on-time morning delivery', '早班 99.8% 准时送达'],
   'Nguồn thực phẩm sạch cho': ['Clean ingredients for', '优质食材供应商，服务于'],
   'theo nhu cầu của bếp.': ['to meet your kitchen needs.', '按食堂实际需求送达。'],
+  // ── Bổ sung đầy đủ thuật ngữ B2B chuẩn quốc tế (EN / 简体中文) ──
+  'Đã thêm thành công': ['Successfully added', '已成功添加'],
+  'mặt hàng từ file Excel vào giỏ hàng!': ['items from the Excel file to your cart!', '项 Excel 采购商品至购物车！'],
+  'Đặt hàng nhanh bằng file Excel': ['Quick Order via Excel', 'Excel 批量快速下单'],
+  'Bếp ăn & Trường học': ['Canteens & Schools', '企业食堂与学校团餐'],
+  'Tải file mẫu Excel, điền số lượng và tải lên để hệ thống tự động thêm nguyên liệu vào giỏ hàng.': [
+    'Download the Excel template, fill in quantities, and upload to automatically add ingredients to your cart.',
+    '下载 Excel 采购模板，填写数量后上传，系统将自动识别食材并加入购物车。',
+  ],
+  'Chọn file Excel tải lên': ['Upload Excel', '上传 Excel'],
+  'Đang đọc...': ['Reading file...', '正在解析文件…'],
+  'Đang kiểm tra và thêm...': ['Verifying & adding...', '正在核对并添加…'],
+  'Cần chọn': ['Needs selection', '待确认匹配'],
+  'Sai số lượng': ['Invalid quantity', '数量有误'],
+  'Kiểm tra mặt hàng nhận diện': ['Review matched items', '核对已识别商品'],
+  'Bỏ chọn tất cả': ['Deselect all', '取消全选'],
+  'Chọn tất cả': ['Select all', '全选'],
+  'Hàng ngoài danh mục · Tạm tính 0đ · TPS1 sẽ báo giá': [
+    'Off-catalog item · Est. 0 VND · TPS1 will quote',
+    '目录外商品 · 暂计 0 越南盾 · TPS1 将为您报价',
+  ],
+  'Sơ chế, đóng gói...': ['Prep, packaging notes...', '加工方式、包装要求…'],
+  'File này đã thêm trước đó. Thêm lại.': [
+    'This file was already imported. Import again.',
+    '该文件此前已导入。重新导入。',
+  ],
+  'ĐVT': ['units', '单位'],
+  'Đóng bảng giỏ hàng': ['Close cart drawer', '关闭购物车面板'],
+  'Danh sách hàng hóa đặt': ['Ordered Items List', '订购商品清单'],
+  'Xóa món này': ['Remove this item', '删除此商品'],
+  'Thành tiền': ['Line total', '小计'],
+  'Ghi chú toàn đơn': ['Order-wide notes', '整单备注'],
+  'SĐT nhận': ['Recipient Phone', '收货电话'],
+  'Địa chỉ chi tiết': ['Detailed Delivery Address', '详细送货地址'],
+  'Ngày giao mong muốn': ['Preferred Delivery Date', '期望送达日期'],
+  'Khung giờ / Ca giao': ['Delivery Window / Shift', '配送时段／班次'],
+  'Giá đang theo bảng giá hiện hành. Mặt hàng nào cần báo giá, TPS1 sẽ xác nhận lại với quý khách.': [
+    'Prices reflect current contract rates. Any items awaiting a quote will be confirmed by TPS1.',
+    '当前显示为现行合同价。待报价商品将由 TPS1 核实后与您确认。',
+  ],
+  'Giờ chốt': ['Cutoff', '截单时间'],
+  'Kinh doanh sẽ báo giá trước khi xác nhận đơn.': [
+    'Our sales team will quote these items before confirming your order.',
+    '销售专员将在确认订单前为您核定报价。',
+  ],
+  'Lưu': ['Save', '保存'],
+  'Sửa': ['Edit', '修改'],
+  'Thêm ghi chú sơ chế': ['Add prep note', '添加加工备注'],
+  'Khác': ['Other', '其他'],
+  'Sẵn hàng giao bếp': ['In stock for kitchen delivery', '现货直供厨房'],
+  'Thêm quy cách / ghi chú': ['Add spec / prep note', '添加规格／加工备注'],
+  'Xóa tìm kiếm': ['Clear search', '清除搜索'],
+  'bếp ăn,': ['commercial kitchens,', '团餐与餐饮厨房，'],
+  'giao': ['delivered', '全程冷链'],
+  'tận nơi': ['right to your door', '配送上门'],
+  'Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng': [
+    'Over 5,000 SKUs from fresh produce, meat, and seafood to dry goods and seasonings—everything your kitchen needs in',
+    '涵盖蔬菜水果、肉禽水产、粮油干货与调味品等 5,000+ 餐饮食材，让您的厨房实现',
+  ],
+  'một nơi.': ['one place.', '一站式集采。'],
+  'Chuẩn ISO 22000 & HACCP': ['ISO 22000 & HACCP Certified', 'ISO 22000 与 HACCP 认证'],
+  'Hơn 5.000 mặt hàng sẵn có': ['5,000+ SKUs in Stock', '5,000+ 现货食材品类'],
+  'Banner': ['Banner', '轮播横幅'],
+  'Tiện ích đặt bếp nhanh': ['Quick Kitchen Tools', '厨房快捷采购'],
+  'Chuẩn ISO 22000 · Giao sớm 05:00': ['ISO 22000 · 05:00 Delivery', 'ISO 22000 · 05:00 早配'],
+  'Bảng đặt nhanh': ['Quick Order', '快速下单表'],
+  'Đặt từ file Excel': ['Excel Order', 'Excel 导入'],
+  'Bạn đã tìm': ['Recent Searches', '最近搜索'],
+  'Xóa toàn bộ lịch sử tìm kiếm': ['Clear all search history', '清空全部搜索记录'],
+  'Xóa tất cả': ['Clear all', '清空全部'],
+  'Xóa': ['Remove', '删除'],
+  'Tìm kiếm thịnh hành': ['Trending Kitchen Searches', '热门采购搜索'],
+  'Nhóm hàng xu hướng cho bếp': ['Popular Kitchen Categories', '食堂常用食材分类'],
+  'Tìm tất cả mặt hàng khớp với': ['Search all items matching', '搜索全部匹配商品：'],
+  'Đang tìm kiếm kho hàng 5.000+ sản phẩm...': ['Searching 5,000+ wholesale SKUs...', '正在搜索 5,000+ 批发食材库…'],
+  'Không tìm thấy mặt hàng phù hợp với': ['No items found matching', '未找到匹配商品：'],
+  'Thử tìm bằng các từ khóa phổ biến: thịt, cá, rau củ, trứng, gia vị...': [
+    'Try popular keywords: pork, beef, fish, vegetables, eggs, seasonings...',
+    '请尝试常用关键词：猪肉、牛肉、鱼、蔬菜、鸡蛋、调味品…',
+  ],
+  'Xem tất cả kết quả cho': ['See all results for', '查看全部搜索结果：'],
+  'Khung giờ giao bếp': ['Kitchen Delivery Window', '厨房配送时段'],
+  'Ca sớm: 05:00 – 07:00': ['Early Shift: 05:00 – 07:00', '早班配送：05:00 – 07:00'],
+  'Điểm giao mặc định': ['Default Delivery Point', '默认收货点'],
+  'Bếp chính': ['Main Kitchen', '主厨房'],
+  'TP.HCM · Bình Dương · Đồng Nai': ['HCMC · Binh Duong · Dong Nai', '胡志明市 · 平阳 · 同奈'],
+  'Tổng đài B2B (24/7)': ['24/7 B2B Hotline', 'B2B 客服专线 (24/7)'],
+  'Lựa chọn hàng đầu': ['Top Kitchen Picks', '主厨严选热销'],
+  'Quay lại': ['Back', '返回'],
+  'Xóa ghi chú': ['Remove note', '删除备注'],
+  'Quý khách chọn hàng từ cửa hàng, hoặc tải file Excel lên để lên đơn nhanh chóng.': [
+    'Browse our wholesale catalog or upload an Excel order sheet to build your order in seconds.',
+    '您可以从批发商店选购食材，或上传 Excel 采购单快速生成订单。',
+  ],
+  'Nếu cần hỗ trợ thêm, vui lòng liên hệ hotline TPS1:': [
+    'For further assistance, please contact the TPS1 B2B hotline:',
+    '如需进一步协助，请联系 TPS1 客服专线：',
+  ],
+  'Ghi chú đơn hàng:': ['Order note:', '订单备注：'],
+  'Điều chỉnh giá:': ['Price adjustment:', '价格调整：'],
+  'Phí vận chuyển xe lạnh:': ['Cold-chain delivery fee:', '冷链配送费：'],
+  'Miễn phí': ['Free', '免运费'],
+  'Giá đã chốt và hoàn tất thanh toán/công nợ.': [
+    'Final prices confirmed and payment/credit settlement completed.',
+    '价格已核定，付款或账期结算已完成。',
+  ],
+  'Địa chỉ & Giao nhận': ['Delivery & Logistics', '收货地址与配送信息'],
+  'Ngày giao dự kiến:': ['Scheduled delivery date:', '预计送达日期：'],
+  'Khách hàng': ['Customer', '客户'],
+  'Địa chỉ kho/bếp ăn mặc định': ['Default warehouse / kitchen address', '默认仓库／食堂收货地址'],
+  'Thanh toán & Công nợ': ['Payment & Credit Terms', '付款方式与账期'],
+  'Phương thức': ['Payment method', '付款方式'],
+  'Trạng thái thanh toán': ['Payment status', '付款状态'],
+  'Đã thu:': ['Paid amount:', '已付金额：'],
+  'Còn nợ:': ['Outstanding balance:', '待结欠款：'],
+  'Xác nhận hủy đơn hàng': ['Confirm Order Cancellation', '确认取消订单'],
+  'Bạn có chắc chắn muốn hủy đơn hàng': ['Are you sure you want to cancel order', '您确定要取消订单'],
+  'Sau khi hủy, kho sẽ không chuẩn bị và không giao chuyến hàng này.': [
+    'Once canceled, our warehouse will stop preparing and will not dispatch this shipment.',
+    '取消后，冷库将停止备货且不再安排此次配送。',
+  ],
+  'Lý do hủy đơn': ['Cancellation reason', '取消原因'],
+  'Nhập lý do hủy (vd: thay đổi thực đơn, hoãn tiệc, đặt trùng...)': [
+    'Enter reason (e.g., menu change, event postponed, duplicate order...)',
+    '请输入取消原因（如：菜单调整、宴会延期、重复下单…）',
+  ],
+  'Giữ đơn hàng': ['Keep order', '保留订单'],
+  'Đang hủy...': ['Canceling...', '正在取消…'],
+  'Đồng ý hủy đơn': ['Confirm cancellation', '确认取消订单'],
+  'Tải lại danh sách': ['Refresh order list', '刷新订单列表'],
+  'Chưa có đơn hàng nào ở trạng thái': ['No orders found with status', '当前状态下暂无订单：'],
+  'Giao tại xưởng/bếp': ['Deliver to factory / kitchen', '配送至工厂／厨房'],
+  'Tổng tiền': ['Total amount', '订单总额'],
+  'Đặt lại': ['Reorder', '再次购买'],
+  'Xem chi tiết': ['View details', '查看详情'],
+  'Không tải được kết quả tìm kiếm, vui lòng thử lại': [
+    'Could not load search results, please try again',
+    '无法加载搜索结果，请重试',
+  ],
+  'Sắp xếp theo': ['Sort by', '排序方式'],
+  'Hiển thị': ['Showing', '当前显示'],
+  'Trang': ['Page', '第'],
+  'Xem tất cả danh mục': ['View all categories', '查看全部分类'],
+  'Chờ thanh toán': ['Pending payment', '待付款'],
+  'COD (Khi nhận hàng)': ['COD (Cash on delivery)', '货到付款 (COD)'],
+  'COD (Trả khi nhận hàng)': ['COD (Cash on delivery)', '货到付款 (COD)'],
+  'Đã thanh toán': ['Paid', '已付款'],
+  'Thất bại': ['Failed', '付款失败'],
+  'Đã hoàn tiền': ['Refunded', '已退款'],
+  'Thanh toán khi nhận hàng (COD)': ['Cash on delivery (COD)', '货到付款 (COD)'],
+  'Công nợ': ['Corporate Credit (Net Terms)', '企业账期结算'],
+  'Chuyển khoản': ['Bank transfer', '银行转账'],
+  'Chưa cập nhật': ['Not specified', '未更新'],
+  'Ba rọi heo': ['Pork belly', '猪五花肉'],
+  'Cá nục': ['Round scad fish', '竹荚鱼／巴浪鱼'],
+  'Trứng gà': ['Chicken eggs', '鲜鸡蛋'],
+  'Cà chua': ['Tomatoes', '番茄／西红柿'],
+  'Chanh': ['Fresh lime', '鲜柠檬'],
+  'Hành tây': ['Onions', '洋葱'],
+  'Cà rốt': ['Carrots', '胡萝卜'],
+  'Dưa leo': ['Cucumbers', '黄瓜'],
+  'Hành lá': ['Spring onions', '小葱／香葱'],
+  'Xà lách': ['Lettuce', '生菜'],
+  'Dầu ăn': ['Cooking oil', '食用油'],
+  'Đã bật thông báo — bấm để tắt': ['Notifications enabled — click to disable', '通知已开启 — 点击关闭'],
+  'Bạn đã chặn thông báo trong cài đặt trình duyệt': [
+    'Notifications are blocked in your browser settings',
+    '您已在浏览器设置中屏蔽通知权限',
+  ],
+  'Bật thông báo đơn hàng': ['Enable order notifications', '开启订单状态通知'],
+  'Đang tải tệp an toàn...': ['Uploading files securely...', '正在安全上传文件…'],
+  'Không tải được': ['Could not upload', '无法上传'],
+  'Gemini đang đọc tài liệu, TPS1 đang đối chiếu sản phẩm...': [
+    'AI is reading your document and matching TPS1 catalog items...',
+    '正在智能解析文档并匹配 TPS1 商品库…',
+  ],
+  'Không đọc được đơn hàng': ['Could not parse the order file', '无法解析采购单'],
+  'Không cập nhật được dòng hàng': ['Could not update line item', '无法更新商品行'],
+  'Còn dòng hàng cần kiểm tra': ['Some line items still need review', '仍有商品行待核对'],
+  'Ảnh, PDF hoặc Excel · luôn xem lại trước khi thêm vào giỏ': [
+    'Photo, PDF, or Excel · always review before adding to cart',
+    '支持图片、PDF 或 Excel · 加入购物车前可逐行核对',
+  ],
+  'Chụp danh sách đặt hàng': ['Take a photo of order sheet', '拍摄采购清单'],
+  'Chọn ảnh, PDF hoặc Excel': ['Select Photo, PDF, or Excel', '选择图片、PDF 或 Excel'],
+  'Đọc và đối chiếu đơn hàng': ['Analyze & Match Order Items', '解析并匹配采购商品'],
+  'Hợp lệ': ['Matched', '已匹配'],
+  'Cần sửa': ['Needs fix', '需修正'],
+  'Chỉ thêm dòng màu xanh. Dòng đỏ phải sửa hoặc bỏ chọn.': [
+    'Only green matched rows will be added. Red rows must be fixed or deselected.',
+    '仅添加绿色已匹配行；红色行请修正或取消勾选。',
+  ],
+  'Thêm': ['Add', '添加'],
+  'dòng vào giỏ': ['rows to cart', '行商品至购物车'],
+  'Đọc được:': ['Parsed:', '识别结果：'],
+  'Bỏ dòng này': ['Deselect row', '取消此行'],
+  'Chọn lại dòng này': ['Reselect row', '重新勾选此行'],
+  'Các mặt hàng trong đơn cũ hiện không còn trong danh mục. Vui lòng tìm và chọn lại.': [
+    'Items from this past order are no longer in the catalog. Please search and select again.',
+    '历史订单中的商品已不在当前目录中，请重新搜索选购。',
+  ],
+  'Một số mặt hàng cũ không còn trong danh mục và đã được bỏ qua.': [
+    'Some unavailable items from the past order were skipped.',
+    '部分已下架的历史商品已自动跳过。',
+  ],
+  'Không đọc được dữ liệu đơn cũ. Vui lòng thử lại.': [
+    'Could not load past order data. Please try again.',
+    '无法读取历史订单数据，请重试。',
+  ],
+  'Chọn sản phẩm hoặc từ khóa gợi ý': [
+    'Select a product or suggested keyword',
+    '选择商品或推荐关键词',
+  ],
+  'Chọn ngôn ngữ': [
+    'Select language',
+    '选择语言',
+  ],
+  'Đi tới Gửi đơn': [
+    'Go to Submit Order',
+    '前往提交订单',
+  ],
+  'mặt hàng trong giỏ': [
+    'items in cart',
+    '件购物车商品',
+  ],
+  'Thu gọn danh sách (chỉ hiện 4 mặt hàng)': [
+    'Collapse list (show 4 items)',
+    '收起列表（仅显示 4 件商品）',
+  ],
+  'Ghi chú sơ chế / quy cách...': [
+    'Add prep / packaging note...',
+    '添加加工／规格备注...',
+  ],
+  'Hiện tại': ['Current', '当前'],
+  'Đã qua': ['Done', '已完成'],
+  'Xem tất cả danh mục này': ['View all in this category', '查看该分类全部'],
+  'Danh mục chi tiết': ['Subcategories', '细分品类'],
+  'Tiêu chuẩn cung ứng TPS1': ['TPS1 Supply Standards', 'TPS1 供应标准'],
+  'Giá hợp đồng': ['Contract pricing', '合同专享价'],
+  'Rau củ tươi': ['Fresh Vegetables', '新鲜蔬菜'],
+  'Củ, quả & Khoai': ['Roots, Gourds & Potatoes', '根茎与瓜果'],
+  'Nấm tươi các loại': ['Fresh Mushrooms', '新鲜菌菇'],
+  'Trái cây tươi': ['Fresh Fruits', '新鲜水果'],
+  'Rau gia vị & Rau thơm': ['Herbs & Aromatics', '香草与调味菜'],
+  'Rau củ sơ chế sẵn': ['Pre-cut Vegetables', '净菜与预切菜'],
+  'VIETGAP': ['VIETGAP', 'VIETGAP'],
+  'Nông trại Đà Lạt': ['Dalat Farms', '大叻农场直采'],
+  'Thu hoạch & vận chuyển lạnh trong 24h': ['Harvested & chilled within 24h', '24小时内采摘冷链直达'],
+  'SƠ CHẾ': ['PRE-PREP', '净菜加工'],
+  'Cắt gọt theo yêu cầu': ['Custom cut & trimmed', '按需切配清洗'],
+  'Rửa sạch gốc, đóng sọt/túi PE chuẩn bếp': ['Washed & packed in kitchen PE crates', '去根洗净，厨房专用框/PE袋包装'],
+  'ISO 22000': ['ISO 22000', 'ISO 22000'],
+  'Kiểm định dư lượng': ['Residue Tested', '农残检测合格'],
+  'Đạt chuẩn an toàn bếp trường học & xí nghiệp': ['Safe for school & factory canteens', '符合学校及企业食堂安全标准'],
+  'CA SỚM': ['EARLY SHIFT', '早班配送'],
+  'Giao từ 05:00 sáng': ['Delivered from 05:00 AM', '凌晨 05:00 起送达'],
+  'Đảm bảo độ tươi giòn cho ca nấu đầu ngày': ['Crisp freshness for morning prep', '保障早班烹饪新鲜脆嫩'],
+  'Ba rọi & Sườn heo': ['Pork Belly & Ribs', '五花肉与排骨'],
+  'Thịt nạc & Thịt đùi': ['Lean Pork & Leg Cuts', '瘦肉与猪腿肉'],
+  'Thịt heo xay & Chế biến': ['Ground Pork & Prepared Cuts', '猪肉末与加工肉'],
+  'Chân giò & Xương hầm': ['Pork Hock & Soup Bones', '猪蹄与筒子骨'],
+  'Lòng & Nội tạng làm sạch': ['Cleaned Pork Offal', '精洗猪内脏'],
+  'THỊT MÁT': ['CHILLED MEAT', '冷鲜肉'],
+  'Kiểm dịch thú y 100%': ['100% Vet Inspected', '100% 兽医检疫合格'],
+  'Nguồn heo mảnh & thịt mát chuẩn CP / Vissan': ['CP / Vissan certified chilled pork', 'CP / Vissan 正规冷鲜猪肉'],
+  'CẮT QUY CÁCH': ['CUSTOM CUTS', '按规切配'],
+  'Cắt lát · Thái hạt lựu': ['Sliced · Diced to Spec', '切片 · 切丁定制'],
+  'Chia khay hút chân không theo định lượng bếp': ['Vacuum-portioned to kitchen specs', '按食堂定量真空分装'],
+  'XE LẠNH': ['COLD CHAIN', '冷链专车'],
+  'Bảo quản 0°C – 4°C': ['Stored at 0°C – 4°C', '0°C – 4°C 低温保鲜'],
+  'Giữ nguyên màu sắc & độ ngọt tự nhiên': ['Preserves natural color & flavor', '锁住自然色泽与鲜甜口感'],
+  'ĐỒNG ĐỀU': ['CONSISTENT', '品质均一'],
+  'Tỉ lệ nạc mỡ chuẩn': ['Standard lean-to-fat ratio', '肥瘦比例严格达标'],
+  'Kiểm soát đúng quy cách hợp đồng bếp ăn': ['Strictly meets contract kitchen specs', '严格遵循食堂合同规格'],
+  'Thăn bò & Phi lê': ['Beef Tenderloin & Fillet', '牛柳与牛排肉'],
+  'Bắp bò & Nạm bò': ['Beef Shank & Brisket', '牛腱与牛腩'],
+  'Ba chỉ bò cuộn & Thái lát': ['Rolled & Sliced Beef Belly', '肥牛卷与切片'],
+  'Bò xay & Bò lúc lắc': ['Ground & Cubed Beef', '牛肉末与骰子牛肉'],
+  'Xương bò & Đuôi bò': ['Beef Bones & Oxtail', '牛骨与牛尾'],
+  'NHẬP KHẨU': ['IMPORTED', '优质进口'],
+  'Bò Úc · Mỹ · Nội địa': ['Australian · US · Local Beef', '澳洲 · 美国 · 本地牛肉'],
+  'Đầy đủ chứng từ CO/CQ & kiểm dịch nhập khẩu': ['Full CO/CQ & import quarantine docs', '齐全 CO/CQ 及进口检疫证明'],
+  'CHẾ BIẾN': ['MACHINE CUT', '机械精切'],
+  'Thái máy 2mm – 5mm': ['Machine sliced 2mm – 5mm', '2mm – 5mm 机械切片'],
+  'Đóng khay tiện lợi cho món xào, phở, lẩu': ['Tray-packed for stir-fry, pho & hotpot', '盒装直用，适合炒菜/汤粉/火锅'],
+  'CHUỖI LẠNH': ['DEEP FROZEN', '深冷锁鲜'],
+  'Cấp đông sâu -18°C': ['Deep frozen at -18°C', '-18°C 深度急冻'],
+  'Không tái đông, giữ trọn dinh dưỡng': ['Never refrozen, full nutrition retained', '绝不二次解冻，保留营养'],
+  'BÁO GIÁ SỚM': ['STABLE PRICE', '稳价直供'],
+  'Giá sỉ ổn định': ['Stable wholesale pricing', '批发价格稳定'],
+  'Cam kết bình ổn giá theo kỳ hợp đồng': ['Locked pricing across contract terms', '合同期内承诺稳定供货价'],
+  'Ức gà & Phi lê gà': ['Chicken Breast & Fillet', '鸡胸肉与鸡柳'],
+  'Đùi gà & Cánh gà': ['Chicken Thighs & Wings', '鸡腿与鸡翅'],
+  'Gà nguyên con & Gà ta': ['Whole & Free-Range Chicken', '整鸡与土鸡'],
+  'Thịt vịt & Ngan làm sạch': ['Cleaned Duck & Muscovy', '精洗鸭肉与番鸭'],
+  'Trứng gà, Trứng vịt & Trứng cút': ['Chicken, Duck & Quail Eggs', '鸡蛋、鸭蛋与鹌鹑蛋'],
+  'Xương gà & Lòng mề': ['Chicken Bones & Giblets', '鸡骨架与鸡杂'],
+  'AN TOÀN': ['CERTIFIED', '安全认证'],
+  'Gia cầm & Trứng sạch': ['Clean Poultry & Eggs', '放心禽肉与鲜蛋'],
+  'Nguồn trại khép kín, đóng dấu kiểm dịch': ['Closed-farm origin with quarantine seal', '封闭养殖场直供，检疫印章齐全'],
+  'Chặt sẵn theo phần': ['Pre-chopped Portions', '按份切块配好'],
+  'Phân chia theo suất ăn công nghiệp': ['Portioned for industrial meal servings', '按团餐份量精准分装'],
+  'TRỨNG MỚI': ['FRESH EGGS', '每日鲜蛋'],
+  'Trứng mới mỗi ngày': ['Daily fresh eggs', '每日新鲜鸡蛋'],
+  'Đóng vỉ 30 quả chống vỡ chuyên dụng': ['Packed in shockproof 30-egg trays', '专用30枚防破蛋托包装'],
+  'GIAO NHANH': ['ON-TIME', '准时送达'],
+  'Đúng giờ ca bếp': ['Right on kitchen schedule', '准时匹配食堂班次'],
+  'Đáp ứng sản lượng lớn cho bếp suất ăn': ['High-volume supply for mass catering', '满足大批量团餐厨房需求'],
+  'Cá nước ngọt & Cá biển': ['Freshwater & Sea Fish', '淡水鱼与海鱼'],
+  'Cá phi lê không xương': ['Boneless Fish Fillets', '无刺鱼柳鱼片'],
+  'Tôm sú, Tôm thẻ & Tôm thịt': ['Tiger, Whiteleg & Peeled Shrimp', '黑虎虾、白虾与虾仁'],
+  'Mực, Bạch tuộc & Chả cá': ['Squid, Octopus & Fish Cakes', '鱿鱼、章鱼与鱼饼'],
+  'Nghêu, Sò, Ốc & Hải sản khác': ['Clams, Shellfish & Seafood', '蛤蜊与贝类海鲜'],
+  'LÀM SẠCH': ['CLEANED', '精洗去脏'],
+  'Đánh vảy · Bỏ ruột · Cắt khúc': ['Scaled · Gutted · Steaked', '去鳞 · 去内脏 · 切段'],
+  'Sơ chế sạch sẽ, bếp nhận hàng nấu ngay': ['Ready-to-cook right upon delivery', '清洗干净，收货即可下锅'],
+  'KHÔNG XƯƠNG': ['BONELESS', '无骨无刺'],
+  'Phi lê an toàn': ['Safe boneless fillets', '安全去刺鱼柳'],
+  'Phù hợp trường mầm non, tiểu học & bệnh viện': ['Ideal for schools & hospital kitchens', '适合幼儿园、中小学及医院食堂'],
+  'ĐÁ LẠNH': ['ICED BOX', '冰鲜箱装'],
+  'Đóng thùng giữ nhiệt': ['Insulated ice boxes', '保温冰箱配送'],
+  'Duy trì độ tươi từ cảng/chợ đầu mối tới bếp': ['Port-to-kitchen chilled freshness', '从码头直达厨房的新鲜度'],
+  'ĐA DẠNG': ['FULL SIZES', '规格齐全'],
+  'Đủ size theo thực đơn': ['All sizes for your menu', '按菜谱需求提供多规格'],
+  'Cắt lát, cắt khúc hoặc nguyên con theo yêu cầu': ['Steaks, fillets or whole on request', '可按需切片、切块或整条供应'],
+  'Khoai tây & Rau củ đông lạnh': ['Frozen Fries & Vegetables', '冷冻薯条与蔬菜'],
+  'Chả giò, Cá viên & Xúc xích': ['Spring Rolls, Fish Balls & Sausages', '春卷、鱼丸与香肠'],
+  'Thịt & Hải sản cấp đông': ['Frozen Meats & Seafood', '冷冻肉类与海鲜'],
+  'Bơ, Phô mai & Sữa': ['Butter, Cheese & Dairy', '黄油、奶酪与乳制品'],
+  'IQF -18°C': ['IQF -18°C', 'IQF -18°C'],
+  'Công nghệ cấp đông nhanh': ['IQF quick-freeze tech', 'IQF 快速单冻技术'],
+  'Giữ nguyên cấu trúc và hương vị món ăn': ['Locks in texture & flavor', '完美锁住口感与风味'],
+  'TIỆN LỢI': ['TIME-SAVING', '省时高效'],
+  'Chế biến nhanh chóng': ['Fast kitchen prep', '快速出餐制备'],
+  'Tiết kiệm thời gian sơ chế cho bếp giờ cao điểm': ['Cuts prep time during peak kitchen hours', '高峰时段大幅节省备菜时间'],
+  'CHÍNH HÃNG': ['GENUINE', '正品保障'],
+  'Thương hiệu uy tín': ['Trusted foodservice brands', '知名餐饮品牌直供'],
+  'Aviko, McCain, CP, Cầu Tre, Vinamilk...': ['Aviko, McCain, CP, Cau Tre, Vinamilk...', 'Aviko、McCain、CP、Cau Tre、Vinamilk 等'],
+  'Giao xe bảo ôn chuyên dụng': ['Dedicated insulated trucks', '专用保温冷藏车配送'],
+  'Kiểm soát nhiệt độ xuyên suốt hành trình': ['Monitored temperature end-to-end', '全程温控保障品质'],
+  'Dầu ăn, Mỡ & Bơ thực vật': ['Cooking Oil, Lard & Margarine', '食用油与人造黄油'],
+  'Nước mắm, Nước tương & Giấm': ['Fish Sauce, Soy Sauce & Vinegar', '鱼露、酱油与食醋'],
+  'Đường, Muối & Hạt nêm': ['Sugar, Salt & Seasoning Powder', '白糖、食盐与鸡精味精'],
+  'Tương ớt, Tương cà & Sốt nấu': ['Chili, Tomato & Cooking Sauces', '辣椒酱、番茄酱与调味酱'],
+  'Bột gia vị & Phụ gia bếp': ['Spices & Culinary Powders', '香料粉与烹饪辅料'],
+  'QUY CÁCH BẾP': ['BULK PACK', '商用大包装'],
+  'Can 5L – 25L · Bao 10kg – 50kg': ['5L–25L Jerrycans · 10kg–50kg Sacks', '5L–25L 大桶 · 10kg–50kg 大袋'],
+  'Tối ưu chi phí cho bếp ăn công nghiệp': ['Cost-effective bulk packs for canteens', '优化大型食堂采购成本'],
+  '100% thương hiệu lớn': ['100% leading brands', '100% 一线大牌'],
+  'Knorr, Ajinomoto, Nam Ngư, Tường An, Cholimex': ['Knorr, Ajinomoto, Nam Ngu, Tuong An, Cholimex', '家乐、味之素、Nam Ngu、Tuong An、Cholimex'],
+  'HẠN DÙNG XA': ['LONG SHELF', '新鲜日期'],
+  'Date mới liên tục': ['Fresh batch dates', '最新生产批次'],
+  'Xuất nhập kho FIFO, đầy đủ hồ sơ công bố': ['FIFO warehouse & full quality dossiers', '先进先出仓储，资质证明齐全'],
+  'HOÁ ĐƠN VAT': ['VAT INVOICE', '正规发票'],
+  'Chứng từ minh bạch': ['Transparent billing', '单据规范透明'],
+  'Xuất hoá đơn VAT điện tử đầy đủ theo đơn': ['Full e-VAT invoices for every order', '每笔订单均可开具电子增值税发票'],
+  'Gạo trắng, Gạo tấm & Nếp': ['White, Broken & Sticky Rice', '白米、碎米与糯米'],
+  'Bún tươi, Phở & Bánh ướt': ['Fresh Rice Noodles & Sheets', '鲜米粉、河粉与肠粉'],
+  'Mì, Miến, Nui & Bánh tráng': ['Dry Noodles, Pasta & Rice Paper', '干面、粉丝、通心粉与米纸'],
+  'Đậu, Hạt, Nấm khô & Mộc nhĩ': ['Beans, Nuts & Dried Mushrooms', '杂豆、干菌菇与木耳'],
+  'Bột mì, Bột năng & Bột chiên': ['Flours, Starches & Batter Mixes', '面粉、生粉与炸粉'],
+  'Đồ hộp, Đồ ngâm & Nguyên liệu pha chế': ['Canned, Pickled & Beverage Supplies', '罐头、腌菜与饮品原料'],
+  'GẠO BẾP ĂN': ['BULK RICE', '食堂专用米'],
+  'Gạo ST25 · Gạo thơm · Gạo tấm': ['ST25 · Jasmine · Broken Rice', 'ST25 丝苗米 · 香米 · 碎米'],
+  'Cơm dẻo, nở đều, ổn định phẩm chất quanh năm': ['Fluffy, consistent grain year-round', '米饭软糯适口，全年品质稳定'],
+  'BÚN TRONG NGÀY': ['DAILY NOODLES', '当日鲜粉'],
+  'Bún & Phở tươi mỗi sáng': ['Fresh vermicelli & pho every morning', '每日清晨现做鲜粉'],
+  'Sản xuất mới trong đêm, không chất bảo quản': ['Made overnight, preservative-free', '夜间现制无防腐剂'],
+  'KHO KHÔ CHUẨN': ['DRY STORAGE', '标准干仓'],
+  'Bảo quản khô ráo, sạch sẽ': ['Dry, clean warehouse storage', '干燥整洁标准仓储'],
+  'Đóng bao/thùng nguyên kiện chống ẩm mốc': ['Moisture-proof sealed sacks & cartons', '防潮原件袋装/箱装'],
+  'GIÁ SỈ TỐT': ['WHOLESALE', '大宗优惠价'],
+  'Chiết khấu theo sản lượng': ['Volume-based discounts', '按采购量享阶梯折扣'],
+  'Nguồn hàng trực tiếp từ nhà máy & nhà phân phối': ['Direct factory & distributor sourcing', '厂家及一级经销商直供'],
+  'Đậu hũ trắng & Đậu hũ chiên': ['Fresh & Fried Tofu', '嫩豆腐与油豆腐'],
+  'Tàu hũ ky & Phù trúc': ['Tofu Skin & Yuba Sheets', '腐竹与豆腐皮'],
+  'Chả chay, Giò chay & Thực phẩm chay': ['Vegan Ham & Plant-Based Meats', '素火腿与素食食材'],
+  'Gia vị chay & Nấm chế biến': ['Vegan Seasonings & Mushrooms', '素食调味料与菌菇'],
+  'LÀM TRONG NGÀY': ['DAILY MADE', '每日现制'],
+  'Đậu hũ thủ công tươi mới': ['Fresh artisanal tofu daily', '每日手工鲜制豆腐'],
+  'Không thạch cao, mềm béo, giao sáng sớm': ['Gypsum-free, creamy, early morning delivery', '无石膏添加，嫩滑鲜香，清晨配送'],
+  'ĐA DẠNG MÓN': ['FULL VEGAN', '素食品类全'],
+  'Trọn bộ nguyên liệu bếp chay': ['Complete vegetarian pantry', '一站备齐素食厨房原料'],
+  'Đáp ứng thực đơn ngày Rằm, mùng 1 & trường học': ['For full-moon days & school vegan menus', '满足初一十五及学校素食菜单'],
+  'CHUẨN ATVSTP': ['100% PLANT', '纯素食品安全'],
+  'Nguồn gốc thực vật 100%': ['100% plant-based origin', '100% 纯植物来源'],
+  'Đóng gói vệ sinh, bảo quản lạnh an toàn': ['Hygienic chilled packaging', '卫生分装，安全冷链储运'],
+  'ĐẶT LỊCH TRƯỚC': ['PRE-ORDER', '提前预订'],
+  'Chủ động lịch Rằm / Mùng 1': ['Reserve for peak vegan days', '初一十五高峰期提前锁单'],
+  'Giữ hàng và giữ giá ổn định ngày cao điểm': ['Guaranteed stock & price on peak dates', '高峰期稳货稳价不断供'],
+  'Hộp xốp, Hộp bã mía & Khay đựng': ['Food Boxes, Bagasse & Meal Trays', '餐盒、甘蔗浆盒与分格餐盘'],
+  'Màng bọc, Giấy bạc & Túi đựng': ['Cling Film, Foil & Carrier Bags', '保鲜膜、锡纸与打包袋'],
+  'Đũa, Muỗng, Nĩa & Tăm tre': ['Chopsticks, Cutlery & Skewers', '筷子、勺叉与竹签牙签'],
+  'Nước rửa chén, Tẩy rửa & Vệ sinh': ['Dish Soap, Detergents & Tissue', '洗洁精、清洁剂与纸巾'],
+  'Găng tay, Tạp dề & Bảo hộ bếp': ['Gloves, Aprons & Kitchen PPE', '手套、围裙与厨房防护用品'],
+  'Nồi, Chảo, Dao thớt & Dụng cụ nấu': ['Pots, Pans, Knives & Cookware', '锅具、刀具砧板与炊具'],
+  'TRỌN GÓI BẾP': ['ONE-STOP', '厨房耗材一站齐'],
+  'Vật tư tiêu hao 1 điểm chạm': ['All consumables in one order', '厨房消耗品一次配齐'],
+  'Đặt kèm xe thực phẩm sáng, không tốn phí ship lẻ': ['Delivered on morning food trucks, no extra freight', '随早班食材车同送，免额外运费'],
+  'AN TOÀN THỰC PHẨM': ['FOOD-GRADE', '食品接触级'],
+  'Bao bì đạt chuẩn tiếp xúc': ['Food-contact safe packaging', '符合食品接触安全标准'],
+  'Hộp bã mía, màng bọc PE công nghiệp chính hãng': ['Certified bagasse boxes & commercial PE film', '正品甘蔗浆餐盒与商用 PE 保鲜膜'],
+  'VỆ SINH HACCP': ['HACCP CLEAN', 'HACCP 卫生'],
+  'Hoá chất & Bảo hộ chuẩn bếp': ['Kitchen-grade cleaners & PPE', '食堂级清洁剂与防护装备'],
+  'Đầy đủ găng tay, tạp dề, dung dịch vệ sinh': ['Complete gloves, aprons & sanitizers', '手套、围裙及消毒液齐全'],
+  'GIÁ BÁN SỈ': ['CASE PRICING', '整箱批发价'],
+  'Đóng lốc / thùng tiết kiệm': ['Economical packs & master cartons', '整条/整箱采购更省钱'],
+  'Tối ưu ngân sách vận hành bếp ăn tập thể': ['Lowers operating costs for mass kitchens', '助力降低集体食堂运营成本'],
 });
 
 type LanguageContextValue = { language: Language; setLanguage: (value: Language) => void; t: (value: string) => string; productName: (value: string) => string; productUnit: (value: string) => string; errorText: (error: { code?: string; message?: string }) => string };
@@ -596,7 +1005,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       .catch(() => { if (active) setCatalogNames({}); });
     return () => { active = false; };
   }, [language]);
-  const t = useCallback((value: string) => language === 'vi' ? value : translations[value]?.[language === 'en' ? 0 : 1] || value, [language]);
+  const t = useCallback((value: string) => language === 'vi' ? value : translations[value]?.[language === 'en' ? 0 : 1] || categoryTranslations[value]?.[language === 'en' ? 0 : 1] || value, [language]);
   const productName = useCallback((value: string) => language === 'vi' ? value : categoryTranslations[value]?.[language === 'en' ? 0 : 1] || catalogNames[value] || value, [language, catalogNames]);
   const productUnit = useCallback((value: string) => language === 'vi' ? value : unitTranslations[value]?.[language === 'en' ? 0 : 1] || value, [language]);
   const errorText = useCallback((error: { code?: string; message?: string }) => t((error.code && errorTranslations[error.code]) || error.message || 'Có lỗi xảy ra, vui lòng thử lại sau.'), [t]);
@@ -609,13 +1018,99 @@ export function useLanguage() {
   return value;
 }
 
+const LANGUAGE_OPTIONS: { code: Language; short: string; label: string }[] = [
+  { code: 'vi', short: 'VI', label: 'Tiếng Việt' },
+  { code: 'en', short: 'EN', label: 'English' },
+  { code: 'zh-CN', short: '中文', label: '简体中文' },
+];
+
 export function LanguageSwitcher({ dark = false }: { dark?: boolean }) {
-  const { language, setLanguage } = useLanguage();
-  return <label className={`inline-flex items-center gap-1 text-xs ${dark ? 'text-white' : 'text-[#17231d]'}`}>
-    <span className="sr-only">Language</span>
-    <select aria-label="Language / Ngôn ngữ / 语言" value={language} onChange={event => setLanguage(event.target.value as Language)}
-      className={`min-h-11 rounded-xl border px-2 font-semibold ${dark ? 'border-white/30 bg-[#0b4f34] text-white' : 'border-[#17231d]/15 bg-white text-[#17231d]'}`}>
-      <option value="vi">Tiếng Việt</option><option value="en">English</option><option value="zh-CN">简体中文</option>
-    </select>
-  </label>;
+  const { language, setLanguage, t } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handlePointerDown = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  const current = LANGUAGE_OPTIONS.find((opt) => opt.code === language) ?? LANGUAGE_OPTIONS[0];
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-label={t('Chọn ngôn ngữ')}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex h-9 sm:h-10 items-center gap-1 sm:gap-1.5 rounded-xl border px-2 sm:px-3 text-xs sm:text-sm transition-all cursor-pointer ${
+          dark
+            ? 'border-white/30 bg-[#0b4f34] text-white font-bold hover:bg-[#0f6443]'
+            : open
+              ? 'border-[#0f7a4f] bg-white text-[#17231d] font-extrabold sm:font-bold ring-2 ring-[#0f7a4f]/15'
+              : 'border-[#17231d]/12 bg-[#f8faf7] text-[#17231d] font-extrabold sm:font-bold hover:bg-white hover:border-[#0f7a4f]/40'
+        }`}
+      >
+        <Globe size={14} className={`hidden sm:inline shrink-0 ${dark ? 'text-white/80' : 'text-[#0f7a4f]'}`} />
+        <span className="sm:hidden">{current.short}</span>
+        <span className="hidden sm:inline whitespace-nowrap">{current.label}</span>
+        <ChevronDown
+          size={14}
+          className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''} ${
+            dark ? 'text-white/80' : 'text-[#59665f]'
+          }`}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="absolute right-0 top-[calc(100%+6px)] z-50 min-w-41 overflow-hidden rounded-2xl border border-[#17231d]/10 bg-white p-1.5 shadow-xl"
+        >
+          {LANGUAGE_OPTIONS.map((opt) => {
+            const active = opt.code === language;
+            return (
+              <button
+                key={opt.code}
+                type="button"
+                role="option"
+                aria-selected={active}
+                onClick={() => {
+                  setLanguage(opt.code);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center justify-between gap-2.5 rounded-xl px-2.5 py-2 text-left text-xs sm:text-sm transition-colors cursor-pointer ${
+                  active
+                    ? 'bg-[#eaf6ef] font-bold text-[#0b4f34]'
+                    : 'font-medium text-[#17231d] hover:bg-[#f4f8f5]'
+                }`}
+              >
+                <span className="flex items-center gap-2 whitespace-nowrap">
+                  <span className="inline-flex min-w-7 items-center justify-center rounded-md bg-[#17231d]/6 px-1.5 py-0.5 text-[10px] font-extrabold text-[#59665f]">
+                    {opt.short}
+                  </span>
+                  <span>{opt.label}</span>
+                </span>
+                {active && <Check size={14} className="text-[#0f7a4f] shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }

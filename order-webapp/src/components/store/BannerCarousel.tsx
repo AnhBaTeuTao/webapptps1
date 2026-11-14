@@ -34,11 +34,10 @@ function BrandHero() {
           <BadgeCheck size={14} /> {t('Đạt chuẩn ISO 22000 & HACCP')}
         </p>
         <h1 className="text-balance text-[18px] sm:text-[22px] lg:text-[26px] font-black leading-[1.28] sm:mt-2.5">
-          <span>{t('Nguồn thực phẩm sạch cho')}</span> <span className="inline-block">{t('bếp ăn,')}</span>{' '}
-          <span>{t('giao')}</span> <span className="inline-block">{t('tận nơi')}</span> <span>{t('theo nhu cầu của bếp.')}</span>
+          {t('Nguồn thực phẩm sạch cho bếp ăn,')} {t('giao tận nơi theo nhu cầu của bếp.')}
         </h1>
         <p className="mt-2 hidden max-w-130 text-pretty text-[13.5px] leading-relaxed text-emerald-50/85 sm:block">
-          {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng')} <span className="inline-block">{t('một nơi.')}</span>
+          {t('Hơn 5.000 mặt hàng, từ rau củ, thịt cá đến gia vị và đồ khô, để bếp của quý khách chỉ cần đặt hàng một nơi.')}
         </p>
         <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-[12px] font-medium text-emerald-100/90">
           <span className="inline-flex items-center gap-1">✓ {t('Chuẩn ISO 22000 & HACCP')}</span>
@@ -101,7 +100,7 @@ export default function BannerCarousel({ banners }: { banners: StoreBanner[] }) 
       <div ref={row} onScroll={onScroll} className="tps1-snap-row -mx-1 flex snap-x snap-mandatory gap-2.5 overflow-x-auto px-1 lg:mx-0 lg:gap-0 lg:px-0 overscroll-contain select-none cursor-grab">
         {banners.map((banner) => {
           const image = (
-            <picture className="block aspect-[2/1] w-full overflow-hidden rounded-2xl bg-[#eaf6ef] lg:aspect-[3/1] lg:rounded-2xl">
+            <picture className="block aspect-2/1 w-full overflow-hidden rounded-2xl bg-[#eaf6ef] lg:aspect-3/1 lg:rounded-2xl">
               <source media="(max-width: 1023px)" srcSet={banner.imageMobileUrl} />
               <img src={banner.imageUrl} alt={banner.title} className="h-full w-full object-cover" draggable={false} />
             </picture>

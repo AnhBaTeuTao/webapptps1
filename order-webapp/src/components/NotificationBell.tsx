@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Bell, BellOff, BellRing } from 'lucide-react';
 import { disablePush, enablePush, getPushStatus, isPushSupported } from '../lib/push';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Nút bật/tắt thông báo đẩy — chủ động để khách bấm thay vì tự động xin quyền
 // lúc mở app (trình duyệt/iOS chặn prompt tự động và tỉ lệ khách bấm "Cho
 // phép" thấp hơn nhiều nếu không giải thích trước lý do).
 export default function NotificationBell({ light = false }: { light?: boolean }) {
+  const { t } = useLanguage();
   const [status, setStatus] = useState<'unsupported' | 'denied' | 'subscribed' | 'not-subscribed' | 'loading'>(
     'loading'
   );
@@ -33,12 +35,13 @@ export default function NotificationBell({ light = false }: { light?: boolean })
   };
 
   const Icon = status === 'subscribed' ? BellRing : status === 'denied' ? BellOff : Bell;
-  const title =
+  const title = t(
     status === 'subscribed'
       ? 'Đã bật thông báo — bấm để tắt'
       : status === 'denied'
         ? 'Bạn đã chặn thông báo trong cài đặt trình duyệt'
-        : 'Bật thông báo đơn hàng';
+        : 'Bật thông báo đơn hàng'
+  );
 
   return (
     <button

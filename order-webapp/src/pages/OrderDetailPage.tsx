@@ -216,7 +216,7 @@ export default function OrderDetailPage() {
           <button
             onClick={() => navigate('/don-hang')}
             className="p-2.5 bg-[#f8faf7] border border-[#17231d]/10 rounded-xl hover:bg-[#eaece8] text-[#17231d] transition-colors cursor-pointer"
-            title="Quay lại danh sách đơn"
+            title={t('Quay lại danh sách đơn')}
           >
             <ArrowLeft size={18} />
           </button>
@@ -277,7 +277,7 @@ export default function OrderDetailPage() {
           <button
             onClick={fetchOrder}
             className="p-2 border border-[#17231d]/15 rounded-xl text-[#59665f] hover:bg-[#f5f7f3] transition-colors cursor-pointer"
-            title="Tải lại"
+            title={t('Làm mới')}
           >
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
           </button>
@@ -286,9 +286,19 @@ export default function OrderDetailPage() {
 
       {/* Timeline Tiến Trình Đơn Hàng */}
       <div className="bg-white rounded-2xl border border-[#17231d]/10 shadow-xs p-4 sm:p-5">
-        <h2 className="text-xs font-bold text-[#59665f] uppercase tracking-wider mb-4">
-          {t('Tiến trình xử lý đơn')}
-        </h2>
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <h2 className="text-xs font-bold text-[#59665f] uppercase tracking-wider">
+            {t('Tiến trình xử lý đơn')}
+          </h2>
+          {!isCanceled && currentStepIdx >= 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#edf7f2] border border-[#cde6d8] px-2.5 py-0.5 text-[11px] font-bold text-[#0f7a4f]">
+              <span className="size-1.5 rounded-full bg-[#0f7a4f] animate-pulse" />
+              <span>
+                {currentStepIdx + 1}/{TIMELINE_STEPS.length} · {t(TIMELINE_STEPS[currentStepIdx]?.label || '')}
+              </span>
+            </span>
+          )}
+        </div>
 
         {isCanceled ? (
           <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 flex items-center gap-3 text-xs">
@@ -296,59 +306,137 @@ export default function OrderDetailPage() {
             <div>
               <p className="font-bold">{t('Đơn hàng này đã bị hủy.')}</p>
               <p className="text-[#59665f] mt-0.5">
-                Nếu cần hỗ trợ thêm, vui lòng liên hệ hotline TPS1: <strong>089 890 2222</strong>.
+                {t('Nếu cần hỗ trợ thêm, vui lòng liên hệ hotline TPS1:')} <strong>089 890 2222</strong>.
               </p>
             </div>
           </div>
         ) : (
-          <div className="relative">
-            {/* Thanh nối các bước */}
-            <div className="hidden sm:block absolute top-1/2 left-6 right-6 h-0.5 bg-[#17231d]/10 -translate-y-1/2 z-0" />
+          <>
+            {/* Desktop / Tablet: Thanh line đi xuyên chính giữa tâm 5 ô tròn */}
+            <div className="hidden sm:block relative">
+              {/* Đường kẻ nối chính xác qua tâm 5 ô tròn (8px padding-top + 20px bán kính = 28px) */}
+              <div className="pointer-events-none absolute top-7 left-[10%] right-[10%] h-0.5 -translate-y-1/2 bg-[#e2ebe5] z-0">
+                <div
+                  className="h-full bg-[#0f7a4f] transition-all duration-500"
+                  style={{
+                    width: `${(Math.max(0, currentStepIdx) / (TIMELINE_STEPS.length - 1)) * 100}%`,
+                  }}
+                />
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 relative z-10">
-              {TIMELINE_STEPS.map((step, idx) => {
-                const isPassed = currentStepIdx >= idx;
-                const isCurrent = currentStepIdx === idx;
-                const StepIcon = step.icon;
+              <div className="grid grid-cols-5 gap-2 relative z-10">
+                {TIMELINE_STEPS.map((step, idx) => {
+                  const isPassed = currentStepIdx >= idx;
+                  const isCurrent = currentStepIdx === idx;
+                  const StepIcon = step.icon;
 
-                return (
-                  <div
-                    key={step.key}
-                    className={`flex flex-col items-center text-center p-2 rounded-xl transition-all ${
-                      isCurrent
-                        ? 'bg-[#0f7a4f]/10 border border-[#0f7a4f]/20'
-                        : isPassed
-                        ? 'text-[#0f7a4f]'
-                        : 'text-[#59665f]/50'
-                    }`}
-                  >
+                  return (
                     <div
-                      className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs mb-1.5 transition-colors ${
-                        isCurrent
-                          ? 'bg-[#0f7a4f] text-white shadow-md shadow-[#0f7a4f]/30 ring-4 ring-[#0f7a4f]/15'
-                          : isPassed
-                          ? 'bg-[#0f7a4f] text-white'
-                          : 'bg-[#f5f7f3] text-[#59665f]/60 border border-[#17231d]/10'
-                      }`}
+                      key={step.key}
+                      className="flex flex-col items-center text-center pt-2 pb-1.5 px-1.5"
                     >
-                      <StepIcon size={16} />
+                      <div
+                        className={`size-10 rounded-full flex items-center justify-center font-bold text-xs mb-2 transition-all ${
+                          isCurrent
+                            ? 'bg-[#0f7a4f] text-white shadow-md shadow-[#0f7a4f]/25 ring-4 ring-[#d7efe3]'
+                            : isPassed
+                            ? 'bg-[#0f7a4f] text-white border-2 border-white shadow-xs'
+                            : 'bg-white text-[#8c9a92] border-2 border-[#dce6e0]'
+                        }`}
+                      >
+                        <StepIcon size={17} />
+                      </div>
+                      <span
+                        className={`text-xs leading-snug px-2 py-0.5 rounded-full transition-colors ${
+                          isCurrent
+                            ? 'font-extrabold text-[#0b4f34] bg-[#eaf6f0] border border-[#c6e4d4]'
+                            : isPassed
+                            ? 'font-bold text-[#17231d]'
+                            : 'font-semibold text-[#8c9a92]'
+                        }`}
+                      >
+                        {t(step.label)}
+                      </span>
                     </div>
-                    <span
-                      className={`text-xs font-bold leading-tight ${
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Mobile: Timeline dọc liền mạch */}
+            <div className="sm:hidden relative pl-1">
+              <div className="space-y-1.5 relative">
+                {TIMELINE_STEPS.map((step, idx) => {
+                  const isPassed = currentStepIdx >= idx;
+                  const isCurrent = currentStepIdx === idx;
+                  const isLast = idx === TIMELINE_STEPS.length - 1;
+                  const isSegmentActive = currentStepIdx > idx;
+                  const StepIcon = step.icon;
+
+                  return (
+                    <div
+                      key={step.key}
+                      className={`relative flex items-center justify-between gap-3 rounded-xl px-2.5 py-2 transition-all ${
                         isCurrent
-                          ? 'text-[#0b4f34]'
-                          : isPassed
-                          ? 'text-[#17231d]'
-                          : 'text-[#59665f]/60'
+                          ? 'bg-[#eef8f3] border border-[#c5e4d4] shadow-2xs'
+                          : 'border border-transparent'
                       }`}
                     >
-                      {t(step.label)}
-                    </span>
-                  </div>
-                );
-              })}
+                      {/* Thanh dọc nối từ tâm ô tròn hiện tại xuống tâm ô tròn kế tiếp */}
+                      {!isLast && (
+                        <div
+                          className={`pointer-events-none absolute left-6.5 top-8.5 h-[calc(100%-12px)] w-0.5 -translate-x-1/2 z-0 ${
+                            isSegmentActive ? 'bg-[#0f7a4f]' : 'bg-[#dfe8e2]'
+                          }`}
+                        />
+                      )}
+
+                      <div className="flex items-center gap-3 min-w-0 relative z-10">
+                        <div
+                          className={`size-8 rounded-full shrink-0 flex items-center justify-center transition-all ${
+                            isCurrent
+                              ? 'bg-[#0f7a4f] text-white shadow-sm shadow-[#0f7a4f]/25 ring-3 ring-[#d4eee1]'
+                              : isPassed
+                              ? 'bg-[#0f7a4f] text-white'
+                              : 'bg-white text-[#8c9a92] border-2 border-[#dce6e0]'
+                          }`}
+                        >
+                          <StepIcon size={15} />
+                        </div>
+                        <span
+                          className={`text-xs leading-snug truncate ${
+                            isCurrent
+                              ? 'font-extrabold text-[#0b4f34]'
+                              : isPassed
+                              ? 'font-bold text-[#17231d]'
+                              : 'font-medium text-[#8c9a92]'
+                          }`}
+                        >
+                          {t(step.label)}
+                        </span>
+                      </div>
+
+                      <div className="shrink-0 relative z-10">
+                        {isCurrent ? (
+                          <span className="inline-flex items-center rounded-full bg-[#0f7a4f] px-2 py-0.5 text-[10px] font-bold text-white">
+                            {t('Hiện tại')}
+                          </span>
+                        ) : isPassed ? (
+                          <span className="inline-flex items-center rounded-full bg-[#edf7f2] px-2 py-0.5 text-[10px] font-semibold text-[#0f7a4f]">
+                            {t('Đã qua')}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-medium text-[#9aa8a0]">
+                            {idx + 1}/{TIMELINE_STEPS.length}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 
@@ -364,7 +452,7 @@ export default function OrderDetailPage() {
                 <span>{t('Mặt hàng trong đơn')}</span>
               </h2>
               <span className="text-xs font-semibold text-[#59665f]">
-                {items.length} mặt hàng
+                {items.length} {t('mặt hàng')}
               </span>
             </div>
 
@@ -416,7 +504,7 @@ export default function OrderDetailPage() {
             {/* Ghi chú toàn đơn */}
             {order.note && (
               <div className="p-3.5 bg-amber-500/10 border-t border-amber-200/40 text-amber-900 text-xs">
-                <span className="font-bold">Ghi chú đơn hàng: </span>
+                <span className="font-bold">{t('Ghi chú đơn hàng:')} </span>
                 <span>{order.note}</span>
               </div>
             )}
@@ -438,7 +526,7 @@ export default function OrderDetailPage() {
 
             {Number(order.discount_amount) > 0 && (
               <div className="flex justify-between text-[#59665f]">
-                <span>Điều chỉnh giá:</span>
+                <span>{t('Điều chỉnh giá:')}</span>
                 <span className="font-mono font-bold text-red-600">
                   -{money(order.discount_amount || 0)}
                 </span>
@@ -446,9 +534,9 @@ export default function OrderDetailPage() {
             )}
 
             <div className="flex justify-between text-[#59665f]">
-              <span>Phí vận chuyển xe lạnh:</span>
+              <span>{t('Phí vận chuyển xe lạnh:')}</span>
               <span className="font-mono font-semibold text-[#17231d]">
-                {Number(order.shipping_amount) > 0 ? money(order.shipping_amount || 0) : 'Miễn phí'}
+                {Number(order.shipping_amount) > 0 ? money(order.shipping_amount || 0) : t('Miễn phí')}
               </span>
             </div>
 
@@ -463,7 +551,7 @@ export default function OrderDetailPage() {
               <Info size={12} className="text-[#e0742f]" />
               <span>
                 {order.status === 'completed'
-                  ? 'Giá đã chốt và hoàn tất thanh toán/công nợ.'
+                  ? t('Giá đã chốt và hoàn tất thanh toán/công nợ.')
                   : t('Giá tạm tính chưa gồm hàng chờ giá; TPS1 sẽ xác nhận giá cuối cùng.')}
               </span>
             </p>
@@ -476,21 +564,21 @@ export default function OrderDetailPage() {
           <div className="bg-white rounded-2xl border border-[#17231d]/10 shadow-xs p-4 space-y-3 text-xs">
             <h3 className="font-bold text-sm text-[#17231d] flex items-center gap-2 pb-2 border-b border-[#17231d]/10">
               <MapPin size={16} className="text-[#0f7a4f]" />
-              <span>Địa chỉ &amp; Giao nhận</span>
+              <span>{t('Địa chỉ & Giao nhận')}</span>
             </h3>
 
             <div className="space-y-2">
               {order.delivery_date && (
                 <div className="flex items-start gap-2.5 text-[#17231d]">
                   <Clock size={14} className="text-[#0f7a4f] mt-0.5 shrink-0" />
-                  <span>Ngày giao dự kiến: <strong>{new Date(`${order.delivery_date}T00:00:00`).toLocaleDateString('vi-VN')}</strong></span>
+                  <span>{t('Ngày giao dự kiến:')} <strong>{new Date(`${order.delivery_date}T00:00:00`).toLocaleDateString('vi-VN')}</strong></span>
                 </div>
               )}
               {(order.delivery_name || order.delivery_phone) && (
                 <div className="flex items-start gap-2.5">
                   <User size={14} className="text-[#59665f]/60 mt-0.5 shrink-0" />
                   <div>
-                    <p className="font-bold text-[#17231d]">{order.delivery_name || 'Khách hàng'}</p>
+                    <p className="font-bold text-[#17231d]">{order.delivery_name || t('Khách hàng')}</p>
                     {order.delivery_phone && (
                       <p className="text-[#59665f] font-mono">{order.delivery_phone}</p>
                     )}
@@ -501,7 +589,7 @@ export default function OrderDetailPage() {
               <div className="flex items-start gap-2.5 text-[#59665f]">
                 <MapPin size={14} className="text-[#59665f]/60 mt-0.5 shrink-0" />
                 <span className="leading-relaxed">
-                  {order.delivery_address || 'Địa chỉ kho/bếp ăn mặc định'}
+                  {order.delivery_address || t('Địa chỉ kho/bếp ăn mặc định')}
                 </span>
               </div>
             </div>
@@ -511,33 +599,33 @@ export default function OrderDetailPage() {
           <div className="bg-white rounded-2xl border border-[#17231d]/10 shadow-xs p-4 space-y-3 text-xs">
             <h3 className="font-bold text-sm text-[#17231d] flex items-center gap-2 pb-2 border-b border-[#17231d]/10">
               <Wallet size={16} className="text-[#0f7a4f]" />
-              <span>Thanh toán &amp; Công nợ</span>
+              <span>{t('Thanh toán & Công nợ')}</span>
             </h3>
 
             <div>
-              <span className="text-[11px] text-[#59665f] block mb-1">Phương thức</span>
+              <span className="text-[11px] text-[#59665f] block mb-1">{t('Phương thức')}</span>
               <span className="font-semibold text-[#17231d] bg-[#f8faf7] px-2.5 py-1 rounded-lg border border-[#17231d]/10 inline-block">
-                {PAYMENT_METHOD_LABELS[String(order.payment_method || '').toUpperCase()] || order.payment_method || 'Chưa cập nhật'}
+                {t(PAYMENT_METHOD_LABELS[String(order.payment_method || '').toUpperCase()] || order.payment_method || 'Chưa cập nhật')}
               </span>
             </div>
 
             <div>
-              <span className="text-[11px] text-[#59665f] block mb-1">Trạng thái thanh toán</span>
+              <span className="text-[11px] text-[#59665f] block mb-1">{t('Trạng thái thanh toán')}</span>
               <span className="font-semibold text-[#17231d]">
-                {PAYMENT_LABELS[order.payment_status] || order.payment_status}
+                {t(PAYMENT_LABELS[order.payment_status] || order.payment_status)}
               </span>
             </div>
 
             {order.paid_amount != null && (
               <div className="space-y-1.5 pt-2 border-t border-[#17231d]/10">
                 <div className="flex justify-between">
-                  <span className="text-[#59665f]">Đã thu:</span>
+                  <span className="text-[#59665f]">{t('Đã thu:')}</span>
                   <span className="font-mono font-bold text-[#0f7a4f]">
                     {money(order.paid_amount || 0)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#59665f]">Còn nợ:</span>
+                  <span className="text-[#59665f]">{t('Còn nợ:')}</span>
                   <span className="font-mono font-bold text-rose-600">
                     {money(order.debt_amount ?? order.grand_total)}
                   </span>
@@ -555,7 +643,7 @@ export default function OrderDetailPage() {
             <div className="flex items-center justify-between pb-2 border-b border-[#17231d]/10">
               <h3 className="font-bold text-base text-[#17231d] flex items-center gap-2">
                 <AlertTriangle size={18} className="text-rose-600" />
-                <span>Xác nhận hủy đơn hàng</span>
+                <span>{t('Xác nhận hủy đơn hàng')}</span>
               </h3>
               <button
                 type="button"
@@ -567,20 +655,19 @@ export default function OrderDetailPage() {
             </div>
 
             <p className="text-xs text-[#59665f] leading-relaxed">
-              Bạn có chắc chắn muốn hủy đơn hàng{' '}
-              <strong className="font-mono text-[#17231d]">{order.order_code}</strong>? Sau khi hủy,
-              kho sẽ không chuẩn bị và không giao chuyến hàng này.
+              {t('Bạn có chắc chắn muốn hủy đơn hàng')}{' '}
+              <strong className="font-mono text-[#17231d]">{order.order_code}</strong>? {t('Sau khi hủy, kho sẽ không chuẩn bị và không giao chuyến hàng này.')}
             </p>
 
             <div>
               <label className="block text-xs font-bold text-[#17231d] mb-1">
-                Lý do hủy đơn <span className="text-rose-600">*</span>
+                {t('Lý do hủy đơn')} <span className="text-rose-600">*</span>
               </label>
               <textarea
                 rows={3}
                 value={cancelReason}
                 onChange={(e) => setCancelReason(e.target.value)}
-                placeholder="Nhập lý do hủy (vd: thay đổi thực đơn, hoãn tiệc, đặt trùng...)"
+                placeholder={t('Nhập lý do hủy (vd: thay đổi thực đơn, hoãn tiệc, đặt trùng...)')}
                 className="w-full text-xs p-3 bg-[#f8faf7] border border-[#17231d]/15 rounded-xl text-[#17231d] focus:outline-none focus:bg-white focus:border-rose-500 resize-none"
               />
             </div>
@@ -597,7 +684,7 @@ export default function OrderDetailPage() {
                 onClick={() => setShowCancelModal(false)}
                 className="flex-1 py-2.5 px-4 rounded-xl border border-[#17231d]/15 text-[#17231d] font-bold text-xs hover:bg-[#f5f7f3]"
               >
-                Giữ đơn hàng
+                {t('Giữ đơn hàng')}
               </button>
               <button
                 type="button"
@@ -605,7 +692,7 @@ export default function OrderDetailPage() {
                 disabled={canceling}
                 className="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs disabled:opacity-50"
               >
-                {canceling ? 'Đang hủy...' : 'Đồng ý hủy đơn'}
+                {canceling ? t('Đang hủy...') : t('Đồng ý hủy đơn')}
               </button>
             </div>
           </div>

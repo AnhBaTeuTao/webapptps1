@@ -47,7 +47,7 @@ export default function LoginPage() {
   return (
     <main className="min-h-dvh bg-[#f7faf6] text-[#18382b] lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(460px,520px)]">
       <section
-        className="tps1-login-hero relative h-[clamp(168px,25dvh,216px)] shrink-0 overflow-hidden bg-[#123c2c] bg-cover bg-[center_35%] lg:h-dvh lg:bg-center"
+        className="tps1-login-hero relative h-[clamp(168px,25dvh,216px)] shrink-0 overflow-hidden bg-[#123c2c] bg-cover bg-position-[center_35%] lg:h-dvh lg:bg-center"
         style={{ backgroundImage: `linear-gradient(180deg, rgba(4,36,24,.16), rgba(4,36,24,.66)), url('${import.meta.env.BASE_URL}images/login-fresh-food-v2.webp')` }}
       >
         <div className="relative mx-auto flex h-full max-w-md flex-col justify-between px-5 pb-8 pt-[max(1rem,env(safe-area-inset-top))] lg:max-w-none lg:px-12 lg:pb-14 lg:pt-12">

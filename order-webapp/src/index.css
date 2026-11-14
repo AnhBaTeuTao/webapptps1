@@ -17,8 +17,15 @@
   --tps1-border: rgba(23, 35, 29, 0.08);
 }
 
-* {
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+html, body, * {
+  font-family: "Be Vietnam Pro", "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.font-extrabold, .font-black {
+  font-synthesis: none;
 }
 
 html {

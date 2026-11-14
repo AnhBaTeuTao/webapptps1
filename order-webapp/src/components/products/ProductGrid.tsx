@@ -64,7 +64,7 @@ export default function ProductGrid({
           <p className="font-bold text-base text-[#17231d]">{t('Không tìm thấy mặt hàng phù hợp')}</p>
           <p className="text-xs text-[#59665f] mt-1 max-w-sm mx-auto">
             {searchQuery
-              ? `Không có kết quả nào cho "${searchQuery}". Hãy thử tìm bằng từ khóa đơn giản hơn hoặc mã SKU.`
+              ? `${t('Không tìm thấy sản phẩm nào khớp với')} "${searchQuery}".`
               : t('Hãy chọn một nhóm hàng hoặc gõ từ khóa tìm kiếm để xem các sản phẩm có sẵn.')}
           </p>
         </div>

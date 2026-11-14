@@ -78,9 +78,9 @@ export default function CartCheckoutDrawer({
           <div>
             <div className="w-10 h-1 rounded-full bg-[#17231d]/15 mx-auto mb-2" />
             <h3 className="font-bold text-base text-[#17231d] flex items-center gap-2">
-              <span>{activeTab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${activeTab.title.slice('Đặt hàng '.length)}` : activeTab.title}</span>
+              <span>{activeTab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${activeTab.title.slice('Đặt hàng '.length)}` : t(activeTab.title)}</span>
               <span className="text-xs font-normal text-[#59665f]">
-                ({activeTab.items.length} món · {totalQuantity.toFixed(1)} ĐVT)
+                ({activeTab.items.length} {t('mặt hàng')} · {totalQuantity.toFixed(1)} {t('ĐVT')})
               </span>
             </h3>
           </div>
@@ -89,7 +89,7 @@ export default function CartCheckoutDrawer({
             type="button"
             onClick={onClose}
             className="p-2 rounded-xl text-[#59665f] hover:bg-[#f5f7f3] active:scale-95 transition-colors cursor-pointer"
-            aria-label="Đóng bảng giỏ hàng"
+            aria-label={t('Đóng bảng giỏ hàng')}
           >
             <X size={20} />
           </button>
@@ -100,7 +100,7 @@ export default function CartCheckoutDrawer({
           {/* Danh sách mặt hàng */}
           <div className="space-y-2.5">
             <h4 className="text-xs font-bold text-[#59665f] uppercase tracking-wider">
-              Danh sách hàng hóa đặt
+              {t('Danh sách hàng hóa đặt')}
             </h4>
 
             {activeTab.items.length === 0 ? (
@@ -108,7 +108,8 @@ export default function CartCheckoutDrawer({
                 {t('Chọn hàng từ danh mục hoặc thêm hàng ngoài danh mục.')}
               </div>
             ) : (
-              activeTab.items.map((item) => {
+              <div className="max-h-[38vh] overflow-y-auto overscroll-contain space-y-2.5 pr-0.5 scroll-smooth">
+              {activeTab.items.map((item) => {
                 const lineTotal = item.quantity * (item.product.price || 0);
                 return (
                   <div
@@ -134,7 +135,7 @@ export default function CartCheckoutDrawer({
                         type="button"
                         onClick={() => onRemoveItem(item.lineKey || item.product.id)}
                         className="text-[#59665f]/50 hover:text-red-600 p-1.5 rounded-lg active:bg-red-50"
-                        title="Xóa món này"
+                        title={t('Xóa món này')}
                       >
                         <Trash2 size={16} />
                       </button>
@@ -182,7 +183,7 @@ export default function CartCheckoutDrawer({
                       </div>
 
                       <div className="text-right">
-                        <span className="text-[10px] text-[#59665f] block">Thành tiền</span>
+                        <span className="text-[10px] text-[#59665f] block">{t('Thành tiền')}</span>
                         <span className="font-mono font-bold text-sm text-[#0f7a4f]">
                           {item.product.isUnlisted ? '0đ' : item.product.priceOnRequest ? t('Chờ sale báo giá') : money(lineTotal)}
                         </span>
@@ -197,7 +198,8 @@ export default function CartCheckoutDrawer({
                     />
                   </div>
                 );
-              })
+              })}
+              </div>
             )}
             <UnlistedItemEntry onAdd={onAddUnlisted} initialOpen={activeTab.items.length === 0}/>
           </div>
@@ -205,7 +207,7 @@ export default function CartCheckoutDrawer({
           {/* Ghi chú chung */}
           <div className="space-y-1">
             <label className="block text-xs font-bold text-[#59665f] uppercase tracking-wider">
-              Ghi chú toàn đơn
+              {t('Ghi chú toàn đơn')}
             </label>
             <input
               type="text"
@@ -230,7 +232,7 @@ export default function CartCheckoutDrawer({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
                     <label className="block text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
-                      Ngày giao
+                      {t('Ngày giao')}
                     </label>
                     <div className="relative">
                       <Calendar className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#59665f]/60" size={14} />
@@ -246,7 +248,7 @@ export default function CartCheckoutDrawer({
 
                   <div>
                     <label className="block text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
-                      Ca giao
+                      {t('Ca giao')}
                     </label>
                     <div className="relative">
                       <Clock className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#59665f]/60" size={14} />
@@ -267,8 +269,8 @@ export default function CartCheckoutDrawer({
                 {/* Người nhận & SĐT */}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
-                      Người nhận
+                    <label className="block truncate text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
+                      {t('Người nhận')}
                     </label>
                     <div className="relative">
                       <User className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#59665f]/50" size={13} />
@@ -282,8 +284,8 @@ export default function CartCheckoutDrawer({
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
-                      SĐT nhận
+                    <label className="block truncate text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
+                      {t('SĐT nhận')}
                     </label>
                     <div className="relative">
                       <Phone className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#59665f]/50" size={13} />
@@ -301,7 +303,7 @@ export default function CartCheckoutDrawer({
                 {/* Địa chỉ nhận */}
                 <div>
                   <label className="block text-[11px] font-bold text-[#59665f] uppercase tracking-wider mb-1">
-                    Địa chỉ chi tiết
+                    {t('Địa chỉ chi tiết')}
                   </label>
                   <textarea
                     rows={2}

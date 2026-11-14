@@ -46,9 +46,9 @@ export default function CartFloatingBar({ activeTab, onOpenDrawer }: CartFloatin
 
           <div className="min-w-0">
             <p className="font-bold text-sm leading-tight flex items-center gap-1.5">
-              <span>{activeTab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${activeTab.title.slice('Đặt hàng '.length)}` : activeTab.title}</span>
+              <span>{activeTab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${activeTab.title.slice('Đặt hàng '.length)}` : t(activeTab.title)}</span>
               <span className="text-[11px] font-normal text-emerald-200/80">
-                ({totalQuantity.toFixed(1)} ĐVT)
+                ({totalQuantity.toFixed(1)} {t('ĐVT')})
               </span>
             </p>
             <p className="font-mono font-extrabold text-sm text-emerald-200">

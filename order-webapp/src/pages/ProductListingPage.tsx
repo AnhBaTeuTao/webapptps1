@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, PackageSearch } from 'lucide-react';
+import { ArrowUpDown, Check, ChevronDown, ChevronLeft, ChevronRight, PackageSearch } from 'lucide-react';
 import { api, ApiError, type Product } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -11,6 +11,104 @@ import StoreProductGrid, { StoreGridSkeleton, useGridColumns } from '../componen
 import CategoryRail from '../components/store/CategoryRail';
 
 type Sort = 'default' | 'price_asc' | 'price_desc' | 'name';
+
+const SORT_OPTIONS: { value: Sort; label: string }[] = [
+  { value: 'default', label: 'Phổ biến' },
+  { value: 'price_asc', label: 'Giá thấp đến cao' },
+  { value: 'price_desc', label: 'Giá cao đến thấp' },
+  { value: 'name', label: 'Tên A–Z' },
+];
+
+function SortDropdown({
+  value,
+  onChange,
+  align = 'left',
+}: {
+  value: Sort;
+  onChange: (next: Sort) => void;
+  align?: 'left' | 'right';
+}) {
+  const { t } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handlePointerDown = (e: MouseEvent) => {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  const currentLabel = SORT_OPTIONS.find((opt) => opt.value === value)?.label ?? 'Phổ biến';
+
+  return (
+    <div ref={rootRef} className="relative flex items-center gap-2 shrink-0">
+      <span className="hidden sm:inline text-xs sm:text-sm font-semibold text-[#17231d]">
+        {t('Sắp xếp theo')}:
+      </span>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className={`flex h-9 items-center gap-2 rounded-full border bg-white px-3.5 text-xs sm:text-sm font-bold text-[#17231d] transition-all cursor-pointer shadow-2xs ${
+          open
+            ? 'border-[#0f7a4f] ring-2 ring-[#0f7a4f]/15'
+            : 'border-[#17231d]/15 hover:border-[#0f7a4f]/50 hover:bg-[#f8faf7]'
+        }`}
+      >
+        <ArrowUpDown size={14} className="text-[#0f7a4f] shrink-0" />
+        <span className="whitespace-nowrap">{t(currentLabel)}</span>
+        <ChevronDown
+          size={15}
+          className={`text-[#59665f] transition-transform duration-200 ${open ? 'rotate-180 text-[#0f7a4f]' : ''}`}
+        />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className={`absolute ${align === 'right' ? 'right-0' : 'left-0'} top-[calc(100%+6px)] z-30 min-w-50 overflow-hidden rounded-2xl border border-[#17231d]/10 bg-white p-1.5 shadow-xl`}
+        >
+          {SORT_OPTIONS.map((opt) => {
+            const active = opt.value === value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                role="option"
+                aria-selected={active}
+                onClick={() => {
+                  onChange(opt.value);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2 text-left text-xs sm:text-sm transition-colors cursor-pointer ${
+                  active
+                    ? 'bg-[#eaf6ef] font-bold text-[#0b4f34]'
+                    : 'font-medium text-[#17231d] hover:bg-[#f4f8f5]'
+                }`}
+              >
+                <span className="whitespace-nowrap">{t(opt.label)}</span>
+                {active && <Check size={14} className="text-[#0f7a4f] shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function sortProducts(products: Product[], sort: Sort) {
   if (sort === 'default') return products;
@@ -262,19 +360,7 @@ export default function ProductListingPage({ mode }: { mode: 'categories' | 'cat
 
           {/* Thanh công cụ Sort & Filter nhóm hàng chuẩn Kamereo */}
           <div className="rounded-2xl bg-[#f8faf8] px-3.5 py-2.5 ring-1 ring-[#17231d]/8 shadow-2xs flex flex-wrap sm:flex-nowrap items-center gap-3">
-            <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#17231d] shrink-0">
-              <span className="hidden sm:inline">{t('Sắp xếp theo')}:</span>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value as Sort)}
-                className="h-9 rounded-full border border-[#17231d]/15 bg-white px-3.5 text-xs sm:text-sm font-bold text-[#17231d] focus:border-[#0f7a4f] focus:outline-none cursor-pointer"
-              >
-                <option value="default">{t('Phổ biến')}</option>
-                <option value="price_asc">{t('Giá thấp đến cao')}</option>
-                <option value="price_desc">{t('Giá cao đến thấp')}</option>
-                <option value="name">{t('Tên A–Z')}</option>
-              </select>
-            </label>
+            <SortDropdown value={sort} onChange={setSort} align="left" />
 
             {!loading && searchCategoryCounts.length > 0 && (
               <>
@@ -393,15 +479,7 @@ export default function ProductListingPage({ mode }: { mode: 'categories' | 'cat
               <h1 className="text-xl font-black text-[#17231d] sm:text-2xl">{title}</h1>
               {!loading && <p className="text-sm text-[#59665f]">{total} {t('mặt hàng')}</p>}
             </div>
-            <label className="flex items-center gap-2 text-sm text-[#59665f]">
-              <span className="hidden sm:inline">{t('Sắp xếp')}</span>
-              <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} className="h-10 rounded-xl border border-[#17231d]/12 bg-white px-3 text-sm font-semibold text-[#17231d] focus:border-[#0f7a4f] focus:outline-none">
-                <option value="default">{t('Phổ biến')}</option>
-                <option value="price_asc">{t('Giá thấp đến cao')}</option>
-                <option value="price_desc">{t('Giá cao đến thấp')}</option>
-                <option value="name">{t('Tên A–Z')}</option>
-              </select>
-            </label>
+            <SortDropdown value={sort} onChange={setSort} align="right" />
           </div>
 
           {mode === 'category' && category && availableSubCategories.length > 1 && (

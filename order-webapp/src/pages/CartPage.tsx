@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowRight, Check, CheckCircle2, Info, Minus, Plus, ShoppingBag, ShoppingCart, Trash2, X } from 'lucide-react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowDown, ArrowRight, Check, CheckCircle2, ChevronDown, ChevronUp, Info, Minus, Plus, ShoppingBag, ShoppingCart, Trash2, X } from 'lucide-react';
 import { useCart, lineKeyOf } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -8,11 +8,11 @@ import { useOrderSubmit } from '../hooks/useOrderSubmit';
 import CartSummarySidebar from '../components/products/CartSummarySidebar';
 import PushOptIn from '../components/store/PushOptIn';
 import UnlistedItemEntry from '../components/products/UnlistedItemEntry';
-import ExcelOrderSection from '../components/cart/ExcelOrderSection';
+import ExcelOrderSection, { scrollToExcelOrderSection } from '../components/cart/ExcelOrderSection';
 import { ProductImage, money, stepOf } from '../components/store/StoreProductCard';
 import type { OrderItem } from '../components/products/OrderTabsBar';
 
-function CartLineRow({ item }: { item: OrderItem }) {
+function CartLineRow({ item, hiddenOnMobile = false }: { item: OrderItem; hiddenOnMobile?: boolean }) {
   const { updateQty, updateNote, removeItem } = useCart();
   const { t, productName, productUnit } = useLanguage();
   const key = lineKeyOf(item);
@@ -50,7 +50,7 @@ function CartLineRow({ item }: { item: OrderItem }) {
   );
 
   return (
-    <li className="flex gap-3 p-3 sm:p-4">
+    <li className={`gap-3 p-3 sm:p-4 ${hiddenOnMobile ? 'hidden lg:flex' : 'flex'}`}>
       {item.product.isUnlisted
         ? <ProductImage product={item.product} className="size-16 shrink-0 rounded-xl sm:size-20" />
         : <Link to={`/san-pham/${item.product.id}`} className="shrink-0"><ProductImage product={item.product} className="size-16 rounded-xl sm:size-20" /></Link>}
@@ -127,7 +127,7 @@ function CartLineRow({ item }: { item: OrderItem }) {
           </div>
         ) : item.note ? (
           <div className="flex items-center justify-between gap-2 rounded-lg bg-emerald-50/80 px-2.5 py-1.5 text-xs text-[#0b4f34] ring-1 ring-emerald-200/60">
-            <span className="min-w-0 flex-1 break-words font-medium">
+            <span className="min-w-0 flex-1 wrap-break-word font-medium">
               📝 <strong className="font-semibold">{t('Ghi chú')}:</strong> {item.note}
             </span>
             <div className="flex items-center gap-1 shrink-0">
@@ -159,9 +159,10 @@ function CartLineRow({ item }: { item: OrderItem }) {
               setDraftNote('');
               setIsEditingNote(true);
             }}
-            className="inline-flex items-center gap-1 text-[11.5px] font-medium text-[#59665f] hover:text-[#0f7a4f] hover:underline pt-0.5"
+            className="inline-flex items-center gap-1 text-left text-[11.5px] font-medium text-[#59665f] transition hover:text-[#0f7a4f] hover:underline pt-0.5"
           >
-            <span>+</span> <span>{t('Ghi chú cho mặt hàng (cách sơ chế, quy cách...)')}</span>
+            <span className="font-bold text-[#0f7a4f]">+</span>
+            <span>{t('Ghi chú sơ chế / quy cách...')}</span>
           </button>
         )}
       </div>
@@ -171,20 +172,28 @@ function CartLineRow({ item }: { item: OrderItem }) {
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const isExcel = searchParams.get('excel') === '1';
   const excelSectionRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const [expandAllMobileItems, setExpandAllMobileItems] = useState(false);
+
+  const scrollToSummary = () => {
+    summaryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const { session } = useAuth();
   const { t } = useLanguage();
   const { tab, updateTab, updateQty, removeItem, addUnlisted, repricedCount, dismissRepriced } = useCart();
   const { submit, submitting, errorMessage, successOrder, clearSuccess, cutoffInfo } = useOrderSubmit();
 
+  const hasItems = tab.items.length > 0;
+
   useEffect(() => {
-    if (isExcel && excelSectionRef.current) {
-      excelSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [isExcel]);
+    if (!isExcel) return;
+    scrollToExcelOrderSection();
+  }, [isExcel, location.key, hasItems, session?.id]);
 
   if (successOrder) {
     return (
@@ -199,7 +208,7 @@ export default function CartPage() {
           {successOrder.pendingPriceCount > 0 && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">{t('Đơn có mặt hàng chưa có giá. Nhân viên kinh doanh sẽ báo giá, hoặc bỏ món tạm hết hàng, trước khi xác nhận đơn với quý khách.')}</p>}
           <PushOptIn />
           <div className="flex flex-col justify-center gap-3 pt-2 sm:flex-row">
-            <button type="button" onClick={() => { clearSuccess(); navigate('/'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-[#17231d]/15 px-5 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]"><ShoppingBag size={16} /> {t('Tiếp tục mua hàng')}</button>
+            <button type="button" onClick={() => { clearSuccess(); navigate('/dat-hang'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl border border-[#17231d]/15 px-5 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]"><ShoppingBag size={16} /> {t('Tiếp tục mua hàng')}</button>
             <button type="button" onClick={() => { clearSuccess(); navigate('/don-hang'); }} className="flex h-11 items-center justify-center gap-1.5 rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white hover:bg-[#0b4f34]">{t('Đơn hàng của tôi')} <ArrowRight size={16} /></button>
           </div>
         </div>
@@ -209,20 +218,20 @@ export default function CartPage() {
 
   if (tab.items.length === 0) {
     return (
-      <div className="mx-auto my-4 max-w-4xl space-y-5">
-        <div className="mx-auto max-w-md space-y-4 rounded-3xl bg-white px-6 py-10 text-center ring-1 ring-[#17231d]/8 shadow-xs">
+      <div className="mx-auto my-4 max-w-3xl space-y-4">
+        <div className="w-full space-y-4 rounded-3xl bg-white px-6 py-10 text-center ring-1 ring-[#17231d]/8 shadow-xs">
           <div className="mx-auto flex size-18 items-center justify-center rounded-2xl bg-[#f5f7f3] text-[#59665f]/40"><ShoppingCart size={32} /></div>
-          <div>
+          <div className="mx-auto max-w-md">
             <h1 className="text-lg font-bold text-[#17231d]">{t('Giỏ hàng đang trống')}</h1>
             <p className="mt-1 text-sm text-[#59665f]">{t('Quý khách chọn hàng từ cửa hàng, hoặc tải file Excel lên để lên đơn nhanh chóng.')}</p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">
-            <Link to="/" className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
+            <Link to="/dat-hang" className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#0f7a4f] px-5 text-sm font-bold text-white hover:bg-[#0b4f34]"><ShoppingBag size={16} /> {t('Xem cửa hàng')}</Link>
           </div>
         </div>
 
         {session && <ExcelOrderSection ref={excelSectionRef} autoFocusHighlight={isExcel} />}
-        {session && <div className="rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6"><UnlistedItemEntry onAdd={addUnlisted} /></div>}
+        {session && <div className="w-full rounded-3xl bg-white p-4 sm:p-5 ring-1 ring-[#17231d]/8 shadow-xs"><UnlistedItemEntry onAdd={addUnlisted} /></div>}
       </div>
     );
   }
@@ -234,7 +243,22 @@ export default function CartPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-black text-[#17231d]">{t('Giỏ hàng')} <span className="text-base font-semibold text-[#59665f]">({tab.items.length} {t('mặt hàng')})</span></h1>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-black text-[#17231d]">
+          {t('Giỏ hàng')}{' '}
+          <span className="text-base font-semibold text-[#59665f]">
+            ({tab.items.length} {t('mặt hàng')})
+          </span>
+        </h1>
+        <button
+          type="button"
+          onClick={scrollToSummary}
+          className="inline-flex items-center gap-1 rounded-full bg-[#eaf6ef] px-3 py-1.5 text-xs font-bold text-[#0b4f34] ring-1 ring-[#0f7a4f]/20 hover:bg-[#daf0e3] active:scale-95 transition-all lg:hidden cursor-pointer"
+        >
+          <span>{t('Đi tới Gửi đơn')}</span>
+          <ArrowDown size={13} />
+        </button>
+      </div>
 
       {repricedCount > 0 && (
         <div className="flex items-start gap-2 rounded-2xl bg-[#eaf6ef] p-3 text-sm text-[#0b4f34] ring-1 ring-[#0f7a4f]/15">
@@ -245,19 +269,49 @@ export default function CartPage() {
       )}
 
       <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="space-y-4">
+        <div className="space-y-4 min-w-0">
           {session && <ExcelOrderSection ref={excelSectionRef} autoFocusHighlight={isExcel} />}
 
-          <ul className="divide-y divide-[#17231d]/6 overflow-hidden rounded-3xl bg-white ring-1 ring-[#17231d]/6">
-            {tab.items.map((item) => <CartLineRow key={lineKeyOf(item)} item={item} />)}
-          </ul>
+          {/* Thanh cuộn dọc chỉ áp dụng trên Desktop; trên Mobile mặc định gọn 4 món để tránh kẹt cuộn */}
+          <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-[#17231d]/6">
+            <ul className="divide-y divide-[#17231d]/6 lg:max-h-135 lg:overflow-y-auto lg:overscroll-contain scroll-smooth">
+              {tab.items.map((item, idx) => (
+                <CartLineRow
+                  key={lineKeyOf(item)}
+                  item={item}
+                  hiddenOnMobile={!expandAllMobileItems && idx >= 4}
+                />
+              ))}
+            </ul>
+            {tab.items.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setExpandAllMobileItems((prev) => !prev)}
+                className="flex w-full items-center justify-center gap-1.5 border-t border-[#17231d]/8 bg-[#f8faf7] px-4 py-2.5 text-xs font-bold text-[#0f7a4f] hover:bg-[#eaf6ef] transition-colors lg:hidden cursor-pointer"
+              >
+                {expandAllMobileItems ? (
+                  <>
+                    <ChevronUp size={15} />
+                    <span>{t('Thu gọn danh sách (chỉ hiện 4 mặt hàng)')}</span>
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown size={15} />
+                    <span>
+                      {t('Xem tất cả')} {tab.items.length} {t('mặt hàng trong giỏ')}
+                    </span>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
           {session && <div className="rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6"><UnlistedItemEntry onAdd={addUnlisted} /></div>}
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><ShoppingBag size={15} /> {t('Tiếp tục chọn hàng')}</Link>
+            <Link to="/dat-hang" className="inline-flex items-center gap-1.5 text-sm font-bold text-[#0f7a4f] hover:underline"><ShoppingBag size={15} /> {t('Tiếp tục chọn hàng')}</Link>
           </div>
         </div>
 
-        <div className="lg:sticky lg:top-37.5">
+        <div ref={summaryRef} className="lg:sticky lg:top-37.5">
           <CartSummarySidebar
             session={session}
             activeTab={tab}

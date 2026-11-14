@@ -28,6 +28,7 @@ import NotificationBell from '../components/NotificationBell';
 import TrustMarquee from '../components/store/TrustMarquee';
 import SmartSearchBox from '../components/store/SmartSearchBox';
 import InstallBanner from '../components/store/InstallBanner';
+import { scrollToExcelOrderSection } from '../components/cart/ExcelOrderSection';
 
 const HOTLINE = '089 890 2222';
 
@@ -117,7 +118,7 @@ export default function StoreLayout() {
         <div className="mx-auto flex max-w-330 items-center justify-between gap-3 sm:gap-4 px-3 py-2.5 sm:px-5 sm:py-3">
           {/* Cụm trái: Logo */}
           <Link to="/" className="shrink-0" aria-label="Thực Phẩm Số Một">
-            <img src={`${import.meta.env.BASE_URL}images/tps1-logo-horizontal.png`} alt="Thực Phẩm Số Một" className="h-9 sm:h-10 w-auto object-contain shrink-0" />
+            <img src={`${import.meta.env.BASE_URL}images/tps1-logo-horizontal.png`} alt="Thực Phẩm Số Một" className="h-8 sm:h-10 w-auto object-contain shrink-0" />
           </Link>
 
           {/* Cụm giữa: 3 thẻ thông tin vận hành B2B chia đều không gian */}
@@ -152,8 +153,8 @@ export default function StoreLayout() {
           </div>
 
           {/* Cụm phải: Ngôn ngữ, Thông báo, Yêu thích, Tài khoản, Giỏ hàng */}
-          <div className="flex shrink-0 items-center gap-2 sm:gap-2.5">
-            <div className="hidden sm:block"><LanguageSwitcher /></div>
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            <LanguageSwitcher />
             {session && <NotificationBell light />}
             <Link
               to="/yeu-thich"
@@ -209,12 +210,12 @@ export default function StoreLayout() {
                 setMobileShowSub(false);
                 setCategoryDrawerOpen(true);
               }}
-              className="flex h-10 shrink-0 items-center gap-1.5 rounded-xl bg-[#0f7a4f] px-3 sm:px-3.5 text-[13px] font-bold text-white shadow-xs transition hover:bg-[#0b4f34] whitespace-nowrap"
+              className="flex h-10 max-w-37.5 sm:max-w-none shrink-0 items-center gap-1.5 rounded-xl bg-[#0f7a4f] px-3 sm:px-3.5 text-[13px] font-bold text-white shadow-xs transition hover:bg-[#0b4f34] whitespace-nowrap"
             >
-              <LayoutGrid size={16} />
-              <span className="hidden xs:inline sm:inline">{t('Tất cả danh mục')}</span>
-              <span className="xs:hidden sm:hidden">{t('Danh mục')}</span>
-              <ChevronDown size={15} />
+              <LayoutGrid size={16} className="shrink-0" />
+              <span className="hidden min-w-0 truncate xs:inline sm:inline">{t('Tất cả danh mục')}</span>
+              <span className="min-w-0 truncate xs:hidden sm:hidden">{t('Danh mục')}</span>
+              <ChevronDown size={15} className="shrink-0" />
             </button>
 
             {/* Thanh tìm kiếm thông minh ở giữa - Smart Search Popover kiểu Kamereo */}
@@ -238,6 +239,11 @@ export default function StoreLayout() {
 
                 <NavLink
                   to="/gio-hang?excel=1"
+                  onClick={() => {
+                    if (location.pathname === '/gio-hang') {
+                      scrollToExcelOrderSection();
+                    }
+                  }}
                   className={() => {
                     const isExcelActive = location.pathname === '/gio-hang' && searchParams.get('excel') === '1';
                     return `flex h-10 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-bold whitespace-nowrap transition ${
@@ -424,7 +430,7 @@ export default function StoreLayout() {
                         )}
                       </div>
                       <span className="mt-2 text-[12.5px] sm:text-[13.5px] font-bold leading-snug text-[#17231d] group-hover:text-[#0f7a4f]">
-                        {t(`Tất cả ${activeCategory.name}`)}
+                        {t('Tất cả')} {t(activeCategory.name)}
                       </span>
                     </Link>
 
@@ -492,7 +498,7 @@ export default function StoreLayout() {
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-[#17231d]/10 bg-white/95 shadow-[0_-8px_24px_rgba(0,0,0,0.06)] backdrop-blur-lg md:hidden" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }} aria-label={t('Điều hướng chính')}>
         <div className="grid grid-cols-5">
           {bottomTabs.map(({ to, label, icon: Icon, end, badge }) => (
-            <NavLink key={label} to={to} end={end} className={({ isActive }) => `flex h-15 flex-col items-center justify-center gap-0.5 text-[10.5px] ${isActive ? 'font-bold text-[#0f7a4f]' : 'font-medium text-[#59665f]'}`}>
+            <NavLink key={label} to={to} end={end} className={({ isActive }) => `flex h-15 min-w-0 overflow-hidden px-0.5 flex-col items-center justify-center gap-0.5 text-[10.5px] ${isActive ? 'font-bold text-[#0f7a4f]' : 'font-medium text-[#59665f]'}`}>
               {({ isActive }) => {
                 const isFavTab = label === 'Yêu thích';
                 const hasFavs = favoriteIds.length > 0;
@@ -510,7 +516,7 @@ export default function StoreLayout() {
                         </span>
                       )}
                     </span>
-                    <span className="truncate whitespace-nowrap px-0.5">{t(label)}</span>
+                    <span className="max-w-full truncate whitespace-nowrap px-0.5">{t(label)}</span>
                   </>
                 );
               }}

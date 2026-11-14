@@ -134,7 +134,7 @@ export default function OrdersPage() {
         <button
           onClick={fetchOrders}
           className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-2 border border-[#17231d]/15 text-[#59665f] hover:text-[#17231d] rounded-xl hover:bg-[#f5f7f3] transition-colors text-xs font-semibold cursor-pointer"
-          title="Tải lại danh sách"
+          title={t('Tải lại danh sách')}
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           <span>{t('Làm mới')}</span>
@@ -193,7 +193,7 @@ export default function OrdersPage() {
           <p className="font-bold text-base text-[#17231d]">{t('Không có đơn hàng nào')}</p>
           <p className="text-xs text-[#59665f] max-w-sm mx-auto">
             {selectedFilter !== 'all'
-              ? `Chưa có đơn hàng nào ở trạng thái "${STATUS_LABELS[selectedFilter] || selectedFilter}".`
+              ? `${t('Chưa có đơn hàng nào ở trạng thái')} "${t(STATUS_LABELS[selectedFilter] || selectedFilter)}".`
               : t('Bạn chưa tạo đơn hàng nào. Hãy vào màn hình Đặt hàng để lên đơn cho bếp.')}
           </p>
         </div>
@@ -239,27 +239,27 @@ export default function OrdersPage() {
                   <div className="flex items-center gap-1.5 text-[#17231d] font-medium">
                     <Package size={13} className="text-[#0f7a4f] shrink-0" />
                     <span>
-                      {itemsCount} mặt hàng:
+                      {itemsCount} {t('mặt hàng')}:
                       <span className="text-[#59665f] font-normal ml-1 line-clamp-1">
                         {order.items
                           ?.slice(0, 3)
                           .map((it) => productName(it.name))
                           .join(', ')}
-                        {itemsCount > 3 ? ` và ${itemsCount - 3} món khác...` : ''}
+                        {itemsCount > 3 ? ` +${itemsCount - 3} ${t('mặt hàng')}...` : ''}
                       </span>
                     </span>
                   </div>
 
                   <div className="flex items-start gap-1.5 text-[#59665f]">
                     <MapPin size={13} className="text-[#59665f]/60 mt-0.5 shrink-0" />
-                    <span className="truncate">{order.delivery_address || 'Giao tại xưởng/bếp'}</span>
+                    <span className="truncate">{order.delivery_address || t('Giao tại xưởng/bếp')}</span>
                   </div>
                 </div>
 
                 {/* Chân card: Tiền & Trạng thái thanh toán & Nút xem chi tiết */}
                 <div className="flex items-center justify-between pt-2.5 border-t border-[#17231d]/8">
                   <div>
-                    <span className="text-[11px] text-[#59665f] block">Tổng tiền</span>
+                    <span className="text-[11px] text-[#59665f] block">{t('Tổng tiền')}</span>
                     <span className="font-extrabold font-mono text-base sm:text-lg text-[#0f7a4f]">
                       {money(order.grand_total)}
                     </span>
@@ -267,7 +267,7 @@ export default function OrdersPage() {
 
                   <div className="flex items-center gap-2 sm:gap-3">
                     <span className="text-xs text-[#59665f] font-medium hidden sm:inline">
-                      {PAYMENT_LABELS[order.payment_status] || order.payment_status}
+                      {t(PAYMENT_LABELS[order.payment_status] || order.payment_status)}
                     </span>
                     <button
                       type="button"
@@ -275,10 +275,10 @@ export default function OrdersPage() {
                       className="inline-flex min-h-10 items-center gap-1 rounded-xl border border-[#0f7a4f]/25 bg-[#f5fbf7] px-3 text-xs font-bold text-[#0f7a4f] hover:bg-[#e6f5ec]"
                     >
                       <RotateCcw size={14} />
-                      <span>Đặt lại</span>
+                      <span>{t('Đặt lại')}</span>
                     </button>
                     <span className="inline-flex items-center gap-1 text-xs font-bold text-[#0f7a4f] group-hover:translate-x-0.5 transition-transform">
-                      <span>Xem chi tiết</span>
+                      <span>{t('Xem chi tiết')}</span>
                       <ChevronRight size={16} />
                     </span>
                   </div>

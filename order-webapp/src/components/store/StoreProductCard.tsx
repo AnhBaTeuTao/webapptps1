@@ -107,6 +107,8 @@ export function ProductImage({ product, className = '' }: { product: Product; cl
   const [failed, setFailed] = useState(false);
   const { t } = useLanguage();
   const src = productImage(product);
+  const isTinyThumb = /\bsize-(10|11|12|14)\b/.test(className);
+  const isCompactThumb = /\bsize-16\b/.test(className);
   return (
     <div className={`relative flex items-center justify-center overflow-hidden bg-[#f3f6f2] ${className}`}>
       {src && !failed ? (
@@ -114,8 +116,14 @@ export function ProductImage({ product, className = '' }: { product: Product; cl
       ) : (
         <PackageOpen size={36} strokeWidth={1.5} className="text-[#59665f]/35" />
       )}
-      {src && !failed && product.imageIsIllustration && (
-        <span className="pointer-events-none absolute bottom-1.5 left-1.5 rounded-md bg-black/45 px-1.5 py-0.5 text-[9.5px] font-semibold text-white backdrop-blur-sm">
+      {src && !failed && product.imageIsIllustration && !isTinyThumb && (
+        <span
+          className={`pointer-events-none absolute whitespace-nowrap font-semibold leading-none text-white backdrop-blur-[2px] ${
+            isCompactThumb
+              ? 'inset-x-0.5 bottom-0.5 rounded bg-black/55 px-1 py-0.5 text-center text-[7.5px]'
+              : 'bottom-1.5 left-1.5 rounded-md bg-black/45 px-1.5 py-0.5 text-[9.5px]'
+          }`}
+        >
           {t('Ảnh minh hoạ')}
         </span>
       )}

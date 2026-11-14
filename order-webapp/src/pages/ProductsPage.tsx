@@ -145,10 +145,8 @@ export default function ProductsPage() {
       } catch (err) {
         if (controller.signal.aborted) return;
         if (err instanceof ApiError && err.status === 401) {
-          if (import.meta.env.VITE_BYPASS_AUTH === 'false') {
-            logout();
-            navigate('/dang-nhap');
-          }
+          logout();
+          navigate('/dang-nhap');
         }
       } finally {
         if (requestId === searchRequestRef.current) setSearchLoading(false);
@@ -328,17 +326,17 @@ export default function ProductsPage() {
         })
         .filter((item): item is NonNullable<typeof item> => Boolean(item));
       if (items.length === 0) {
-        setErrorMessage('Các mặt hàng trong đơn cũ hiện không còn trong danh mục. Vui lòng tìm và chọn lại.');
+        setErrorMessage(t('Các mặt hàng trong đơn cũ hiện không còn trong danh mục. Vui lòng tìm và chọn lại.'));
         return;
       }
       updateActiveTab((tab) => ({ ...tab, items }));
       if (items.length < requested.length) {
-        setErrorMessage('Một số mặt hàng cũ không còn trong danh mục và đã được bỏ qua.');
+        setErrorMessage(t('Một số mặt hàng cũ không còn trong danh mục và đã được bỏ qua.'));
       }
     } catch {
-      setErrorMessage('Không đọc được dữ liệu đơn cũ. Vui lòng thử lại.');
+      setErrorMessage(t('Không đọc được dữ liệu đơn cũ. Vui lòng thử lại.'));
     }
-  }, [catalogProducts, updateActiveTab]);
+  }, [catalogProducts, updateActiveTab, t]);
 
   // Danh sách gợi ý từ catalog và lịch sử
   const frequentProducts = useMemo(

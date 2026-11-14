@@ -57,7 +57,7 @@ export default function OrderTabsBar({
             }`}
           >
             <ShoppingBag size={13} className={isActive ? 'text-white' : 'text-[#0f7a4f]'} />
-            <span>{tab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${tab.title.slice('Đặt hàng '.length)}` : tab.title}</span>
+            <span>{tab.title.startsWith('Đặt hàng ') ? `${t('Đặt hàng')} ${tab.title.slice('Đặt hàng '.length)}` : t(tab.title)}</span>
 
             {count > 0 && (
               <span
