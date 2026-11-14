@@ -224,7 +224,7 @@
         <span class="hero-badge">Tổng số file: 28 files</span>
         <span class="hero-badge">Tạo mới (A): 4 files</span>
         <span class="hero-badge">Chỉnh sửa (M): 24 files</span>
-        <span class="hero-badge">+3661 / -736 dòng code</span>
+        <span class="hero-badge">+3762 / -765 dòng code</span>
       </div>
     </header>
 
@@ -364,7 +364,7 @@ QUY TẮC TUYỆT ĐỐI KHI ĐỌC TÀI LIỆU NÀY:
       <td><code class="filepath">order-webapp/src/components/store/BannerCarousel.tsx</code></td>
       <td><span class="pill pill-mod">Chỉnh sửa</span></td>
       <td class="diff-stat"><span class="diff-add">+35</span> / <span class="diff-del">-11</span><div style="font-size:11px;color:#6e7a73;font-weight:500;">(136 dòng)</div></td>
-      <td>Hỗ trợ kéo thả ngang banner bằng chuột và cảm ứng mượt mà.</td>
+      <td>Hỗ trợ kéo thả ngang banner bằng chuột; cập nhật nút Bắt đầu chọn hàng chuyển sang /danh-muc trên Desktop khi #store-home-catalog ẩn (el.offsetParent !== null).</td>
     </tr>
 
     <tr onclick="document.getElementById('file-block-14').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;">
@@ -483,8 +483,8 @@ QUY TẮC TUYỆT ĐỐI KHI ĐỌC TÀI LIỆU NÀY:
       <td><strong>28</strong></td>
       <td><code class="filepath">order-webapp/src/pages/StoreHomePage.tsx</code></td>
       <td><span class="pill pill-mod">Chỉnh sửa</span></td>
-      <td class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span><div style="font-size:11px;color:#6e7a73;font-weight:500;">(317 dòng)</div></td>
-      <td>Bật hiệu ứng tự động trôi ngang chậm (autoScroll) cho dải Hàng bán chạy và tinh chỉnh bố cục trang chủ B2B.</td>
+      <td class="diff-stat"><span class="diff-add">+145</span> / <span class="diff-del">-49</span><div style="font-size:11px;color:#6e7a73;font-weight:500;">(317 dòng)</div></td>
+      <td>Thiết kế lại khu vực Hero Desktop 2 cột lg:grid-cols-[250px_minmax(0,1fr)] gồm cột menu danh mục dọc CategorySidebar bên trái và BannerCarousel bên phải; chuyển khối BẾP ĐỐI TÁC TPS1 thành thanh ngang toàn màn hình ngay dưới Hero kèm 3 nút (Đặt nhanh &amp; Đặt lại đơn, Đặt hàng từ file Excel, Đơn hàng); ẩn dải CategoryRail trên Desktop (lg:hidden); bật autoScroll cho dải Hàng bán chạy.</td>
     </tr>
         </tbody>
       </table>
@@ -7429,7 +7429,7 @@ export default function QuickOrderSections({
             <span class="pill pill-mod">Chỉnh sửa (M)</span>
             <span class="diff-stat"><span class="diff-add">+35</span> / <span class="diff-del">-11</span> · Tổng 136 dòng</span>
           </div>
-          <p class="file-spec-note"><strong>Đặc tả kỹ thuật cho AI:</strong> Hỗ trợ kéo thả ngang banner bằng chuột và cảm ứng mượt mà.</p>
+          <p class="file-spec-note"><strong>Đặc tả kỹ thuật cho AI:</strong> Hỗ trợ kéo thả ngang banner bằng chuột; cập nhật nút Bắt đầu chọn hàng chuyển sang /danh-muc trên Desktop khi #store-home-catalog ẩn (el.offsetParent !== null).</p>
         </div>
         <div class="file-spec-actions">
           <button type="button" class="btn-small" onclick="copyTextById('diff-code-13', this)">Copy Git Diff</button>
@@ -7440,7 +7440,7 @@ export default function QuickOrderSections({
       <details class="code-details" open>
         <summary>📌 1. GIT UNIFIED DIFF — Vị trí dòng sửa chính xác (- xóa / + thêm) của <code>order-webapp/src/components/store/BannerCarousel.tsx</code></summary>
         <pre class="code-box diff-box"><code id="diff-code-13">diff --git a/order-webapp/src/components/store/BannerCarousel.tsx b/order-webapp/src/components/store/BannerCarousel.tsx
-index d91c995..6ba502f 100644
+index d91c995..75103d2 100644
 --- a/order-webapp/src/components/store/BannerCarousel.tsx
 +++ b/order-webapp/src/components/store/BannerCarousel.tsx
 @@ -1,35 +1,58 @@
@@ -7465,7 +7465,7 @@ index d91c995..6ba502f 100644
 +  const handleStartShopping = (e: MouseEvent) =&gt; {
 +    if (!session) {
 +      const el = document.getElementById('store-home-catalog');
-+      if (el) {
++      if (el &amp;&amp; el.offsetParent !== null) {
 +        e.preventDefault();
 +        el.scrollIntoView({ behavior: 'smooth' });
 +      }
@@ -7498,11 +7498,11 @@ index d91c995..6ba502f 100644
 -          {t('Bắt đầu chọn hàng')} &lt;ArrowRight size={16} /&gt;
 +        &lt;div className=&quot;mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-[12px] font-medium text-emerald-100/90&quot;&gt;
 +          &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Chuẩn ISO 22000 &amp; HACCP')}&lt;/span&gt;
-+          &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Hơn 5.000+ mặt hàng sẵn có')}&lt;/span&gt;
++          &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Hơn 5.000 mặt hàng sẵn có')}&lt;/span&gt;
 +          &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Giao đúng hẹn 99,8% ca sáng')}&lt;/span&gt;
 +        &lt;/div&gt;
 +        &lt;Link
-+          to={session ? '/dat-hang' : '#store-home-catalog'}
++          to={session ? '/dat-hang' : '/danh-muc'}
 +          onClick={handleStartShopping}
 +          className=&quot;mt-3 inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-[#e0742f] px-5 text-[13px] font-bold text-white whitespace-nowrap shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-4 sm:text-sm&quot;
 +        &gt;
@@ -7562,7 +7562,7 @@ function BrandHero() {
   const handleStartShopping = (e: MouseEvent) =&gt; {
     if (!session) {
       const el = document.getElementById('store-home-catalog');
-      if (el) {
+      if (el &amp;&amp; el.offsetParent !== null) {
         e.preventDefault();
         el.scrollIntoView({ behavior: 'smooth' });
       }
@@ -7586,11 +7586,11 @@ function BrandHero() {
         &lt;/p&gt;
         &lt;div className=&quot;mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] sm:text-[12px] font-medium text-emerald-100/90&quot;&gt;
           &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Chuẩn ISO 22000 &amp; HACCP')}&lt;/span&gt;
-          &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Hơn 5.000+ mặt hàng sẵn có')}&lt;/span&gt;
+          &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Hơn 5.000 mặt hàng sẵn có')}&lt;/span&gt;
           &lt;span className=&quot;inline-flex items-center gap-1&quot;&gt;✓ {t('Giao đúng hẹn 99,8% ca sáng')}&lt;/span&gt;
         &lt;/div&gt;
         &lt;Link
-          to={session ? '/dat-hang' : '#store-home-catalog'}
+          to={session ? '/dat-hang' : '/danh-muc'}
           onClick={handleStartShopping}
           className=&quot;mt-3 inline-flex min-h-10 items-center justify-center gap-1.5 rounded-xl bg-[#e0742f] px-5 text-[13px] font-bold text-white whitespace-nowrap shadow-lg shadow-black/20 hover:bg-[#c4601f] sm:mt-4 sm:text-sm&quot;
         &gt;
@@ -14310,9 +14310,9 @@ export default function ProductsPage() {
             <span class="file-index">#28</span>
             <code class="filepath" style="font-size:14px;">order-webapp/src/pages/StoreHomePage.tsx</code>
             <span class="pill pill-mod">Chỉnh sửa (M)</span>
-            <span class="diff-stat"><span class="diff-add">+44</span> / <span class="diff-del">-20</span> · Tổng 317 dòng</span>
+            <span class="diff-stat"><span class="diff-add">+145</span> / <span class="diff-del">-49</span> · Tổng 317 dòng</span>
           </div>
-          <p class="file-spec-note"><strong>Đặc tả kỹ thuật cho AI:</strong> Bật hiệu ứng tự động trôi ngang chậm (autoScroll) cho dải Hàng bán chạy và tinh chỉnh bố cục trang chủ B2B.</p>
+          <p class="file-spec-note"><strong>Đặc tả kỹ thuật cho AI:</strong> Thiết kế lại khu vực Hero Desktop 2 cột lg:grid-cols-[250px_minmax(0,1fr)] gồm cột menu danh mục dọc CategorySidebar bên trái và BannerCarousel bên phải; chuyển khối BẾP ĐỐI TÁC TPS1 thành thanh ngang toàn màn hình ngay dưới Hero kèm 3 nút (Đặt nhanh &amp; Đặt lại đơn, Đặt hàng từ file Excel, Đơn hàng); ẩn dải CategoryRail trên Desktop (lg:hidden); bật autoScroll cho dải Hàng bán chạy.</p>
         </div>
         <div class="file-spec-actions">
           <button type="button" class="btn-small" onclick="copyTextById('diff-code-28', this)">Copy Git Diff</button>
@@ -14323,10 +14323,94 @@ export default function ProductsPage() {
       <details class="code-details" open>
         <summary>📌 1. GIT UNIFIED DIFF — Vị trí dòng sửa chính xác (- xóa / + thêm) của <code>order-webapp/src/pages/StoreHomePage.tsx</code></summary>
         <pre class="code-box diff-box"><code id="diff-code-28">diff --git a/order-webapp/src/pages/StoreHomePage.tsx b/order-webapp/src/pages/StoreHomePage.tsx
-index 595fbc8..ff4ed08 100644
+index 595fbc8..fb6af6c 100644
 --- a/order-webapp/src/pages/StoreHomePage.tsx
 +++ b/order-webapp/src/pages/StoreHomePage.tsx
-@@ -17,11 +17,11 @@ function RailSkeleton() {
+@@ -1,27 +1,93 @@
+ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+ import { Link } from 'react-router-dom';
+-import { BadgePercent, ClipboardList, FileSpreadsheet, Flame, Loader2, RotateCcw, Sparkles } from 'lucide-react';
+-import { api, type Product } from '../lib/api';
++import {
++  BadgePercent,
++  ChevronRight,
++  ClipboardList,
++  FileSpreadsheet,
++  Flame,
++  LayoutGrid,
++  Loader2,
++  Package,
++  RotateCcw,
++  Sparkles,
++} from 'lucide-react';
++import { api, type StoreCategory, type Product } from '../lib/api';
+ import { useAuth } from '../contexts/AuthContext';
+ import { useLanguage } from '../contexts/LanguageContext';
+ import { useStoreHome } from '../hooks/useStoreHome';
+ import BannerCarousel from '../components/store/BannerCarousel';
+ import CategoryRail from '../components/store/CategoryRail';
+ import ProductRail from '../components/store/ProductRail';
+ import StoreProductGrid from '../components/store/StoreProductGrid';
+ 
++function CategoryThumbnail({ category }: { category: StoreCategory }) {
++  const [error, setError] = useState(false);
++  return (
++    &lt;span className=&quot;flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#eaf6ef] ring-1 ring-[#0f7a4f]/10&quot;&gt;
++      {category.imageUrl &amp;&amp; !error ? (
++        &lt;img
++          src={category.imageUrl}
++          alt=&quot;&quot;
++          loading=&quot;lazy&quot;
++          onError={() =&gt; setError(true)}
++          className=&quot;h-full w-full object-cover&quot;
++        /&gt;
++      ) : (
++        &lt;Package size={16} className=&quot;text-[#0f7a4f]/60&quot; /&gt;
++      )}
++    &lt;/span&gt;
++  );
++}
++
++function CategorySidebar({ categories }: { categories: StoreCategory[] }) {
++  const { t } = useLanguage();
++  return (
++    &lt;nav
++      aria-label={t('Danh mục hàng hóa')}
++      className=&quot;relative hidden min-h-[340px] rounded-2xl bg-white ring-1 ring-[#17231d]/6 lg:block&quot;
++    &gt;
++      &lt;div className=&quot;no-scrollbar absolute inset-0 flex flex-col overflow-y-auto p-1.5&quot;&gt;
++        {categories.map((c) =&gt; (
++          &lt;Link
++            key={c.slug}
++            to={`/danh-muc/${c.slug}`}
++            className=&quot;group flex items-center gap-2.5 rounded-xl px-2 py-1 text-[13.5px] font-semibold text-[#17231d] transition hover:bg-[#eaf6ef] hover:text-[#0b4f34]&quot;
++          &gt;
++            &lt;CategoryThumbnail category={c} /&gt;
++            &lt;span className=&quot;min-w-0 flex-1 truncate&quot;&gt;{t(c.name)}&lt;/span&gt;
++            &lt;ChevronRight
++              size={16}
++              className=&quot;shrink-0 text-[#8a9690] transition group-hover:translate-x-0.5 group-hover:text-[#0f7a4f]&quot;
++            /&gt;
++          &lt;/Link&gt;
++        ))}
++        &lt;Link
++          to=&quot;/danh-muc&quot;
++          className=&quot;mt-auto flex items-center gap-2.5 rounded-xl px-2 py-1 text-[13px] font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]&quot;
++        &gt;
++          &lt;span className=&quot;flex size-7 shrink-0 items-center justify-center rounded-full bg-[#0f7a4f]/10&quot;&gt;
++            &lt;LayoutGrid size={15} /&gt;
++          &lt;/span&gt;
++          {t('Xem tất cả danh mục')}
++        &lt;/Link&gt;
++      &lt;/div&gt;
++    &lt;/nav&gt;
++  );
++}
++
+ /** Danh mục không phải thực phẩm: không đưa vào lưới đề xuất. */
+ const NON_FOOD_SLUGS = new Set(['dung-cu-bep']);
+ 
+ function RailSkeleton() {
    return (
      &lt;div className=&quot;rounded-2xl bg-white p-3 ring-1 ring-[#17231d]/6 sm:p-4&quot;&gt;
        &lt;div className=&quot;mb-3 h-5 w-40 animate-pulse rounded-lg bg-[#eef2ee]&quot; /&gt;
@@ -14339,7 +14423,7 @@ index 595fbc8..ff4ed08 100644
              &lt;div className=&quot;mt-1.5 h-3 w-2/3 animate-pulse rounded bg-[#eef2ee]&quot; /&gt;
            &lt;/div&gt;
          ))}
-@@ -94,38 +94,59 @@ export default function StoreHomePage() {
+@@ -94,74 +160,104 @@ export default function StoreHomePage() {
      } finally {
        setLoadingMore(false);
      }
@@ -14357,88 +14441,121 @@ index 595fbc8..ff4ed08 100644
        {/* Điện thoại: danh mục lên đầu để khách thấy gian hàng ngay; máy tính: banner trước. */}
        &lt;div className=&quot;flex flex-col gap-3&quot;&gt;
 -        &lt;div className=&quot;order-2 grid gap-3 lg:order-1 lg:grid-cols-[minmax(0,1fr)_280px]&quot;&gt;
-+        &lt;div className=&quot;order-2 grid gap-3 lg:order-1 lg:grid-cols-[minmax(0,1fr)_300px]&quot;&gt;
++        &lt;div className=&quot;order-2 grid gap-3 lg:order-1 lg:grid-cols-[250px_minmax(0,1fr)]&quot;&gt;
++          {data &amp;&amp; data.categories.length &gt; 0 ? (
++            &lt;CategorySidebar categories={data.categories} /&gt;
++          ) : (
++            &lt;div className=&quot;hidden animate-pulse rounded-2xl bg-white ring-1 ring-[#17231d]/6 lg:block&quot; aria-hidden=&quot;true&quot; /&gt;
++          )}
            &lt;BannerCarousel banners={data?.banners || []} /&gt;
-           &lt;aside className=&quot;hidden flex-col gap-3 lg:flex&quot;&gt;
-             {session ? (
-               &lt;div className=&quot;flex flex-1 flex-col justify-between rounded-2xl bg-white p-4 ring-1 ring-[#17231d]/6&quot;&gt;
-                 &lt;div&gt;
+-          &lt;aside className=&quot;hidden flex-col gap-3 lg:flex&quot;&gt;
+-            {session ? (
+-              &lt;div className=&quot;flex flex-1 flex-col justify-between rounded-2xl bg-white p-4 ring-1 ring-[#17231d]/6&quot;&gt;
+-                &lt;div&gt;
 -                  &lt;p className=&quot;text-xs font-semibold uppercase tracking-wider text-[#59665f]&quot;&gt;{t('Xin chào')}&lt;/p&gt;
 -                  &lt;p className=&quot;mt-1 line-clamp-2 text-base font-black text-[#17231d]&quot;&gt;{session.company || session.name}&lt;/p&gt;
 -                  &lt;p className=&quot;mt-1 text-xs text-[#59665f]&quot;&gt;{t('Giá trên cửa hàng đã là giá hợp đồng của quý khách.')}&lt;/p&gt;
-+                  &lt;span className=&quot;inline-block rounded-md bg-[#eaf6ef] px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wider text-[#0f7a4f]&quot;&gt;
-+                    {t('BẾP ĐỐI TÁC TPS1')}
-+                  &lt;/span&gt;
-+                  &lt;p className=&quot;mt-2 line-clamp-2 text-base font-black text-[#17231d]&quot;&gt;{session.company || session.name}&lt;/p&gt;
-+                  &lt;p className=&quot;mt-1 text-xs text-[#59665f]&quot;&gt;{t('Giá hiển thị đã áp dụng theo hợp đồng của bếp.')}&lt;/p&gt;
-                 &lt;/div&gt;
-                 &lt;div className=&quot;mt-3 grid gap-2&quot;&gt;
+-                &lt;/div&gt;
+-                &lt;div className=&quot;mt-3 grid gap-2&quot;&gt;
 -                  &lt;Link to=&quot;/dat-hang&quot; className=&quot;flex h-10 items-center gap-2 rounded-xl bg-[#0f7a4f] px-4 text-sm font-bold text-white hover:bg-[#0b4f34]&quot;&gt;&lt;RotateCcw size={16} /&gt; {t('Đặt nhanh hoặc đặt lại đơn cũ')}&lt;/Link&gt;
 -                  &lt;Link to=&quot;/dat-hang/excel&quot; className=&quot;flex h-10 items-center gap-2 rounded-xl border border-[#0f7a4f]/25 px-4 text-sm font-bold text-[#0f7a4f] hover:bg-[#eaf6ef]&quot;&gt;&lt;FileSpreadsheet size={16} /&gt; {t('Đặt hàng từ file Excel')}&lt;/Link&gt;
-+                  &lt;Link
-+                    to=&quot;/dat-hang&quot;
-+                    className=&quot;flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#0f7a4f] px-4 py-2.5 text-[13.5px] font-bold text-white whitespace-nowrap shadow-sm shadow-[#0f7a4f]/20 transition hover:bg-[#0b4f34]&quot;
-+                  &gt;
-+                    &lt;RotateCcw size={16} className=&quot;shrink-0&quot; /&gt;
-+                    &lt;span&gt;{t('Đặt nhanh &amp; Đặt lại đơn')}&lt;/span&gt;
-+                  &lt;/Link&gt;
-+                  &lt;Link
-+                    to=&quot;/gio-hang?excel=1&quot;
-+                    className=&quot;flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#0f7a4f]/30 bg-[#eaf6ef]/50 px-4 py-2.5 text-[13.5px] font-bold text-[#0b4f34] whitespace-nowrap transition hover:bg-[#eaf6ef]&quot;
-+                  &gt;
-+                    &lt;FileSpreadsheet size={16} className=&quot;shrink-0&quot; /&gt;
-+                    &lt;span&gt;{t('Đặt hàng từ file Excel')}&lt;/span&gt;
-+                  &lt;/Link&gt;
-                 &lt;/div&gt;
-               &lt;/div&gt;
-             ) : (
+-                &lt;/div&gt;
+-              &lt;/div&gt;
+-            ) : (
 -              &lt;div className=&quot;flex flex-1 flex-col justify-between rounded-2xl bg-gradient-to-br from-[#fef5ee] to-white p-4 ring-1 ring-[#e0742f]/15&quot;&gt;
-+              &lt;div className=&quot;flex flex-1 flex-col justify-between rounded-2xl bg-linear-to-br from-[#fef5ee] to-white p-4 ring-1 ring-[#e0742f]/15&quot;&gt;
-                 &lt;div&gt;
-                   &lt;p className=&quot;text-base font-black leading-snug text-[#17231d]&quot;&gt;{t('Giá riêng cho bếp của quý khách')}&lt;/p&gt;
-                   &lt;p className=&quot;mt-1.5 text-[13px] text-[#59665f]&quot;&gt;{t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}&lt;/p&gt;
-                 &lt;/div&gt;
-                 &lt;div className=&quot;mt-3 grid gap-2&quot;&gt;
+-                &lt;div&gt;
+-                  &lt;p className=&quot;text-base font-black leading-snug text-[#17231d]&quot;&gt;{t('Giá riêng cho bếp của quý khách')}&lt;/p&gt;
+-                  &lt;p className=&quot;mt-1.5 text-[13px] text-[#59665f]&quot;&gt;{t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}&lt;/p&gt;
+-                &lt;/div&gt;
+-                &lt;div className=&quot;mt-3 grid gap-2&quot;&gt;
 -                  &lt;Link to=&quot;/dang-ky&quot; className=&quot;flex h-10 items-center justify-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white hover:bg-[#c4601f]&quot;&gt;{t('Đăng ký tài khoản')}&lt;/Link&gt;
 -                  &lt;Link to=&quot;/dang-nhap&quot; className=&quot;flex h-10 items-center justify-center rounded-xl border border-[#17231d]/12 bg-white px-4 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]&quot;&gt;{t('Đăng nhập')}&lt;/Link&gt;
-+                  &lt;Link to=&quot;/dang-ky&quot; className=&quot;flex min-h-11 items-center justify-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white whitespace-nowrap shadow-sm shadow-[#e0742f]/20 transition hover:bg-[#c4601f]&quot;&gt;{t('Đăng ký tài khoản')}&lt;/Link&gt;
-+                  &lt;Link to=&quot;/dang-nhap&quot; className=&quot;flex min-h-11 items-center justify-center rounded-xl border border-[#17231d]/12 bg-white px-4 text-sm font-bold text-[#17231d] whitespace-nowrap transition hover:bg-[#f5f7f3]&quot;&gt;{t('Đăng nhập')}&lt;/Link&gt;
-                 &lt;/div&gt;
-               &lt;/div&gt;
-             )}
-           &lt;/aside&gt;
+-                &lt;/div&gt;
+-              &lt;/div&gt;
+-            )}
+-          &lt;/aside&gt;
          &lt;/div&gt;
-@@ -133,35 +154,38 @@ export default function StoreHomePage() {
-         {/* Lối tắt trên điện thoại/tablet (máy tính đã có khung bên cạnh banner và thanh menu). */}
+ 
+-        {/* Lối tắt trên điện thoại/tablet (máy tính đã có khung bên cạnh banner và thanh menu). */}
          {session ? (
-           &lt;div className=&quot;order-3 grid grid-cols-3 gap-2 lg:hidden&quot;&gt;
-             {[
-               { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh' },
+-          &lt;div className=&quot;order-3 grid grid-cols-3 gap-2 lg:hidden&quot;&gt;
+-            {[
+-              { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh' },
 -              { to: '/dat-hang/excel', icon: FileSpreadsheet, label: 'Đặt từ Excel' },
-+              { to: '/gio-hang?excel=1', icon: FileSpreadsheet, label: 'Đặt từ Excel' },
-               { to: '/don-hang', icon: ClipboardList, label: 'Đơn hàng' },
-             ].map(({ to, icon: Icon, label }) =&gt; (
+-              { to: '/don-hang', icon: ClipboardList, label: 'Đơn hàng' },
+-            ].map(({ to, icon: Icon, label }) =&gt; (
 -              &lt;Link key={to} to={to} className=&quot;flex items-center justify-center gap-1.5 rounded-xl bg-white px-2 py-2.5 text-center text-[12.5px] font-bold text-[#0b4f34] ring-1 ring-[#17231d]/6 active:scale-[0.98]&quot;&gt;
 -                &lt;Icon size={17} className=&quot;shrink-0 text-[#0f7a4f]&quot; /&gt;
 -                {t(label)}
-+              &lt;Link
-+                key={to}
-+                to={to}
-+                className=&quot;flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-white px-2 py-2.5 text-center text-[12px] sm:text-[13px] font-bold text-[#0b4f34] ring-1 ring-[#17231d]/6 whitespace-nowrap active:scale-[0.98]&quot;
-+              &gt;
-+                &lt;Icon size={16} className=&quot;shrink-0 text-[#0f7a4f]&quot; /&gt;
-+                &lt;span&gt;{t(label)}&lt;/span&gt;
-               &lt;/Link&gt;
-             ))}
+-              &lt;/Link&gt;
+-            ))}
++          &lt;div className=&quot;order-3 flex flex-col gap-2 lg:order-2 lg:flex-row lg:items-center lg:rounded-2xl lg:bg-white lg:p-2 lg:pl-4 lg:ring-1 lg:ring-[#17231d]/6&quot;&gt;
++            &lt;div className=&quot;hidden min-w-0 flex-1 items-center gap-2.5 lg:flex&quot;&gt;
++              &lt;span className=&quot;shrink-0 rounded-md bg-[#eaf6ef] px-2 py-0.5 text-[10.5px] font-extrabold uppercase tracking-wider text-[#0f7a4f]&quot;&gt;
++                {t('BẾP ĐỐI TÁC TPS1')}
++              &lt;/span&gt;
++              &lt;span className=&quot;truncate text-sm font-black text-[#17231d]&quot;&gt;
++                {session.company || session.name}
++              &lt;/span&gt;
++              &lt;span className=&quot;hidden truncate text-xs text-[#59665f] xl:inline&quot;&gt;
++                {'· '}
++                {t('Giá hiển thị đã áp dụng theo hợp đồng của bếp.')}
++              &lt;/span&gt;
++            &lt;/div&gt;
++            &lt;div className=&quot;grid grid-cols-3 gap-2 lg:flex lg:shrink-0&quot;&gt;
++              {[
++                { to: '/dat-hang', icon: RotateCcw, label: 'Đặt nhanh', desktop: 'Đặt nhanh &amp; Đặt lại đơn' },
++                { to: '/gio-hang?excel=1', icon: FileSpreadsheet, label: 'Đặt từ Excel', desktop: 'Đặt hàng từ file Excel' },
++                { to: '/don-hang', icon: ClipboardList, label: 'Đơn hàng', desktop: 'Đơn hàng' },
++              ].map(({ to, icon: Icon, label, desktop }, idx) =&gt; (
++                &lt;Link
++                  key={to}
++                  to={to}
++                  className={`flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-center text-[12px] font-bold whitespace-nowrap active:scale-[0.98] sm:text-[13px] lg:min-h-10 lg:px-4 ${
++                    idx === 0
++                      ? 'bg-white text-[#0b4f34] ring-1 ring-[#17231d]/6 lg:bg-[#0f7a4f] lg:text-white lg:ring-0 lg:hover:bg-[#0b4f34]'
++                      : 'bg-white text-[#0b4f34] ring-1 ring-[#17231d]/6 lg:ring-[#0f7a4f]/25 lg:hover:bg-[#eaf6ef]'
++                  }`}
++                &gt;
++                  &lt;Icon
++                    size={16}
++                    className={`shrink-0 ${idx === 0 ? 'text-[#0f7a4f] lg:text-white' : 'text-[#0f7a4f]'}`}
++                  /&gt;
++                  &lt;span className=&quot;lg:hidden&quot;&gt;{t(label)}&lt;/span&gt;
++                  &lt;span className=&quot;hidden lg:inline&quot;&gt;{t(desktop)}&lt;/span&gt;
++                &lt;/Link&gt;
++              ))}
++            &lt;/div&gt;
            &lt;/div&gt;
-         ) : null}
+-        ) : null}
++        ) : (
++          &lt;div className=&quot;order-3 hidden items-center gap-3 rounded-2xl bg-linear-to-r from-[#fef5ee] to-white p-2 pl-4 ring-1 ring-[#e0742f]/15 lg:order-2 lg:flex&quot;&gt;
++            &lt;p className=&quot;min-w-0 flex-1 truncate text-sm text-[#59665f]&quot;&gt;
++              &lt;span className=&quot;font-black text-[#17231d]&quot;&gt;{t('Giá riêng cho bếp của quý khách')}&lt;/span&gt;
++              {' · '}
++              {t('Đăng ký tài khoản miễn phí để xem đúng giá hợp đồng, gửi đơn bằng file Excel và biết đơn đang giao tới đâu.')}
++            &lt;/p&gt;
++            &lt;Link
++              to=&quot;/dang-ky&quot;
++              className=&quot;flex min-h-10 shrink-0 items-center rounded-xl bg-[#e0742f] px-4 text-sm font-bold text-white hover:bg-[#c4601f]&quot;
++            &gt;
++              {t('Đăng ký tài khoản')}
++            &lt;/Link&gt;
++            &lt;Link
++              to=&quot;/dang-nhap&quot;
++              className=&quot;flex min-h-10 shrink-0 items-center rounded-xl border border-[#17231d]/12 bg-white px-4 text-sm font-bold text-[#17231d] hover:bg-[#f5f7f3]&quot;
++            &gt;
++              {t('Đăng nhập')}
++            &lt;/Link&gt;
++          &lt;/div&gt;
++        )}
  
          {data &amp;&amp; data.categories.length &gt; 0 &amp;&amp; (
 -          &lt;section className=&quot;order-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 sm:p-4 lg:order-2&quot;&gt;
 -            &lt;div className=&quot;mb-2.5 hidden items-center justify-between lg:flex&quot;&gt;
 -              &lt;h2 className=&quot;text-lg font-black text-[#17231d]&quot;&gt;{t('Danh mục hàng hóa')}&lt;/h2&gt;
 -              &lt;Link to=&quot;/danh-muc&quot; className=&quot;text-sm font-bold text-[#0f7a4f] hover:underline&quot;&gt;{t('Xem tất cả')}&lt;/Link&gt;
-+          &lt;section id=&quot;store-home-catalog&quot; className=&quot;order-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 sm:p-4 lg:order-2&quot;&gt;
++          &lt;section id=&quot;store-home-catalog&quot; className=&quot;order-1 rounded-2xl bg-white px-3 py-3 ring-1 ring-[#17231d]/6 sm:p-4 lg:hidden&quot;&gt;
 +            &lt;div className=&quot;mb-3 flex items-center justify-between&quot;&gt;
 +              &lt;h2 className=&quot;text-base font-black text-[#17231d] sm:text-lg&quot;&gt;{t('Danh mục hàng hóa')}&lt;/h2&gt;
              &lt;/div&gt;
